@@ -1,62 +1,59 @@
-# Parallel and Distributed Systems
+# Software Engineering
+# Module - 1
 
-## Module - 1
+## <p style="color: Blue"> 1. Explain interactive and incremental development in agile development? </p>
 
-- [x] **1. Introduction to parallel computing.** 
+Ans:-
 
-- [ ] **2. Parallel programming platforms:-**
-	- [ ] 1. Trends in microprocessor Architectures, 
-	- [ ] 2. Limitations of memory system performance, 
-	- [ ] 3. Dichotomy of parallel computing platforms, 
-	- [ ] 4. physical organization of parallel platforms, 
-	- [ ] 5. communication costs in parallel machines, 
-	- [ ] 6. Routing mechanisms for interconnection network, 
-	- [ ] 7. Impact of process processors mapping and mapping techniques.
+### Incremental development
 
-## Module - 2
+- Incremental development is a development approach that slices the product into fully working slices that are called increments. 
+- Each new increment builds on top of the existing released functionality.
 
-- [ ] **1. Principles of parallel algorithm design:-**
-	- [ ] 1. Preliminaries,
-	- [ ] 2. Decomposition techniques,
-	- [ ] 3. Characteristics of tasks and interactions,
-	- [ ] 4. Mapping techniques for load balancing,
-	- [ ] 5. Methods for containing.
+#### Example: Ecommerce Website
 
-- [ ] **2. Interactions overheads,**
+- Consider a team building an ecommerce website using incremental development. The final target product has search, product information, a shopping basket, checkout, favourites, and customer reviews.
 
-- [ ] **3. Parallel algorithm models.**
+- For the first released increment, the team builds the basic functionality to buy a product. It includes search, product information, adding products to a shopping basket and checkout. This first slice would only be released once it’s complete.
 
-- [ ] **4. Basic communication operations:-**
-	- [ ] 1. One-to-All Broadcast and All-to-One Reduction,
-	- [ ] 2. All-to-All broadcast and reduction All-Reduce and prefix sum operations,
-	- [ ] 3. scatter and gather,
-	- [ ] 4. All-to-All personalized communication,
-	- [ ] 5. circular shift,
-	- [ ] 6. Improving the speed of some communication operation.
+- The second released increment builds on that basic functionality, and would add another capability such as favourites. The would be released when the favourites functionality is complete.
 
-## Module - 3
+- The third released increment adds customer reviews once that is complete, and so on.
 
-- [ ] **1. Analytical modeling of parallel programs:-**
+![image](https://agility.im/wp-content/uploads/2020/06/Incr-vs-iterative.png)
 
-	- [ ] 1. Performance metrics for parallel systems,
-	- [ ] 2. Effect of granularity of performance,
-	- [ ] 3. scalability of parallel system,
-	- [ ] 4. Minimum execution time and minimum cost-optimal execution time,
-	- [ ] 5. Asymptotic analysis of parallel programs,
-	- [ ] 6. other scalability metrics.
+### Iterative development 
 
-## Module - 4
+- Iterative development is when teams gradually build up the features and functions but don’t wait until each of these is complete before releasing. 
+- They release a basic version of each feature and the add to that feature in subsequent iterative releases, usually based on feedback from the basic version released.
 
-- [ ] **1. Programming using the message passing paradigm:-**
-	- [ ] 1. Principle of message - Passing programming,
-	- [ ] 2. Send and receive operations,
-	- [ ] 3. The message passing interface,
-	- [ ] 4. Topologies and embedding,
-	- [ ] 5. Overlapping communication with computation,
-	- [ ] 6. collective communication and computation operations,
-	- [ ] 7. Groups and communicators.
+#### Example: Ecommerce Website
 
-- [ ] **2. Dense matrix algorithm:-**
-	- [ ] 1. Matrix-vector multiplication,
-	- [ ] 2. Matrix-matrix algorithm,
-	- [ ] 3. Solving a system of linear equations.
+- Assume a team building the same ecommerce website using an iterative process.
+
+- The first release has a really stripped back version of all the required functionality; namely search, product information, a shopping basket, checkout, favourites, and customer reviews.
+
+- For the second iterative release, the team would improve some of the existing basic functionality, taking into account feedback from stakeholders or customer, or other inputs such as analytics.
+
+- On every subsequent iterative release, new ideas and requirements are added or low value/usage areas may be removed.
+
+## <p style="color: blue">2. How Agile process is differed from classical waterfall process?
+</p>
+
+|                    | Waterfall                                                                                                                                                                                                                                                                                     | Agile                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Timeline           | Waterfall has a fixed timeline. The idea is that the start and finish of the project are already mapped out from the beginning.                                                                                                                                                               | Agile is a lot more flexible and accounts for experimenting with different directions. Rather than a fixed timeline, the schedule adapts as the project progresses. The   Agile Manifesto , an online document released in 2001 by a group of software developers, says team members are expected to, “Deliver working software frequently, from a couple of weeks to a couple of months, with a preference to the shorter timescale.” |
+| Client Involvement | Once the end goal is established, Waterfall does not involve the client or project owner during the process, apart from specific check-ins or for deliverables. The course of the project is outlined from the start, so incorporating client feedback is not an ongoing part of the process. | A fundamental part of Agile is including clients in the project development at every step. The Agile Manifesto states, “Our highest priority is to satisfy the customer through early and continuous delivery of valuable software.” Therefore, business owners are expected to be involved and give feedback to the software development team as they progress through the different phases of the project.                           |
+| Flexibility        | Waterfall is not as flexible as Agile because each phase needs to be fully completed before moving on to the next phase. The project is also planned out ahead of time, making this management system ideal for teams with a clear vision of where they are headed from start to finish.      | Flexibility is built into the Agile method. Agile values short bursts of work, which are called sprints. The method welcomes adapting to different directions, incorporating new information even at a later stage of the project.                                                                                                                                                                                                     |
+| Budget             | Fixed.  The budget for projects using the Waterfall methodology is generally fixed. Because the project is determined from start to finish, there is less room to change the budget mid-project.                                                                                              | Flexible.  Agile is open to adaptation, encourages experimentation and welcomes changes of direction, even in later phases of the project. Because of this, the budget tends to be more flexible.                                                                                                                                                                                                                                      |
+
+## <p style="color:blue">3. Why Extreme program is called “Extreme”?</p>
+## <p style="color:blue">4. Explain why spiral model is called meta model?</p>
+Ans:- 
+The Spiral model is called a Meta-Model because it subsumes all the other SDLC models.
+
+For example:
+- a single loop spiral actually represents the Iterative Waterfall Model.
+- The spiral model incorporates the stepwise approach of the Classical Waterfall Model.
+- The spiral model uses the approach of the Prototyping Model by building a prototype at the start of each phase as a risk-handling technique.
+- Also, the spiral model can be considered as supporting the evolutionary model – the iterations along the spiral can be considered as evolutionary levels through which the complete system is built.
