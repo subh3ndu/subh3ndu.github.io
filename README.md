@@ -96,7 +96,9 @@ Coupling is a measure that defines the level of inter-dependability among module
 
 Ideally, no coupling is the best.
 
-![image](https://static.javatpoint.com/tutorial/software-engineering/images/software-engineering-coupling-and-cohesion2.png)
+<p align="center">
+	<img src = "https://static.javatpoint.com/tutorial/software-engineering/images/software-engineering-coupling-and-cohesion2.png" />
+</p>
 
 ## 2. What do you mean by cohesion? Describe the different types of cohesion.
 
@@ -137,7 +139,9 @@ Ans: -
     - It is considered to be the highest degree of cohesion, and it is highly expected. - Elements of module in functional cohesion are grouped because they all contribute to a single well-defined function.
     - It can also be reused.
 
-![image](https://static.javatpoint.com/tutorial/software-engineering/images/software-engineering-coupling-and-cohesion7.png)
+<p align="center">
+  <img src="https://static.javatpoint.com/tutorial/software-engineering/images/software-engineering-coupling-and-cohesion7.png" />
+</p>
 
 ## 3. Describe different types of software design strategy.
 
