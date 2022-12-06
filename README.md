@@ -274,7 +274,9 @@ For the smallest units of data elements, the data dictionary lists their name an
 
 1. It partitions a system into block boxes. A Black box system that functionality is known to the user without the knowledge of internal design.
 
-![image](https://static.javatpoint.com/tutorial/software-engineering/images/software-engineering-function-oriented-design4.png)
+<p align="center">
+	<img src="https://static.javatpoint.com/tutorial/software-engineering/images/software-engineering-function-oriented-design4.png" />
+</p>
 
 2. Structured Chart is a graphical representation which shows:
 
