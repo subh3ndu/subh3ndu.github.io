@@ -21,7 +21,9 @@ Ans:-
 
 -   The third released increment adds customer reviews once that is complete, and so on.
 
-![image](https://agility.im/wp-content/uploads/2020/06/Incr-vs-iterative.png)
+<p align='center'>
+	<img src='https://agility.im/wp-content/uploads/2020/06/Incr-vs-iterative.png' />
+</p>
 
 ### Iterative development
 
@@ -220,13 +222,13 @@ A good structured design has high cohesion and low coupling arrangements.
 6.  **Design Process :-**
     Software design process can be perceived as series of well-defined steps. Though it varies according to design approach (function oriented or object oriented, yet It may have the following steps involved:
 
-        - A solution design is created from requirement or previous used system and/or system sequence diagram.
+    -   A solution design is created from requirement or previous used system and/or system sequence diagram.
 
-        - Objects are identified and grouped into classes on behalf of similarity in attribute characteristics.
+    -   Objects are identified and grouped into classes on behalf of similarity in attribute characteristics.
 
-        - Class hierarchy and relation among them is defined.
+    -   Class hierarchy and relation among them is defined.
 
-        - Application framework is defined.
+    -   Application framework is defined.
 
 ## 4. What do you mean by Function Oriented design? Describe different types of design notation used in Function Oriented design.
 
@@ -319,15 +321,17 @@ Hierarchical, Multilevel and Multiple inheritances.
 
     - The logical DFD describes the business events that take place and the data required for each event.
 
-    - **Diagram:-**
-      ![image](https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/data-flow-diagram/discovery/data-flow-diagram-1.svg)
+<p>
+	<img src="https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/data-flow-diagram/discovery/data-flow-diagram-1.svg" />
+</p>
 
 2. **Physical DFD:-**
 
     - Physical DFD, which depicts how the data system will work, such as the hardware, software, paper files and people involved. In tandem, the logical and physical can fully visualize the current state and model the new state to be considered and then implemented.
 
-    - **Diagram:-**
-      ![image](https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/data-flow-diagram/discovery/data-flow-diagram-2.svg)
+<p>
+	<img src="https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/data-flow-diagram/discovery/data-flow-diagram-2.svg" />
+</p>
 
 # Module - 4
 
