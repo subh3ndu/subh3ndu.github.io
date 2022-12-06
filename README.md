@@ -1,7 +1,7 @@
 # Software Engineering
 # Module - 1
 
-## <p style="color: Blue"> 1. Explain interactive and incremental development in agile development? </p>
+## 1. Explain interactive and incremental development in agile development?
 
 Ans:-
 
@@ -37,8 +37,7 @@ Ans:-
 
 - On every subsequent iterative release, new ideas and requirements are added or low value/usage areas may be removed.
 
-## <p style="color: blue">2. How Agile process is differed from classical waterfall process?
-</p>
+## 2. How Agile process is differed from classical waterfall process?
 
 |                    | Waterfall                                                                                                                                                                                                                                                                                     | Agile                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -47,8 +46,8 @@ Ans:-
 | Flexibility        | Waterfall is not as flexible as Agile because each phase needs to be fully completed before moving on to the next phase. The project is also planned out ahead of time, making this management system ideal for teams with a clear vision of where they are headed from start to finish.      | Flexibility is built into the Agile method. Agile values short bursts of work, which are called sprints. The method welcomes adapting to different directions, incorporating new information even at a later stage of the project.                                                                                                                                                                                                     |
 | Budget             | Fixed.  The budget for projects using the Waterfall methodology is generally fixed. Because the project is determined from start to finish, there is less room to change the budget mid-project.                                                                                              | Flexible.  Agile is open to adaptation, encourages experimentation and welcomes changes of direction, even in later phases of the project. Because of this, the budget tends to be more flexible.                                                                                                                                                                                                                                      |
 
-## <p style="color:blue">3. Why Extreme program is called “Extreme”?</p>
-## <p style="color:blue">4. Explain why spiral model is called meta model?</p>
+## 3. Why Extreme program is called “Extreme”?
+## 4. Explain why spiral model is called meta model?
 Ans:- 
 The Spiral model is called a Meta-Model because it subsumes all the other SDLC models.
 
