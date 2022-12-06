@@ -236,7 +236,9 @@ Ans:-
 
 -   **Design Notations** are primarily meant to be used during the process of design and are used to represent design or design decisions. For a function-oriented design, the design can be represented graphically or mathematically by the following:
 
-![image](https://static.javatpoint.com/tutorial/software-engineering/images/software-engineering-function-oriented-design.png)
+<p align="center">
+	<img src = "https://static.javatpoint.com/tutorial/software-engineering/images/software-engineering-function-oriented-design.png" />
+</p>
 
 ### 1. Data Flow Diagram :-
 
@@ -256,9 +258,9 @@ Ans:-
 
 2. A data dictionary lists the objective of all data items and the definition of all composite data elements in terms of their component data items. For example, a data dictionary entry may contain that the data grossPay consists of the parts regularPay and overtimePay.
 
-```math
+$$
 grossPay = regularPay + overtimePay
-```
+$$
 
 For the smallest units of data elements, the data dictionary lists their name and their type.
 
