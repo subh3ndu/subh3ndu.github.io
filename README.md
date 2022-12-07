@@ -300,25 +300,24 @@ For the smallest units of data elements, the data dictionary lists their name an
 
 Ans:-
 
-1. Inheritance is the procedure in which one class inherits the attributes and methods of another class.
+1.  Inheritance is the procedure in which one class inherits the attributes and methods of another class.
 
-2. The class whose properties and methods are inherited is known as the Parent class. And the class that inherits the properties from the parent class is the Child class.
+2.  The class whose properties and methods are inherited is known as the Parent class. And the class that inherits the properties from the parent class is the Child class.
 
-3. **Types of Inheritance:** 
-There are different types of inheritance viz., Single inheritance, Multiple inheritance, Multilevel inheritance, hybrid inheritance, and hierarchical inheritance. 
+3.  **Types of Inheritance:**
+    There are different types of inheritance viz., Single inheritance, Multiple inheritance, Multilevel inheritance, hybrid inheritance, and hierarchical inheritance.
 
-    1. **Single Inheritance:** When a derived class inherits only from one base class, it is known as single inheritance. 
-    2. **Multiple Inheritance:** When a derived class inherits from multiple base classes it is known as multiple inheritances. 
-    3. **Hierarchical inheritance:** 
-        - When more than one derived class is created from a single base class, it is known as
-        - Hierarchical inheritance. 
-    4. **Multilevel Inheritance:** 
-        - The transitive nature of inheritance is itself reflected by this form of inheritance. 
-        - When a class is derived from a class that is a derived class then it is referred to as multilevel inheritance. 
-    5. **Hybrid inheritance:** 
-        - When there is a combination of more than one type of inheritance, it is known as hybrid inheritance.
+        1. **Single Inheritance:** When a derived class inherits only from one base class, it is known as single inheritance.
+        2. **Multiple Inheritance:** When a derived class inherits from multiple base classes it is known as multiple inheritances.
+        3. **Hierarchical inheritance:**
+            - When more than one derived class is created from a single base class, it is known as Hierarchical inheritance.
+        4. **Multilevel Inheritance:**
+            - The transitive nature of inheritance is itself reflected by this form of inheritance.
+            - When a class is derived from a class that is a derived class then it is referred to as multilevel inheritance.
+        5. **Hybrid inheritance:**
+            - When there is a combination of more than one type of inheritance, it is known as hybrid inheritance.
 
-        - Hence, it may be a combination of Multilevel and Multiple inheritances or Hierarchical and Multilevel inheritance or Hierarchical, Multilevel and Multiple inheritances.
+            - Hence, it may be a combination of Multilevel and Multiple inheritances or Hierarchical and Multilevel inheritance or Hierarchical, Multilevel and Multiple inheritances.
 
 ## 6. What are the Differences between physical DFD and logical DFD.
 
