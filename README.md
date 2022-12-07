@@ -318,9 +318,7 @@ There are different types of inheritance viz., Single inheritance, Multiple inhe
     5. **Hybrid inheritance:** 
         - When there is a combination of more than one type of inheritance, it is known as hybrid inheritance.
 
-        - Hence, it may be a combination of Multilevel and Multiple inheritances or Hierarchical and Multilevel inheritance or
-
-Hierarchical, Multilevel and Multiple inheritances.
+        - Hence, it may be a combination of Multilevel and Multiple inheritances or Hierarchical and Multilevel inheritance or Hierarchical, Multilevel and Multiple inheritances.
 
 ## 6. What are the Differences between physical DFD and logical DFD.
 
