@@ -440,8 +440,3 @@ Reduction on an eight-node ring with node 0 as the destination of the reduction.
 	- Mathematically, it is given by  $\Rightarrow E = s/p$
 	
 	- Following the bounds on speedup, efficiency can be as low as 0 and as high as 1.
-
-## PDS - 6
-
-### 1. Explain Distributed Resource Management with respect to Distributed Computing Environment ?
-**Ans:-**
