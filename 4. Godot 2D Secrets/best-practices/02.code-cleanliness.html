@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpSrr0GqBFcx</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="code-cleanliness-and-readability-tips">Code cleanliness and readability tips</h1>
+<p>Even when you work alone on a project and code everything, you do not code for your eyes alone.</p>
+<p>Days, weeks, months, or years into your project, you may need to track down an elusive bug or refactor an old system. You may be the one who coded it in the first place, but memory is a fickle thing; the odds of you remembering what each abbreviated, shorthanded variable name means or what a block of ambiguous logic means is low.</p>
+<p>While it may make your code more verbose, it becomes easier to read, remember, and follow its logic by looking at variable names and functions.</p>
+<p>On the other hand, if the code is clean and explicit, refamiliarizing yourself with it will be a lot easier. You don’t code <em>just</em> for yourself, but your future self too.</p>
+<p>Help your future self. You’re their only hope.</p>
+<h2 id="keep-function-and-variable-names-readable-and-descriptive">Keep function and variable names readable and descriptive</h2>
+<p>Abbreviations, shorthand, and ambiguous names can save typing time but demand more brainpower if you forget what it meant down the line or if someone else has to read your code.</p>
+<p>The problem becomes even more evident when you take the piece of code out of context, like when showing it to someone or asking for help on a chat server.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> rcvs_p<span style="color:#f92672">.</span>has(c):
+    rcvs_p[c] <span style="color:#f92672">=</span> min(apow, rpow)
+<span style="color:#66d9ef">else</span>:
+    rcvs_p[c] <span style="color:#f92672">+=</span> min(apow, rpow)
+
+apow <span style="color:#f92672">-=</span> rpow
+</pre>
+<p>Use actual, descriptive names where possible to make the logic more opaque and obvious. We are no longer coding on terminals of 80 characters or struggling with keeping code under 1 kilobyte of space.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> receivers_already_provided<span style="color:#f92672">.</span>has(cell):
+    receivers_already_provided[cell] <span style="color:#f92672">=</span> min(available_power, power_required)
+<span style="color:#66d9ef">else</span>:
+    receivers_already_provided[cell] <span style="color:#f92672">+=</span> min(available_power, power_required)
+
+available_power <span style="color:#f92672">-=</span> power_required
+</pre>
+<p>Some codified examples have well-understood shorthands already. When iterating through an array’s indices, you do not need to rename a simple <code>i</code> to <code>index</code>, or rename mathematical constants if it does not help readability.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> vertex_indices:
+    <span style="color:#75715e">#...</span>
+</pre>
+<h2 id="wrap-ambiguous-conditionals-inside-nicely-named-variables">Wrap ambiguous conditionals inside nicely named variables</h2>
+<p>Consider the following condition for an <code>if</code> statement:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">if</span> _gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">and</span> _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>placeable:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _simulation<span style="color:#f92672">.</span>entity_tracker<span style="color:#f92672">.</span>entities<span style="color:#f92672">.</span>has(cellv) <span style="color:#f92672">and</span> get_global_mouse_position()<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position) <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE <span style="color:#f92672">and</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+        <span style="color:#75715e">#...</span>
+</pre>
+<p>If you are intimate with the code base, you may know what each of those conditions implicitly means. But if you leave the project to sit for days, weeks, or months before returning to this line of code, or someone else comes in and takes a look at it, it means minutes or more tracking down what each stipulation implies.</p>
+<p>If the condition is ambiguous about its meaning, split it up into clear, well-labeled variables.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">and</span> _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>placeable
+
+<span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+    get_global_mouse_position()<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position) <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+)
+
+<span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _simulation<span style="color:#f92672">.</span>entity_tracker<span style="color:#f92672">.</span>entities<span style="color:#f92672">.</span>has(cellv)
+<span style="color:#66d9ef">var</span> is_on_ground :<span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+
+<span style="color:#66d9ef">if</span> has_placeable_blueprint:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+        <span style="color:#75715e">#...</span>
+</pre>
+<p>Here are some guidelines to find readable names:</p>
+<ol type="1">
+<li>Use <strong>nouns for data</strong> and <strong>verbs for functions</strong>. For example, <code>var weapons: Array</code> and <code>func walk_along_path()</code>. This helps to distinguish the two at a glance and will be especially useful with first-class functions in Godot 4.0.</li>
+<li>Consider using a prefix for booleans: <code>has_placeable_blueprint</code> instead of <code>placeable_blueprint</code>. This clarifies that the value is either <code>true</code> or <code>false</code> and that it couldn’t reference a node or some other data.</li>
+<li>Use the past tense for signals in Godot: they represent events that already occurred. For signals that represent the start or the end of a chain of events, we append “_started” or “_finished” to the name.</li>
+<li>For classes and nodes, try to find names that instantly tell what their responsibility is. For example, in our tower defense demo, the node that places towers on the grid is named <code>TowerPlacer</code>.</li>
+</ol>
+<h2 id="keep-indented-blocks-shallow">Keep indented blocks shallow</h2>
+<p>Having nested if statements or loops is inevitable in some cases, but you can keep your code looking a lot tidier by trying to keep as much of it as possible lined up with the left margin as possible.</p>
+<p>The more indentation levels you have in a script, the more your eyes have to jump around to read and understand the code.</p>
+<p>Limit the number of if statements inside if statements: you can rewrite certain condition chains into a single if. You can wrap <code>or</code> statements inside parentheses to maintain the logic, whereas you can chain <code>and</code> statements.</p>
+<p>Instead of this:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">if</span> gui<span style="color:#f92672">.</span>window<span style="color:#f92672">.</span>fuel <span style="color:#f92672">or</span> available_fuel <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.0</span>:
+    <span style="color:#66d9ef">if</span> gui<span style="color:#f92672">.</span>window<span style="color:#f92672">.</span>ore:
+        <span style="color:#66d9ef">if</span> work<span style="color:#f92672">.</span>available_work <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0.0</span>:
+            <span style="color:#75715e">#...</span>
+</pre>
+<p>You can write the condition on a single line.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">if</span> (gui<span style="color:#f92672">.</span>window<span style="color:#f92672">.</span>fuel <span style="color:#f92672">or</span> available_fuel <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.0</span>) <span style="color:#f92672">and</span> gui<span style="color:#f92672">.</span>window<span style="color:#f92672">.</span>ore <span style="color:#f92672">and</span> work<span style="color:#f92672">.</span>available_work <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0.0</span>:
+    <span style="color:#75715e">#...</span>
+</pre>
+<p>When you have many conditions and the line becomes difficult to read, you can use a variable to describe it.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> can_build: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> (
+    (gui<span style="color:#f92672">.</span>window<span style="color:#f92672">.</span>fuel <span style="color:#f92672">or</span> available_fuel <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.0</span>) <span style="color:#f92672">and</span> gui<span style="color:#f92672">.</span>window<span style="color:#f92672">.</span>ore <span style="color:#f92672">and</span> work<span style="color:#f92672">.</span>available_work <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0.0</span>
+)
+
+<span style="color:#66d9ef">if</span> can_build:
+    <span style="color:#75715e">#...</span>
+</pre>
+<p>You can do the same with functions. If the function only works on certain conditions, you can invert your <code>if</code> statement and return early.</p>
+<p>Avoid the following.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> screen_fader<span style="color:#f92672">.</span>is_playing:
+        <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventKey</span> <span style="color:#f92672">or</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;thrust_forwards&quot;</span>):
+            <span style="color:#75715e">#...</span>
+</pre>
+<p>Instead, you can do this.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Only run the function&#39;s body if the screen_fader is stopped.</span>
+    <span style="color:#66d9ef">if</span> screen_fader<span style="color:#f92672">.</span>is_playing:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventKey</span> <span style="color:#f92672">or</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;thrust_forwards&quot;</span>):
+        <span style="color:#75715e">#...</span>
+</pre>
+<h2 id="prefer-calls-to-named-functions-over-nested-logic">Prefer calls to named functions over nested logic</h2>
+<p>Try to keep functions doing more or less one job. For example, <code>_unhandled_input</code>’s job is to detect and parse user input and do something on specific inputs.</p>
+<p>Its role is not to place an entity and update the neighboring entities.</p>
+<p>Avoid putting a lot of code in an unrelated function like so.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+        <span style="color:#66d9ef">var</span> blueprint: BlueprintEntity <span style="color:#f92672">=</span> _gui<span style="color:#f92672">.</span>blueprint
+        <span style="color:#66d9ef">var</span> blueprint_name: <span style="color:#a6e22e">String</span> <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>get_filename_from(blueprint)
+
+        <span style="color:#66d9ef">var</span> new_entity: <span style="color:#a6e22e">Node2D</span> <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>entities[blueprint_name]<span style="color:#f92672">.</span>instance()
+        <span style="color:#66d9ef">for</span> neighbor <span style="color:#f92672">in</span> Types<span style="color:#f92672">.</span>NEIGHBORS<span style="color:#f92672">.</span>keys():
+        <span style="color:#66d9ef">var</span> key: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> cellv <span style="color:#f92672">+</span> Types<span style="color:#f92672">.</span>NEIGHBORS[neighbor]
+            <span style="color:#75715e">#etc...</span>
+</pre>
+<p>Instead, extract the logic inside functions to do that job, and have the original call those functions.</p>
+<p>Give the new functions descriptive names so that, at a glance, you can tell what happens on which input. Coupled with wrapping your conditions inside descriptive variables and you can almost read the code like English.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+        _place_entity(cellv)
+        _update_neighboring_flat_entities(cellv)
+</pre>
+<h2 id="reduce-repetition-cache-values">Reduce repetition: cache values</h2>
+<p>If you have a particular conditional, value, or lookup you frequently use in a function’s body, you can make your code more readable by caching it ahead of time instead of repeating it.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> blueprint <span style="color:#f92672">and</span> blueprint<span style="color:#f92672">.</span>placeable
+<span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _simulation<span style="color:#f92672">.</span>is_cell_occupied(cellv)
+<span style="color:#66d9ef">var</span> is_on_ground :<span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+
+<span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+    global_mouse_position<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position)
+    <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+)
+
+<span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;left_click&quot;</span>):
+    <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+            _place_entity(cellv)
+            _update_neighboring_flat_entities(cellv)
+
+    <span style="color:#66d9ef">elif</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player:
+        <span style="color:#66d9ef">var</span> entity :<span style="color:#f92672">=</span> _simulation<span style="color:#f92672">.</span>get_entity_at(cellv)
+        <span style="color:#66d9ef">if</span> entity <span style="color:#f92672">and</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>GUI_ENTITIES):
+            _gui<span style="color:#f92672">.</span>open_entity_gui(entity)
+            _clear_hover_entity()
+</pre>
+<p>This also results in better performance, especially for expensive calls like <code>get_node()</code> (or its shorthand <code>$</code>).</p>
+<h2 id="add-blank-lines-between-groups-of-relevant-lines-of-code">Add blank lines between groups of relevant lines of code</h2>
+<p>A bit of breathing room will go a long way towards improving the readability. Consider the difference between the following two blocks of code. One breathes a little more and keeps the eye from glazing over as much.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventMouseButton</span>:
+        _abort_deconstruct()
+    <span style="color:#66d9ef">var</span> global_mouse_position :<span style="color:#f92672">=</span> get_global_mouse_position()
+    <span style="color:#66d9ef">var</span> blueprint: BlueprintEntity <span style="color:#f92672">=</span> _gui<span style="color:#f92672">.</span>blueprint
+    <span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> blueprint <span style="color:#f92672">and</span> blueprint<span style="color:#f92672">.</span>placeable
+    <span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+        global_mouse_position<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position)
+        <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+    )
+    <span style="color:#66d9ef">var</span> cellv :<span style="color:#f92672">=</span> world_to_map(global_mouse_position)
+    <span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _simulation<span style="color:#f92672">.</span>is_cell_occupied(cellv)
+    <span style="color:#66d9ef">var</span> is_on_ground :<span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+
+</pre>
+<p>By adding extra lines, we can visually group logic and read it more easily.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventMouseButton</span>:
+        _abort_deconstruct()
+
+    <span style="color:#66d9ef">var</span> global_mouse_position :<span style="color:#f92672">=</span> get_global_mouse_position()
+    <span style="color:#66d9ef">var</span> blueprint: BlueprintEntity <span style="color:#f92672">=</span> _gui<span style="color:#f92672">.</span>blueprint
+    <span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> blueprint <span style="color:#f92672">and</span> blueprint<span style="color:#f92672">.</span>placeable
+
+    <span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+        global_mouse_position<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position)
+        <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+    )
+
+    <span style="color:#66d9ef">var</span> cellv :<span style="color:#f92672">=</span> world_to_map(global_mouse_position)
+    <span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _simulation<span style="color:#f92672">.</span>is_cell_occupied(cellv)
+    <span style="color:#66d9ef">var</span> is_on_ground :<span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+</pre>
+<h2 id="when-commenting-code-avoid-obvious-comments">When commenting code, avoid obvious comments</h2>
+<p>Comments are useful, but they should be helpful and not get in the way or make your codebase more cluttered. Use them when the code is not evident and when descriptive variable or function names are not enough.</p>
+<p>Avoid commenting lines that are obvious from reading the code, such as in the following.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Converts the global mouse position from world to map coordinates.</span>
+<span style="color:#66d9ef">var</span> cellv :<span style="color:#f92672">=</span> world_to_map(global_mouse_position)
+
+<span style="color:#75715e"># Places the entity at the mouse map coordinates</span>
+_place_entity(cellv)
+</pre>
+<p>The comments above paraphrase the code. Even worse, comments add maintenance work and tend to fall out of sync with the code. Over time, they can turn into <em>lies</em>.</p>
+<p>That’s why you want to avoid superfluous comments. Use them sparingly, when they help to understand the code better.</p>
+<p>Splitting logic into functions and using descriptive names greatly reduces the need for comments as it reduces the amount of ambiguous code.</p>
+<h2 id="limit-line-length">Limit line length</h2>
+<p>Unavoidably, some lines are going to become long. While you should not be <em>too</em> concerned about line length, a good practice is to keep lines of code below 100 characters. Going a little over is fine, but if you exceed it by a large margin, use parentheses and parameters to break up the line.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _get_direction() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Vector2</span>:
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">Vector2</span>(
+        (<span style="color:#a6e22e">Input</span><span style="color:#f92672">.</span>get_action_strength(<span style="color:#e6db74">&quot;right&quot;</span>) <span style="color:#f92672">-</span> <span style="color:#a6e22e">Input</span><span style="color:#f92672">.</span>get_action_strength(<span style="color:#e6db74">&quot;left&quot;</span>)) <span style="color:#f92672">*</span> <span style="color:#ae81ff">2.0</span>,
+        <span style="color:#a6e22e">Input</span><span style="color:#f92672">.</span>get_action_strength(<span style="color:#e6db74">&quot;down&quot;</span>) <span style="color:#f92672">-</span> <span style="color:#a6e22e">Input</span><span style="color:#f92672">.</span>get_action_strength(<span style="color:#e6db74">&quot;up&quot;</span>)
+    )<span style="color:#f92672">.</span>normalized()
+</pre>
+<p>A code formatter will do that for you automatically. For GDScript code, you can use <a href="https://github.com/Scony/godot-gdscript-toolkit/">gdformat</a>.</p>
+</body>
+</html>

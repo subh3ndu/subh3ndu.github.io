@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpukgIwvUU2P</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="stat-bonuses-and-penalties">Stat bonuses and penalties</h1>
+<p>With the separation between base and final stats, we still need to register and calculate bonuses and penalties. We’re going to store a list of upgrades for each stat. And to avoid creating many more properties, we’ll use a dictionary to do so.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># A list of all properties that can receive bonuses.</span>
+<span style="color:#66d9ef">const</span> UPGRADABLE_STATS <span style="color:#f92672">=</span> [
+    <span style="color:#e6db74">&quot;max_health&quot;</span>, <span style="color:#e6db74">&quot;max_energy&quot;</span>, <span style="color:#e6db74">&quot;attack&quot;</span>, <span style="color:#e6db74">&quot;defense&quot;</span>, <span style="color:#e6db74">&quot;speed&quot;</span>, <span style="color:#e6db74">&quot;hit_chance&quot;</span>, <span style="color:#e6db74">&quot;evasion&quot;</span>
+]
+
+<span style="color:#75715e"># The property below stores a list of modifiers for each property listed in</span>
+<span style="color:#75715e"># `UPGRADABLE_STATS`.</span>
+<span style="color:#75715e"># The value of a modifier can be any floating-point value, positive or negative.</span>
+<span style="color:#66d9ef">var</span> _modifiers :<span style="color:#f92672">=</span> {}
+
+
+<span style="color:#75715e"># Initializes keys in the modifiers dict, ensuring they all exist.</span>
+<span style="color:#66d9ef">func</span> _init() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> stat <span style="color:#f92672">in</span> UPGRADABLE_STATS:
+        <span style="color:#75715e"># For each stat, we create an empty dictionary.</span>
+        <span style="color:#75715e"># Each upgrade will be a unique key-value pair.</span>
+        _modifiers[stat] <span style="color:#f92672">=</span> {}
+</pre>
+<p>From there, we can write the missing <code>_recalculate_and_update()</code> method from the previous lesson.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Calculates the final value of a single stat. That is, its based value</span>
+<span style="color:#75715e"># with all modifiers applied.</span>
+<span style="color:#75715e"># We reference a stat property name using a string here and update</span>
+<span style="color:#75715e"># it with the `set()` method.</span>
+<span style="color:#66d9ef">func</span> _recalculate_and_update(stat: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># All our property names follow a pattern: the base stat has the</span>
+    <span style="color:#75715e"># same identifier as the final stat with the &quot;base_&quot; prefix.</span>
+    <span style="color:#66d9ef">var</span> value: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> get(<span style="color:#e6db74">&quot;base_&quot;</span> <span style="color:#f92672">+</span> stat)
+    <span style="color:#75715e"># We get the array of modifiers corresponding to a stat.</span>
+    <span style="color:#66d9ef">var</span> modifiers: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> _modifiers[stat]<span style="color:#f92672">.</span>values()
+    <span style="color:#66d9ef">for</span> modifier <span style="color:#f92672">in</span> modifiers:
+        value <span style="color:#f92672">+=</span> modifier
+    <span style="color:#75715e"># This line ensures the final stat cannot be negative.</span>
+    value <span style="color:#f92672">=</span> max(value, <span style="color:#ae81ff">0.0</span>)
+    <span style="color:#75715e"># Here&#39;s where we assign the value to the stat. For instance,</span>
+    <span style="color:#75715e"># if the `stat` argument is &quot;attack&quot;, this is like writing</span>
+    <span style="color:#75715e"># attack = value</span>
+    set(stat, value)
+</pre>
+<p>I should explain a bit more about how <code>_modifiers</code> works. Once populated with stats and bonuses, it should look like this:</p>
+<pre style="color:#f8f8f2;background-color:#272822">{
+    <span style="color:#e6db74">&quot;attack&quot;</span>: {
+        <span style="color:#ae81ff">1</span>: <span style="color:#ae81ff">12.0</span>,
+        <span style="color:#ae81ff">2</span>: <span style="color:#f92672">-</span><span style="color:#ae81ff">3.0</span>
+    },
+    <span style="color:#e6db74">&quot;defense&quot;</span>: {},
+    <span style="color:#75715e"># ...</span>
+}
+</pre>
+<p>In the example above, if we sum the values for “attack”, we get <code>12 - 3 = 9</code> bonus attack points. That’s what <code>_recalculate_and_update()</code> does for us: it adds the bonus points to the <code>base_attack</code> and assigns the total to <code>attack</code>.</p>
+<h2 id="adding-and-removing-modifiers">Adding and removing modifiers</h2>
+<p>To safely add and remove modifiers, we should provide some public methods. As we need to identify stats using a string, the <code>assert()</code> function can tell us if we write an incorrect name.</p>
+<p>We will use the functions below when we add status effects.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Adds a modifier that affects the stat with the given `stat_name` and returns</span>
+<span style="color:#75715e"># its unique key.</span>
+<span style="color:#66d9ef">func</span> add_modifier(stat_name: <span style="color:#a6e22e">String</span>, value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    assert(stat_name <span style="color:#f92672">in</span> UPGRADABLE_STATS, <span style="color:#e6db74">&quot;Trying to add a modifier to a nonexistent stat.&quot;</span>)
+    <span style="color:#75715e"># We use a function to ensure we generate a unique ID for every stat</span>
+    <span style="color:#75715e"># modifier. You can find it below.</span>
+    <span style="color:#66d9ef">var</span> id :<span style="color:#f92672">=</span> _generate_unique_id(stat_name)
+    <span style="color:#75715e"># Using the unique ID, we save the modifier&#39;s value.</span>
+    _modifiers[stat_name][id] <span style="color:#f92672">=</span> value
+    <span style="color:#75715e"># Every time we add or remove a stat modifier, we need to recalculate its</span>
+    <span style="color:#75715e"># final value.</span>
+    _recalculate_and_update(stat_name)
+    <span style="color:#75715e"># Returning the id allows the caller to bind it to a signal. For instance</span>
+    <span style="color:#75715e"># with equpment, to call `remove_modifier()` upon removing the equipment.</span>
+    <span style="color:#66d9ef">return</span> id
+
+
+<span style="color:#75715e"># Removes a modifier associated with the given `stat_name`.</span>
+<span style="color:#66d9ef">func</span> remove_modifier(stat_name: <span style="color:#a6e22e">String</span>, id: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># As above, during development, we want to know if we try to remove a</span>
+    <span style="color:#75715e"># modifier that doesn&#39;t exist.</span>
+    assert(id <span style="color:#f92672">in</span> _modifiers[stat_name], <span style="color:#e6db74">&quot;Id </span><span style="color:#e6db74">%s</span><span style="color:#e6db74"> not found in </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [id, _modifiers[stat_name]])
+    <span style="color:#75715e"># Here&#39;s why we use dictionaries in `_modifiers`: we can arbitrarily erase</span>
+    <span style="color:#75715e"># keys without affecting others, ensuring our unique IDs always work.</span>
+    _modifiers[stat_name]<span style="color:#f92672">.</span>erase(id)
+    _recalculate_and_update(stat_name)
+
+
+<span style="color:#75715e"># Find the first unused integer in a stat&#39;s modifiers keys.</span>
+<span style="color:#66d9ef">func</span> _generate_unique_id(stat_name: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> keys: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> _modifiers[stat_name]<span style="color:#f92672">.</span>keys()
+    <span style="color:#75715e"># If there are no keys, we return `0`, which is our first valid unique id.</span>
+    <span style="color:#75715e"># Without existing keys, calling methods like `Array.back()` will trigger an</span>
+    <span style="color:#75715e"># error.</span>
+    <span style="color:#66d9ef">if</span> keys<span style="color:#f92672">.</span>empty():
+        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#75715e"># We always start from the last key, which will always be the highest</span>
+        <span style="color:#75715e"># number, even if we remove modifiers.</span>
+        <span style="color:#66d9ef">return</span> keys<span style="color:#f92672">.</span>back() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+</pre>
+<p>We have yet to create and attach BattlerStats resources to our battlers. But once we do so, we will be able to add and remove modifiers like so.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># This is a short imaginary example of some stat-boosting effect.</span>
+class_name AttackBooster
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#75715e"># Emitted when the effect expires.</span>
+<span style="color:#66d9ef">signal</span> expired
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> attack_bonus :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+<span style="color:#75715e"># Duration of the boost in seconds.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> duration :<span style="color:#f92672">=</span> <span style="color:#ae81ff">4.0</span>
+
+<span style="color:#66d9ef">var</span> _target: Battler
+
+
+<span style="color:#66d9ef">func</span> _init(target: Battler) <span style="color:#f92672">-&gt;</span> void:
+    _target <span style="color:#f92672">=</span> target
+
+
+<span style="color:#75715e"># When adding the node to the tree, we apply the bonus</span>
+<span style="color:#75715e"># and start the effect&#39;s countdown using a timer.</span>
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> id: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>add_modifier(<span style="color:#e6db74">&quot;attack&quot;</span>, attack_bonus)
+    <span style="color:#75715e"># We can use the convenient method `SceneTree.create_timer()` to create a</span>
+    <span style="color:#75715e"># simple timer object from anywhere.</span>
+    <span style="color:#66d9ef">var</span> timer :<span style="color:#f92672">=</span> get_tree()<span style="color:#f92672">.</span>create_timer(duration)
+    <span style="color:#75715e"># Notice how we bind the `id` to the signal&#39;s callback.</span>
+    <span style="color:#75715e"># Doing so allows us to later remove the stat boost.</span>
+    timer<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Timer_timeout&quot;</span>, [id])
+
+
+<span style="color:#75715e"># When the timer ends, we remove the modifier.</span>
+<span style="color:#66d9ef">func</span> _on_Timer_timeout(id: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> id: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>remove_modifier(<span style="color:#e6db74">&quot;attack&quot;</span>, id)
+    emit_signal(<span style="color:#e6db74">&quot;expired&quot;</span>)
+    queue_free()
+</pre>
+<h2 id="going-further">Going further</h2>
+<p>There is more than one way to code stats. Adding character progression to the mix may require you to separate base data from the calculated attack, defense, and other properties.</p>
+<p>You will find another example from our <a href="https://github.com/GDQuest/godot-2d-space-game">open-source 2D space game</a> in the course’s annex.</p>
+<h2 id="the-complete-battlerstats-class">The complete BattlerStats class</h2>
+<p>Here’s the complete <code>BattlerStats.gd</code> for reference.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Stores and manages the battler&#39;s base stats like health, energy, and base</span>
+<span style="color:#75715e"># damage.</span>
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Resource</span>
+class_name BattlerStats
+
+<span style="color:#66d9ef">signal</span> health_depleted
+<span style="color:#66d9ef">signal</span> health_changed(old_value, new_value)
+<span style="color:#66d9ef">signal</span> energy_changed(old_value, new_value)
+
+<span style="color:#66d9ef">const</span> UPGRADABLE_STATS <span style="color:#f92672">=</span> [
+    <span style="color:#e6db74">&quot;max_health&quot;</span>, <span style="color:#e6db74">&quot;max_energy&quot;</span>, <span style="color:#e6db74">&quot;attack&quot;</span>, <span style="color:#e6db74">&quot;defense&quot;</span>, <span style="color:#e6db74">&quot;speed&quot;</span>, <span style="color:#e6db74">&quot;hit_chance&quot;</span>, <span style="color:#e6db74">&quot;evasion&quot;</span>
+]
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> max_health :<span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> max_energy :<span style="color:#f92672">=</span> <span style="color:#ae81ff">6</span>
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_attack :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span> <span style="color:#66d9ef">setget</span> set_base_attack
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_defense :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span> <span style="color:#66d9ef">setget</span> set_base_defense
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_speed :<span style="color:#f92672">=</span> <span style="color:#ae81ff">70.0</span> <span style="color:#66d9ef">setget</span> set_base_speed
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_hit_chance :<span style="color:#f92672">=</span> <span style="color:#ae81ff">100.0</span> <span style="color:#66d9ef">setget</span> set_base_hit_chance
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_evasion :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span> <span style="color:#66d9ef">setget</span> set_base_evasion
+
+<span style="color:#66d9ef">var</span> health :<span style="color:#f92672">=</span> max_health <span style="color:#66d9ef">setget</span> set_health
+<span style="color:#66d9ef">var</span> energy :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">setget</span> set_energy
+
+<span style="color:#66d9ef">var</span> attack :<span style="color:#f92672">=</span> base_attack
+<span style="color:#66d9ef">var</span> defense :<span style="color:#f92672">=</span> base_defense
+<span style="color:#66d9ef">var</span> speed :<span style="color:#f92672">=</span> base_speed
+<span style="color:#66d9ef">var</span> hit_chance :<span style="color:#f92672">=</span> base_hit_chance
+<span style="color:#66d9ef">var</span> evasion :<span style="color:#f92672">=</span> base_evasion
+
+<span style="color:#66d9ef">var</span> _modifiers :<span style="color:#f92672">=</span> {}
+
+
+<span style="color:#66d9ef">func</span> _init() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> stat <span style="color:#f92672">in</span> UPGRADABLE_STATS:
+        _modifiers[stat] <span style="color:#f92672">=</span> {}
+
+
+<span style="color:#66d9ef">func</span> reinitialize() <span style="color:#f92672">-&gt;</span> void:
+    set_health(max_health)
+
+
+<span style="color:#66d9ef">func</span> add_modifier(stat_name: <span style="color:#a6e22e">String</span>, value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    assert(stat_name <span style="color:#f92672">in</span> UPGRADABLE_STATS, <span style="color:#e6db74">&quot;Trying to add a modifier to a nonexistent stat.&quot;</span>)
+    <span style="color:#66d9ef">var</span> id :<span style="color:#f92672">=</span> _generate_unique_id(stat_name)
+    _modifiers[stat_name][id] <span style="color:#f92672">=</span> value
+    _recalculate_and_update(stat_name)
+    <span style="color:#66d9ef">return</span> id
+
+
+<span style="color:#66d9ef">func</span> remove_modifier(stat_name: <span style="color:#a6e22e">String</span>, id: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    assert(id <span style="color:#f92672">in</span> _modifiers[stat_name], <span style="color:#e6db74">&quot;Id </span><span style="color:#e6db74">%s</span><span style="color:#e6db74"> not found in </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [id, _modifiers[stat_name]])
+    _modifiers[stat_name]<span style="color:#f92672">.</span>erase(id)
+    _recalculate_and_update(stat_name)
+
+
+<span style="color:#66d9ef">func</span> set_health(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> health_previous :<span style="color:#f92672">=</span> health
+    health <span style="color:#f92672">=</span> clamp(value, <span style="color:#ae81ff">0.0</span>, max_health)
+    emit_signal(<span style="color:#e6db74">&quot;health_changed&quot;</span>, health_previous, health)
+    <span style="color:#66d9ef">if</span> is_equal_approx(health, <span style="color:#ae81ff">0.0</span>):
+        emit_signal(<span style="color:#e6db74">&quot;health_depleted&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> set_energy(value: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> energy_previous :<span style="color:#f92672">=</span> energy
+    energy <span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(clamp(value, <span style="color:#ae81ff">0.0</span>, max_energy))
+    emit_signal(<span style="color:#e6db74">&quot;energy_changed&quot;</span>, energy_previous, energy)
+
+
+<span style="color:#66d9ef">func</span> set_base_attack(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    base_attack <span style="color:#f92672">=</span> value
+    _recalculate_and_update(<span style="color:#e6db74">&quot;attack&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> set_base_defense(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    base_defense <span style="color:#f92672">=</span> value
+    _recalculate_and_update(<span style="color:#e6db74">&quot;defense&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> set_base_speed(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    base_speed <span style="color:#f92672">=</span> value
+    _recalculate_and_update(<span style="color:#e6db74">&quot;speed&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> set_base_hit_chance(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    base_hit_chance <span style="color:#f92672">=</span> value
+    _recalculate_and_update(<span style="color:#e6db74">&quot;hit_chance&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> set_base_evasion(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    base_evasion <span style="color:#f92672">=</span> value
+    _recalculate_and_update(<span style="color:#e6db74">&quot;evasion&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _recalculate_and_update(stat: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> value: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> get(<span style="color:#e6db74">&quot;base_&quot;</span> <span style="color:#f92672">+</span> stat)
+    <span style="color:#66d9ef">var</span> modifiers: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> _modifiers[stat]<span style="color:#f92672">.</span>values()
+    <span style="color:#66d9ef">for</span> modifier <span style="color:#f92672">in</span> modifiers:
+        value <span style="color:#f92672">+=</span> modifier
+    value <span style="color:#f92672">=</span> max(value, <span style="color:#ae81ff">0.0</span>)
+    set(stat, value)
+
+
+<span style="color:#66d9ef">func</span> _generate_unique_id(stat_name: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> keys: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> _modifiers[stat_name]<span style="color:#f92672">.</span>keys()
+    <span style="color:#66d9ef">if</span> keys<span style="color:#f92672">.</span>empty():
+        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">return</span> keys<span style="color:#f92672">.</span>back() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+</pre>
+</body>
+</html>

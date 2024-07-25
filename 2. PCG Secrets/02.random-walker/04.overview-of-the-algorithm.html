@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpXv5vsvjW8w</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="overview-of-the-algorithm">Overview of the algorithm</h1>
+<p>Let’s talk about how our level generation algorithm works.</p>
+<p>We are going to separate the program into two parts:</p>
+<ol type="1">
+<li>Building an abstract representation of the level.</li>
+<li>Using this representation to construct the level.</li>
+</ol>
+<p>Doing so allows us to test and debug both parts separately. It can also make the generator work with any kind of assets, not just tile maps. For instance, you could use a complete scene for each room.</p>
+<p>Our algorithm is going to start at the top of the level and walk horizontally and downwards. On each step, we update a state data container that constructs a valid path for the player. After that, we copy rooms from the <em>Rooms</em> scene on this path and move on to filling the remaining unused grid cells.</p>
+<p>Let’s break this down a little more.</p>
+<p>We start with a grid of a given size, say <code>Vector2(8, 6)</code>. With this, our random walker is first going to pick a starting position on the top row, a <code>Vector2(r, 0)</code> where <code>r</code> is a number in the range <code>[0, grid_size.x - 1]</code> inclusive.</p>
+<p>Then, the walker generates the main level path in a loop. While we haven’t reached a <code>y</code> position greater than <code>grid_size.y</code>, we:</p>
+<ol type="1">
+<li>Pick a random, non-blocking room type for the cell, and save our position on the grid.</li>
+<li>Pick an adjacent position we haven’t visited within the grid’s boundaries.</li>
+</ol>
+<p>Once we are at the bottom of the grid, we have a guaranteed path from the level’s start to its end. Then, in another loop, we build the actual level:</p>
+<ol type="1">
+<li>Place the walls of our level so the player can’t go past the boundaries.</li>
+<li>Place rooms on the valid path we previously calculated.</li>
+<li>Loop over empty cells in the grid and fill them with random rooms.</li>
+</ol>
+</body>
+</html>

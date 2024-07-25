@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpC1uy6bSJXd</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="godot-shader-keywords">Godot shader keywords</h1>
+<p>In this part, we cover some of the main keywords in Godot’s shader language.</p>
+<p>This lesson is here to get your feet wet and give you the minimum language knowledge to follow the next chapters. There is a lot more to the shading language that we will progressively explore writing real-world effects.</p>
+<p>We recommend you to bookmark and read the <a href="https://docs.godotengine.org/en/stable/tutorials/shading/shading_reference/shading_language.html">Godot shader reference</a>. It explains every keyword and data-type in the language in greater detail.</p>
+<h2 id="shader-type">Shader type</h2>
+<p>In Godot, a shader must start with the <code>shader_type</code> statement. It is mandatory. It determines the type of object on which you intend to use the shader.</p>
+<pre style="color:#f8f8f2;background-color:#272822">shader_type canvas_item;
+</pre>
+<p>For more information, see the official documentation:</p>
+<ul>
+<li>For 3D objects, the type is <a href="https://docs.godotengine.org/en/3.2/tutorials/shading/shading_reference/spatial_shader.html">spatial</a>.</li>
+<li>For 2D objects, like sprites or <em>Control</em> nodes, the type is <a href="https://docs.godotengine.org/en/3.2/tutorials/shading/shading_reference/canvas_item_shader.html">canvas_item</a>.</li>
+<li>For GPU-based particle systems: <a href="https://docs.godotengine.org/en/3.2/tutorials/shading/shading_reference/particle_shader.html">particle</a>. These shaders control the motion of the emitted particles.</li>
+</ul>
+<h2 id="render-mode">Render mode</h2>
+<p>The <code>render_mode</code> statement is optional. Each rendering pipeline has special flags that can change how any given shader executes, or how it fits in the underlying GLSL shader. Refer to the <code>shader_type</code> documentation links above to get a list of supported render modes for each type of shader.</p>
+<p>The modes below, <code>cull_front</code> and <code>unshaded</code>, respectively discard polygons that are facing the camera and make the object unlit. The first mode is only for 3D geometry, while the second also exists in 2D.</p>
+<pre style="color:#f8f8f2;background-color:#272822">render_mode cull_front, unshaded;
+</pre>
+<h2 id="uniform">Uniform</h2>
+<p>Uniforms are variables exposed to the Inspector or game scripts. They come with optional hints that make them easier to use in the Inspector. For example, the <code>: hint_color</code> adds a color picker next to the property in the Inspector.</p>
+<p>You can access uniforms throughout the shader program.</p>
+<pre style="color:#f8f8f2;background-color:#272822">uniform <span style="color:#66d9ef">float</span> line_length;
+uniform vec4 line_color : hint_color;
+uniform sampler2D line_texture;
+</pre>
+<h3 id="controlling-uniforms-from-gdscript">Controlling uniforms from GDScript</h3>
+<p>Uniforms are to shaders what exported variables are to GDScript classes. They expose some of the program’s parameters to change from the outside. If you want to animate a shader, like, for instance, the tint of the screen in a day-night cycle system, you can do so from GDScript.</p>
+<p>You access the <code>material</code> property of the object with the shader attached to it and call its <code>set_shader_param</code> method. The syntax is the following:</p>
+<pre style="color:#f8f8f2;background-color:#272822">material<span style="color:#f92672">.</span>set_shader_param(<span style="color:#e6db74">&quot;property_name&quot;</span>, value)
+</pre>
+<p>Conversely, <code>get_shader_param</code> lets you read the value of a uniform.</p>
+<h2 id="varying">Varying</h2>
+<p>Varyings are variables that allow you to forward data from the Vertex shader to the Fragment shader. They allow you to alter pixels based on calculations in the vertex shader. You can use that for special lighting effects that require vertex normal information, like the x-ray view in Hitman games.</p>
+<pre style="color:#f8f8f2;background-color:#272822">varying vec3 camera_to_object_direction;
+</pre>
+<p>The rasterizer interpolates between values assigned to varyings in the vertex.</p>
+<p>Imagine you have two vertices on either side of the screen, vertex A and B. You assign a value of <code>0.0</code> to a varying for vertex A, and <code>1.0</code> for vertex B. For a fragment in the middle of the screen, that variable will have a value of <code>0.5</code>.</p>
+<h2 id="vertex-shader">Vertex shader</h2>
+<p>The <code>vertex()</code> function is your vertex shader in Godot. If you define it, it runs once for every vertex in the object. The vertex shader sets each vertex’s position and orientation in 3D space and calculates any information the fragment shader needs.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">vertex</span>() {
+    POSITION <span style="color:#f92672">+=</span> NORMAL <span style="color:#f92672">*</span> growth_length;
+}
+</pre>
+<p>Godot uses the content of this function to complete its built-in shaders.</p>
+<h2 id="fragment-shader">Fragment shader</h2>
+<p>The <code>fragment()</code> function runs once for every fragment an object occupies. The fragment shader outputs color information for the final appearance of an object on the screen. In 3D, this includes information used later in the rendering pipeline. For example, metallic and roughness, on top of color.</p>
+<p>The fragment function below paints your object black.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fragment</span>() {
+    COLOR.rgb <span style="color:#f92672">=</span> vec3(<span style="color:#ae81ff">0.0</span>);
+}
+</pre>
+<h3 id="about-colors">About colors</h3>
+<p>Colors can have four channels: Red, Green, Blue, and Alpha, or RGBA. Each channel is a value between <code>0.0</code> and <code>1.0</code>, unless you’re dealing with high dynamic range colors. Black corresponds to a value of <code>vec3(0.0, 0.0, 0.0)</code>, and white to <code>vec3(1.0, 1.0, 1.0)</code>. The color’s fourth component, alpha, controls its opacity. Here are some examples of colors with transparency:</p>
+<ul>
+<li>Fully transparent white: <code>vec4(1.0, 1.0, 1.0, 0.0)</code></li>
+<li>Half transparent white: <code>vec4(1.0, 1.0, 1.0, 0.5)</code></li>
+</ul>
+<h2 id="built-ins">Built-ins</h2>
+<p>Built-ins are variables, functions, macros, and constants that Godot exposes to make life easier or contain frequently used information.</p>
+<p>Some examples include:</p>
+<ul>
+<li><code>TEXTURE</code>: the texture currently assigned to a 2D node, like a <code>Sprite</code>.</li>
+<li><code>UV</code>: coordinates of the fragment on the texture, square of one by one arbitrary unit, which we call U and V. When applying textures to a 3D object, we traditionally unwrap and flatten the mesh on that square to map the texture onto it.</li>
+<li><code>COLOR</code>: RGBA color information for canvas items.</li>
+<li><code>ALBEDO</code>: color information for 3D objects. It only contains the RGB color.</li>
+</ul>
+</body>
+</html>

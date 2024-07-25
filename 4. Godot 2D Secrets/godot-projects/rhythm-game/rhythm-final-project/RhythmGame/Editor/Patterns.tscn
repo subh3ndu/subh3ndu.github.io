@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://RhythmGame/Tracks/Cephalopod/Cephalopod.tscn" type="PackedScene" id=1]
+[ext_resource path="res://RhythmGame/Tracks/Werq/Werq.tscn" type="PackedScene" id=2]
+[ext_resource path="res://RhythmGame/Tracks/DiscoLounge/DiscoLounge.tscn" type="PackedScene" id=3]
+
+[node name="Patterns" type="Node2D"]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Cephalopod" parent="." instance=ExtResource( 1 )]
+visible = false
+
+[node name="Werq" parent="." instance=ExtResource( 2 )]
+
+[node name="Disco Lounge" parent="." instance=ExtResource( 3 )]
+visible = false

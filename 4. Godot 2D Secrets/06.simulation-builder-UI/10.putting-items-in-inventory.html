@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpKOElofMizT</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="putting-ground-items-in-the-inventory">Putting ground items in the inventory</h1>
+<p>When the player picks up an item, we need to check all inventory slots, see which are available and put it in an available one. If there are slots that already have the same item in them and there is room on the stack, we should prioritize them.</p>
+<p>To do so, and to handle edge cases when picking up items, we need to write new functions. That’s what we’ll do in this lesson.</p>
+<h2 id="finding-a-panel-with-a-specific-item">Finding a panel with a specific item</h2>
+<p>We have a blueprint on our ground item waiting for pick up, and it has a name as a string. We want to check if any inventory slots already have this name as its held item, so let’s code a lookup function in our GUI.</p>
+<p>That’s another interaction that involves both the game world and the user interface, so we need to coordinate it through the <code>GUI</code> node.</p>
+<p>The <code>GUI</code> has an <code>InventoryWindow</code> that contains several <code>InventoryBar</code> nodes. So we need to loop over the item slots in every bar and send relevant data up to the <code>GUI</code> that’ll process the information.</p>
+<p>The place to start is the script that directly references each inventory panel: <code>InventoryBar.gd</code>. We write a function that returns all inventory slots matching an item’s name.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Returns an array of inventory panels that have a held item that have a name that</span>
+<span style="color:#75715e">## matches the item id provided.</span>
+<span style="color:#66d9ef">func</span> find_panels_with(item_id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> output :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> panel <span style="color:#f92672">in</span> panels:
+        <span style="color:#75715e"># Check if there is an item and its name matches</span>
+        <span style="color:#66d9ef">if</span> panel<span style="color:#f92672">.</span>held_item <span style="color:#f92672">and</span> Library<span style="color:#f92672">.</span>get_entity_name_from(panel<span style="color:#f92672">.</span>held_item) <span style="color:#f92672">==</span> item_id:
+            output<span style="color:#f92672">.</span>push_back(panel)
+
+    <span style="color:#66d9ef">return</span> output
+</pre>
+<p>We then call that new function on each bar from <code>InventoryWindow.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Returns an array of inventory panels that have a held item with a name matching</span>
+<span style="color:#75715e">## the item id from the inventory bars.</span>
+<span style="color:#66d9ef">func</span> find_panels_with(item_id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> output :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> inventory <span style="color:#f92672">in</span> inventories:
+        output <span style="color:#f92672">+=</span> inventory<span style="color:#f92672">.</span>find_panels_with(item_id)
+
+    <span style="color:#66d9ef">return</span> output
+</pre>
+<p>While we don’t need the function in <code>GUI.gd</code> for picking up items, it will come in useful in the next chapter when we deal with crafting items and keeping track of the user’s inventory.</p>
+<p>We can add a call this method and concatenate its return value with a call to <code>quickbar.find_panels_with()</code>. This gives us a list of all inventory slots with a specific item type, be it in the quick-bar or the inventory window.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Returns an array of inventory panels containing a held item that has a name</span>
+<span style="color:#75715e">## that matches the provided item id from the player inventory and quick-bar.</span>
+<span style="color:#66d9ef">func</span> find_panels_with(item_id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> existing_stacks: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> (
+        quickbar<span style="color:#f92672">.</span>find_panels_with(item_id)
+        <span style="color:#f92672">+</span> player_inventory<span style="color:#f92672">.</span>find_panels_with(item_id)
+    )
+
+    <span style="color:#66d9ef">return</span> existing_stacks
+</pre>
+<h2 id="adding-an-item-into-an-existing-panel">Adding an item into an existing panel</h2>
+<p>With that, we have the data we need to add items to existing stacks.</p>
+<p>We’ll code that in <code>GUI.gd</code>.</p>
+<p>First, we define a function to add an item to the inventory. It’s a bit long because we need to handle the following cases:</p>
+<ol type="1">
+<li>If all inventory panels are full, we can’t add the item.</li>
+<li>If there’s a slot with an item of the same type and there’s space in the stack, we add it to the stack.</li>
+<li>If one stack isn’t enough to store the picked item, we find other stacks and empty slots to store it.</li>
+<li>If there’s no existing item of the same type, we find an empty slot and store it there.</li>
+</ol>
+<p>Also, we prioritize inventory slots in this order:</p>
+<ol type="1">
+<li>Existing stacks of this item.</li>
+<li>Empty slots in the quick-bar.</li>
+<li>Empty slots in the inventory window.</li>
+</ol>
+<p>Let’s start with adding the item to the existing inventory stack. We’ll implement the other features as we move forward in the lesson.</p>
+<p>To detect when the player picks up an item, we use our Event bus singleton and call <code>add_to_inventory()</code>.</p>
+<p>Open <code>GUI.gd</code> and add the following code to it.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    Events<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;entered_pickup_area&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Player_entered_pickup_area&quot;</span>)
+
+
+<span style="color:#75715e">## Tries to add the blueprint to the inventory, starting with existing item</span>
+<span style="color:#75715e">## stacks and then to an empty panel in the quickbar, then in the main inventory.</span>
+<span style="color:#75715e">## Returns true if it succeeds.</span>
+<span style="color:#66d9ef">func</span> add_to_inventory(item: BlueprintEntity) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#75715e"># This is temporary for testing! We&#39;ll replace this shortly.</span>
+    <span style="color:#66d9ef">return</span> false
+
+
+<span style="color:#75715e">## Tries to add the ground item detected by the player collision into the player&#39;s</span>
+<span style="color:#75715e">## inventory and trigger the animation for it.</span>
+<span style="color:#66d9ef">func</span> _on_Player_entered_pickup_area(item: GroundItem, player: <span style="color:#a6e22e">KinematicBody2D</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> (item <span style="color:#f92672">and</span> item<span style="color:#f92672">.</span>blueprint):
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># We get the current amount inside the stack. It&#39;s possible for there to be</span>
+    <span style="color:#75715e"># no space for the entire stack, but we could still pick up parts of the stack.</span>
+    <span style="color:#66d9ef">var</span> amount :<span style="color:#f92672">=</span> item<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count
+
+    <span style="color:#75715e"># Attempts to add the item to existing stacks and available space.</span>
+    <span style="color:#66d9ef">if</span> add_to_inventory(item<span style="color:#f92672">.</span>blueprint):
+        <span style="color:#75715e"># If we succeed, we play the `do_pickup()` animation, disable collision, etc.</span>
+        item<span style="color:#f92672">.</span>do_pickup(player)
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#75715e"># If the attempt failed, we calculate if the stack is smaller than it</span>
+        <span style="color:#75715e"># used to be before we tried picking it up.</span>
+        <span style="color:#66d9ef">if</span> item<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">&lt;</span> amount:
+            <span style="color:#75715e"># If so, we need to create a new duplicate ground item whose job is to animate</span>
+            <span style="color:#75715e"># itself flying to the player.</span>
+            <span style="color:#66d9ef">var</span> new_item :<span style="color:#f92672">=</span> item<span style="color:#f92672">.</span>duplicate()
+
+            <span style="color:#75715e"># We need to use `call_deferred` to delay the new item by a frame because</span>
+            <span style="color:#75715e"># we disable the shape&#39;s collision so it can&#39;t be picked up twice.</span>
+            <span style="color:#75715e">#</span>
+            <span style="color:#75715e"># As the physics engine is currently busy dealing with the collision</span>
+            <span style="color:#75715e"># with the player&#39;s area and Godot doesn&#39;t allow us to change</span>
+            <span style="color:#75715e"># collision states when its physics engine is busy, we need to wait</span>
+            <span style="color:#75715e"># so it won&#39;t complain or cause errors.</span>
+            item<span style="color:#f92672">.</span>get_parent()<span style="color:#f92672">.</span>call_deferred(<span style="color:#e6db74">&quot;add_child&quot;</span>, new_item)
+            new_item<span style="color:#f92672">.</span>call_deferred(<span style="color:#e6db74">&quot;setup&quot;</span>, item<span style="color:#f92672">.</span>blueprint)
+            new_item<span style="color:#f92672">.</span>call_deferred(<span style="color:#e6db74">&quot;do_pickup&quot;</span>, player)
+</pre>
+<p>The <code>call_deferred()</code> method takes care of calling functions “during idle time”, that is to say, when the engine’s done with essential processes, like physics processing. It adds the calls to a queue and executes them as soon as the engine finished updating the world this frame.</p>
+<h2 id="adding-an-item-to-the-first-empty-inventory-panel">Adding an item to the first empty inventory panel</h2>
+<p>If you run the game now, you can’t actually pick up items because we haven’t coded the logic to actually get them into the user’s inventory. We need to have the items either replenish existing stacks, or go into the first available empty panel.</p>
+<p>We need a function to do those tasks. Open <code>InventoryBar.gd</code> where we can do that.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Tries to add the provided item to the first available empty space. Returns</span>
+<span style="color:#75715e">## true if it succeeds.</span>
+<span style="color:#66d9ef">func</span> add_to_first_available_inventory(item: BlueprintEntity) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">var</span> item_name :<span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>get_entity_name_from(item)
+
+    <span style="color:#66d9ef">for</span> panel <span style="color:#f92672">in</span> panels:
+        <span style="color:#75715e"># If the panel already has an item and its name matches that of the item</span>
+        <span style="color:#75715e"># we are trying to put in it, _and_ there is space for it, we merge the</span>
+        <span style="color:#75715e"># stacks.</span>
+        <span style="color:#66d9ef">if</span> (
+            panel<span style="color:#f92672">.</span>held_item
+            <span style="color:#f92672">and</span> Library<span style="color:#f92672">.</span>get_entity_name_from(panel<span style="color:#f92672">.</span>held_item) <span style="color:#f92672">==</span> item_name
+            <span style="color:#f92672">and</span> panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">&lt;</span> panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_size
+        ):
+            <span style="color:#66d9ef">var</span> available_space: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_size <span style="color:#f92672">-</span> panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_count
+            
+            <span style="color:#75715e"># If there is not enough space, we reduce the item count by however</span>
+            <span style="color:#75715e"># many we can fit onto it, then move on to the next panel.</span>
+            <span style="color:#66d9ef">if</span> item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">&gt;</span> available_space:
+                <span style="color:#66d9ef">var</span> transfer_count :<span style="color:#f92672">=</span> item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">-</span> available_space
+                panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">+=</span> transfer_count
+                item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">-=</span> transfer_count
+            <span style="color:#75715e"># If there is enough space, we increment the stack, destroy the item, and </span>
+            <span style="color:#75715e"># report success.</span>
+            <span style="color:#66d9ef">else</span>:
+                panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">+=</span> item<span style="color:#f92672">.</span>stack_count
+                item<span style="color:#f92672">.</span>queue_free()
+                <span style="color:#66d9ef">return</span> true
+
+        <span style="color:#75715e"># If the item is empty, then automatically put the item in it and report success.</span>
+        <span style="color:#66d9ef">elif</span> <span style="color:#f92672">not</span> panel<span style="color:#f92672">.</span>held_item:
+            panel<span style="color:#f92672">.</span>held_item <span style="color:#f92672">=</span> item
+            <span style="color:#66d9ef">return</span> true
+
+    <span style="color:#75715e"># There is no more available space in this inventory bar or it cannot pick up</span>
+    <span style="color:#75715e"># the item. Report as much.</span>
+    <span style="color:#66d9ef">return</span> false
+</pre>
+<p>Like we did with the <code>find_panels_with()</code> function, we need to forward the message from the GUI, starting with <code>InventoryWindow.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Adds the provided item to the first available spaces it can find in the</span>
+<span style="color:#75715e">## inventory bars. Returns true if it succeeds.</span>
+<span style="color:#66d9ef">func</span> add_to_first_available_inventory(item: BlueprintEntity) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">for</span> inventory <span style="color:#f92672">in</span> inventories:
+        <span style="color:#66d9ef">if</span> inventory<span style="color:#f92672">.</span>add_to_first_available_inventory(item):
+            <span style="color:#66d9ef">return</span> true
+
+    <span style="color:#66d9ef">return</span> false
+</pre>
+<p>And finally, we can replace <code>GUI.gd</code>’s temporary <code>add_to_inventory()</code> function with the real one by trying with the quick-bar first, then the inventory window. Remove the temporary <code>return false</code> and replace it with a call to the quick bar and inventory window.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> add_to_inventory(item: BlueprintEntity) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#75715e"># If the item is already in the scene tree, remove it first.</span>
+    <span style="color:#66d9ef">if</span> item<span style="color:#f92672">.</span>get_parent() <span style="color:#f92672">!=</span> null:
+        item<span style="color:#f92672">.</span>get_parent()<span style="color:#f92672">.</span>remove_child(item)
+
+    <span style="color:#66d9ef">if</span> quickbar<span style="color:#f92672">.</span>add_to_first_available_inventory(item):
+        <span style="color:#66d9ef">return</span> true
+
+    <span style="color:#66d9ef">return</span> player_inventory<span style="color:#f92672">.</span>add_to_first_available_inventory(item)
+</pre>
+<p>Now, if you run the game and put down every battery, then deconstruct them and run over them, you’ll hoover them up right into your quick-bar as intended!</p>
+<h2 id="code-reference">Code reference</h2>
+<p>Here are the complete scripts we modified in this lesson.</p>
+<p><code>InventoryBar.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name InventoryBar
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">HBoxContainer</span>
+
+<span style="color:#66d9ef">signal</span> inventory_changed(panel, held_item)
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> InventoryPanelScene: <span style="color:#a6e22e">PackedScene</span>
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> slot_count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+
+<span style="color:#66d9ef">var</span> panels :<span style="color:#f92672">=</span> []
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    _make_panels()
+
+
+<span style="color:#66d9ef">func</span> setup(gui: <span style="color:#a6e22e">Control</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> panel <span style="color:#f92672">in</span> panels:
+        panel<span style="color:#f92672">.</span>setup(gui)
+        panel<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;held_item_changed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Panel_held_item_changed&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> find_panels_with(item_id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> output :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> panel <span style="color:#f92672">in</span> panels:
+        <span style="color:#66d9ef">if</span> panel<span style="color:#f92672">.</span>held_item <span style="color:#f92672">and</span> Library<span style="color:#f92672">.</span>get_entity_name_from(panel<span style="color:#f92672">.</span>held_item) <span style="color:#f92672">==</span> item_id:
+            output<span style="color:#f92672">.</span>push_back(panel)
+
+    <span style="color:#66d9ef">return</span> output
+
+
+<span style="color:#66d9ef">func</span> add_to_first_available_inventory(item: BlueprintEntity) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">var</span> item_name :<span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>get_entity_name_from(item)
+
+    <span style="color:#66d9ef">for</span> panel <span style="color:#f92672">in</span> panels:
+        <span style="color:#66d9ef">if</span> (
+            panel<span style="color:#f92672">.</span>held_item
+            <span style="color:#f92672">and</span> Library<span style="color:#f92672">.</span>get_entity_name_from(panel<span style="color:#f92672">.</span>held_item) <span style="color:#f92672">==</span> item_name
+            <span style="color:#f92672">and</span> panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">&lt;</span> panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_size
+        ):
+            <span style="color:#66d9ef">var</span> available_space: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_size <span style="color:#f92672">-</span> panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_count
+            
+            <span style="color:#66d9ef">if</span> item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">&gt;</span> available_space:
+                <span style="color:#66d9ef">var</span> transfer_count :<span style="color:#f92672">=</span> item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">-</span> available_space
+                panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">+=</span> transfer_count
+                item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">-=</span> transfer_count
+            <span style="color:#66d9ef">else</span>:
+                panel<span style="color:#f92672">.</span>held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">+=</span> item<span style="color:#f92672">.</span>stack_count
+                item<span style="color:#f92672">.</span>queue_free()
+                <span style="color:#66d9ef">return</span> true
+
+        <span style="color:#66d9ef">elif</span> <span style="color:#f92672">not</span> panel<span style="color:#f92672">.</span>held_item:
+            panel<span style="color:#f92672">.</span>held_item <span style="color:#f92672">=</span> item
+            <span style="color:#66d9ef">return</span> true
+
+    <span style="color:#66d9ef">return</span> false
+
+
+<span style="color:#66d9ef">func</span> _make_panels() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> _i <span style="color:#f92672">in</span> slot_count:
+        <span style="color:#66d9ef">var</span> panel :<span style="color:#f92672">=</span> InventoryPanelScene<span style="color:#f92672">.</span>instance()
+        add_child(panel)
+        panels<span style="color:#f92672">.</span>append(panel)
+
+
+<span style="color:#66d9ef">func</span> _on_Panel_held_item_changed(panel: <span style="color:#a6e22e">Control</span>, held_item: BlueprintEntity) <span style="color:#f92672">-&gt;</span> void:
+    emit_signal(<span style="color:#e6db74">&quot;inventory_changed&quot;</span>, panel, held_item)
+</pre>
+<p><code>InventoryWindow.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">MarginContainer</span>
+
+<span style="color:#66d9ef">signal</span> inventory_changed(panel, held_item)
+
+<span style="color:#66d9ef">var</span> gui: <span style="color:#a6e22e">Control</span>
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> inventory_path :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">PanelContainer</span><span style="color:#f92672">/</span><span style="color:#a6e22e">MarginContainer</span><span style="color:#f92672">/</span>Inventories
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> inventories :<span style="color:#f92672">=</span> inventory_path<span style="color:#f92672">.</span>get_children()
+
+
+<span style="color:#66d9ef">func</span> setup(_gui: <span style="color:#a6e22e">Control</span>) <span style="color:#f92672">-&gt;</span> void:
+    gui <span style="color:#f92672">=</span> _gui
+    <span style="color:#66d9ef">for</span> bar <span style="color:#f92672">in</span> inventories:
+        bar<span style="color:#f92672">.</span>setup(gui)
+
+    <span style="color:#66d9ef">var</span> engine: BlueprintEntity <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>blueprints<span style="color:#f92672">.</span>StirlingEngine<span style="color:#f92672">.</span>instance()
+    engine<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>
+    <span style="color:#66d9ef">var</span> battery: BlueprintEntity <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>blueprints<span style="color:#f92672">.</span>Battery<span style="color:#f92672">.</span>instance()
+    battery<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>
+    inventories[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>panels[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>held_item <span style="color:#f92672">=</span> engine
+    inventories[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>panels[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>held_item <span style="color:#f92672">=</span> battery
+
+
+<span style="color:#66d9ef">func</span> claim_quickbar(quickbar: <span style="color:#a6e22e">Control</span>) <span style="color:#f92672">-&gt;</span> void:
+    quickbar<span style="color:#f92672">.</span>get_parent()<span style="color:#f92672">.</span>remove_child(quickbar)
+    inventory_path<span style="color:#f92672">.</span>add_child(quickbar)
+
+
+<span style="color:#66d9ef">func</span> add_to_first_available_inventory(item: BlueprintEntity) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">for</span> inventory <span style="color:#f92672">in</span> inventories:
+        <span style="color:#66d9ef">if</span> inventory<span style="color:#f92672">.</span>add_to_first_available_inventory(item):
+            <span style="color:#66d9ef">return</span> true
+
+    <span style="color:#66d9ef">return</span> false
+
+
+<span style="color:#66d9ef">func</span> find_panels_with(item_id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> output :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> inventory <span style="color:#f92672">in</span> inventories:
+        output <span style="color:#f92672">+=</span> inventory<span style="color:#f92672">.</span>find_panels_with(item_id)
+
+    <span style="color:#66d9ef">return</span> output
+
+
+<span style="color:#66d9ef">func</span> _on_InventoryBar_inventory_changed(panel, held_item) <span style="color:#f92672">-&gt;</span> void:
+    emit_signal(<span style="color:#e6db74">&quot;inventory_changed&quot;</span>, panel, held_item)
+</pre>
+<p><code>GUI.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">CenterContainer</span>
+
+<span style="color:#66d9ef">const</span> QUICKBAR_ACTIONS :<span style="color:#f92672">=</span> [
+    <span style="color:#e6db74">&quot;quickbar_1&quot;</span>,
+    <span style="color:#e6db74">&quot;quickbar_2&quot;</span>,
+    <span style="color:#e6db74">&quot;quickbar_3&quot;</span>,
+    <span style="color:#e6db74">&quot;quickbar_4&quot;</span>,
+    <span style="color:#e6db74">&quot;quickbar_5&quot;</span>,
+    <span style="color:#e6db74">&quot;quickbar_6&quot;</span>,
+    <span style="color:#e6db74">&quot;quickbar_7&quot;</span>,
+    <span style="color:#e6db74">&quot;quickbar_8&quot;</span>,
+    <span style="color:#e6db74">&quot;quickbar_9&quot;</span>,
+    <span style="color:#e6db74">&quot;quickbar_0&quot;</span>
+]
+
+
+<span style="color:#66d9ef">var</span> blueprint: BlueprintEntity <span style="color:#66d9ef">setget</span> _set_blueprint, _get_blueprint
+
+<span style="color:#66d9ef">var</span> mouse_in_gui :<span style="color:#f92672">=</span> false
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _is_open: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">HBoxContainer</span><span style="color:#f92672">/</span>InventoryWindow<span style="color:#f92672">.</span>visible
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> player_inventory :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">HBoxContainer</span><span style="color:#f92672">/</span>InventoryWindow
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _drag_preview :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>DragPreview
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _gui_rect :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">HBoxContainer</span>
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> quickbar :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">MarginContainer</span><span style="color:#f92672">/</span>QuickBar
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> quickbar_container :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">MarginContainer</span>
+
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    player_inventory<span style="color:#f92672">.</span>setup(self)
+    quickbar<span style="color:#f92672">.</span>setup(self)
+    Events<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;entered_pickup_area&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Player_entered_pickup_area&quot;</span>)
+
+
+
+<span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;toggle_inventory&quot;</span>):
+        <span style="color:#66d9ef">if</span> _is_open:
+            _close_inventories()
+        <span style="color:#66d9ef">else</span>:
+            _open_inventories()
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> QUICKBAR_ACTIONS<span style="color:#f92672">.</span>size():
+            <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">InputMap</span><span style="color:#f92672">.</span>event_is_action(event, QUICKBAR_ACTIONS[i]) <span style="color:#f92672">and</span> event<span style="color:#f92672">.</span>is_pressed():
+                _simulate_input(quickbar<span style="color:#f92672">.</span>panels[i])
+                <span style="color:#66d9ef">break</span>
+
+
+<span style="color:#66d9ef">func</span> find_panels_with(item_id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> existing_stacks: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> (
+        quickbar<span style="color:#f92672">.</span>find_panels_with(item_id)
+        <span style="color:#f92672">+</span> player_inventory<span style="color:#f92672">.</span>find_panels_with(item_id)
+    )
+
+    <span style="color:#66d9ef">return</span> existing_stacks
+
+
+<span style="color:#66d9ef">func</span> add_to_inventory(item: BlueprintEntity) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">if</span> item<span style="color:#f92672">.</span>get_parent() <span style="color:#f92672">!=</span> null:
+        item<span style="color:#f92672">.</span>get_parent()<span style="color:#f92672">.</span>remove_child(item)
+
+    <span style="color:#66d9ef">if</span> quickbar<span style="color:#f92672">.</span>add_to_first_available_inventory(item):
+        <span style="color:#66d9ef">return</span> true
+
+    <span style="color:#66d9ef">return</span> player_inventory<span style="color:#f92672">.</span>add_to_first_available_inventory(item)
+
+
+<span style="color:#66d9ef">func</span> _simulate_input(panel: InventoryPanel) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> input :<span style="color:#f92672">=</span> <span style="color:#a6e22e">InputEventMouseButton</span><span style="color:#f92672">.</span>new()
+    input<span style="color:#f92672">.</span>button_index <span style="color:#f92672">=</span> BUTTON_LEFT
+    input<span style="color:#f92672">.</span>pressed <span style="color:#f92672">=</span> true
+
+    panel<span style="color:#f92672">.</span>_gui_input(input)
+
+
+<span style="color:#66d9ef">func</span> _process(delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> mouse_position :<span style="color:#f92672">=</span> get_global_mouse_position()
+    mouse_in_gui <span style="color:#f92672">=</span> _is_open <span style="color:#f92672">and</span> _gui_rect<span style="color:#f92672">.</span>get_rect()<span style="color:#f92672">.</span>has_point(mouse_position)
+
+
+<span style="color:#66d9ef">func</span> destroy_blueprint() <span style="color:#f92672">-&gt;</span> void:
+    _drag_preview<span style="color:#f92672">.</span>destroy_blueprint()
+
+
+<span style="color:#66d9ef">func</span> update_label() <span style="color:#f92672">-&gt;</span> void:
+    _drag_preview<span style="color:#f92672">.</span>update_label()
+
+
+<span style="color:#66d9ef">func</span> _set_blueprint(value: BlueprintEntity) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+    _drag_preview<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">=</span> value
+
+
+<span style="color:#66d9ef">func</span> _get_blueprint() <span style="color:#f92672">-&gt;</span> BlueprintEntity:
+    <span style="color:#66d9ef">return</span> _drag_preview<span style="color:#f92672">.</span>blueprint
+
+
+<span style="color:#66d9ef">func</span> _open_inventories() <span style="color:#f92672">-&gt;</span> void:
+    _is_open <span style="color:#f92672">=</span> true
+    player_inventory<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> true
+    player_inventory<span style="color:#f92672">.</span>claim_quickbar(quickbar)
+
+
+<span style="color:#66d9ef">func</span> _close_inventories() <span style="color:#f92672">-&gt;</span> void:
+    _is_open <span style="color:#f92672">=</span> false
+    player_inventory<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> false
+    _claim_quickbar()
+
+
+<span style="color:#66d9ef">func</span> _claim_quickbar() <span style="color:#f92672">-&gt;</span> void:
+    quickbar<span style="color:#f92672">.</span>get_parent()<span style="color:#f92672">.</span>remove_child(quickbar)
+    quickbar_container<span style="color:#f92672">.</span>add_child(quickbar)
+
+
+<span style="color:#66d9ef">func</span> _on_Player_entered_pickup_area(item: GroundItem, player: <span style="color:#a6e22e">KinematicBody2D</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> (item <span style="color:#f92672">and</span> item<span style="color:#f92672">.</span>blueprint):
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">var</span> amount :<span style="color:#f92672">=</span> item<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count
+
+    <span style="color:#66d9ef">if</span> add_to_inventory(item<span style="color:#f92672">.</span>blueprint):
+        item<span style="color:#f92672">.</span>do_pickup(player)
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">if</span> item<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">&lt;</span> amount:
+            <span style="color:#66d9ef">var</span> new_item :<span style="color:#f92672">=</span> item<span style="color:#f92672">.</span>duplicate()
+
+            item<span style="color:#f92672">.</span>get_parent()<span style="color:#f92672">.</span>call_deferred(<span style="color:#e6db74">&quot;add_child&quot;</span>, new_item)
+            new_item<span style="color:#f92672">.</span>call_deferred(<span style="color:#e6db74">&quot;setup&quot;</span>, item<span style="color:#f92672">.</span>blueprint)
+            new_item<span style="color:#f92672">.</span>call_deferred(<span style="color:#e6db74">&quot;do_pickup&quot;</span>, player)
+</pre>
+</body>
+</html>

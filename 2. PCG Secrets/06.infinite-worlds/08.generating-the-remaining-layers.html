@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpQVwo4y10FQ</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="generating-the-remaining-layers">Generating the remaining layers</h1>
+<p>In the previous lesson, we set up the layered generation, wrote the drawing code, and generated seeds.</p>
+<p>In this part, we’ll build upon that code to generate the planets, moons, travel routes, and asteroids.</p>
+<h2 id="spawning-planets-based-on-the-seeding-points">Spawning planets based on the seeding points</h2>
+<p>In the second layer, we take the data from the previous layer, that is, the three points, and treat them as a triangle. We calculate that triangle’s area, and if it is above our threshold value, we span a planet at the triangle’s epicenter.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>The planet’s radius is inversely proportional to the triangle’s area. In other words, the smaller the triangle, the larger the planet.</p>
+<p>We introduce a new value, a threshold to decide whether we generate a planet in a given sector. And we add two new utility functions that calculate a triangle’s area and epicenter.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## The maximum area covered by the three seeding vertices for a planet to form.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> planet_generation_area_threshold :<span style="color:#f92672">=</span> <span style="color:#ae81ff">5000.0</span>
+
+<span style="color:#75715e"># Potentially generate a planet in a given sector. There can only be one planet</span>
+<span style="color:#75715e"># in a sector.</span>
+<span style="color:#66d9ef">func</span> _generate_planets_at(sector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _sectors[sector]<span style="color:#f92672">.</span>planet:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># We calculate the area created by the three seeded points. See the</span>
+    <span style="color:#75715e"># `_calculate_triangle_area()` function below.</span>
+    <span style="color:#66d9ef">var</span> vertices: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> _sectors[sector]<span style="color:#f92672">.</span>seeds
+    <span style="color:#66d9ef">var</span> area :<span style="color:#f92672">=</span> _calculate_triangle_area(vertices[<span style="color:#ae81ff">0</span>], vertices[<span style="color:#ae81ff">1</span>], vertices[<span style="color:#ae81ff">2</span>])
+
+    <span style="color:#75715e"># If the area is less than the generation threshold, we create a planet</span>
+    <span style="color:#75715e"># based to the seeds&#39; area.</span>
+    <span style="color:#75715e"># We position the planet at the triangle&#39;s epicenter and give it a scale</span>
+    <span style="color:#75715e"># inversely proportional to the triangle&#39;s area.</span>
+    <span style="color:#66d9ef">if</span> area <span style="color:#f92672">&lt;</span> planet_generation_area_threshold:
+        _sectors[sector]<span style="color:#f92672">.</span>planet <span style="color:#f92672">=</span> {
+            position <span style="color:#f92672">=</span> _calculate_triangle_epicenter(vertices[<span style="color:#ae81ff">0</span>], vertices[<span style="color:#ae81ff">1</span>], vertices[<span style="color:#ae81ff">2</span>]),
+            scale <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">+</span> area <span style="color:#f92672">/</span> (planet_generation_area_threshold <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>)
+        }
+
+
+<span style="color:#75715e">## Returns the area of a triangle.</span>
+<span style="color:#66d9ef">func</span> _calculate_triangle_area(a: <span style="color:#a6e22e">Vector2</span>, b: <span style="color:#a6e22e">Vector2</span>, c: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">float</span>:
+    <span style="color:#75715e"># The formula to calculate a triangle&#39;s area is as follows. We take each</span>
+    <span style="color:#75715e"># point&#39;s `x` position and multiply it by the difference between the other</span>
+    <span style="color:#75715e"># points&#39; vertical position. Finally, we divide the value by two.</span>
+    <span style="color:#66d9ef">return</span> abs(a<span style="color:#f92672">.</span>x <span style="color:#f92672">*</span> (b<span style="color:#f92672">.</span>y <span style="color:#f92672">-</span> c<span style="color:#f92672">.</span>y) <span style="color:#f92672">+</span> b<span style="color:#f92672">.</span>x <span style="color:#f92672">*</span> (c<span style="color:#f92672">.</span>y <span style="color:#f92672">-</span> a<span style="color:#f92672">.</span>y) <span style="color:#f92672">+</span> c<span style="color:#f92672">.</span>x <span style="color:#f92672">*</span> (a<span style="color:#f92672">.</span>y <span style="color:#f92672">-</span> b<span style="color:#f92672">.</span>y)) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>
+
+
+<span style="color:#75715e">## Returns the epicenter of a triangle.</span>
+<span style="color:#66d9ef">func</span> _calculate_triangle_epicenter(a: <span style="color:#a6e22e">Vector2</span>, b: <span style="color:#a6e22e">Vector2</span>, c: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Vector2</span>:
+    <span style="color:#75715e"># The epicenter of a triangle is the sum of its points&#39; position divided by</span>
+    <span style="color:#75715e"># three.</span>
+    <span style="color:#66d9ef">return</span> (a <span style="color:#f92672">+</span> b <span style="color:#f92672">+</span> c) <span style="color:#f92672">/</span> <span style="color:#ae81ff">3.0</span>
+</pre>
+<h2 id="adding-moons-around-planets">Adding moons around planets</h2>
+<p>Next, we want to add moons around planets. To do so, we start from the planet’s position and calculate a random offset to place the moon in its orbit. We then roll a dice, that is to say, we call the <code>randf()</code> function, and we add moons randomly up to a maximum count.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>We start by defining two new exported variables that control moon generation and implement <code>_generate_moons_at()</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## The probability of a moon being generated next to a planet.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> moon_generation_chance :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.1</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">3.0</span>
+<span style="color:#75715e">## The maximum number of moons we can generate in one sector.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> max_moon_count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>
+
+
+<span style="color:#75715e"># If there is a planet in a given sector, we may spawn one or more moons around it.</span>
+<span style="color:#66d9ef">func</span> _generate_moons_at(sector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _sectors[sector]<span style="color:#f92672">.</span>moons <span style="color:#f92672">!=</span> []:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># We check for an existing planet in the sector generated by the previous</span>
+    <span style="color:#75715e"># layer, and if there is none, there won&#39;t be a moon orbiting around it, so</span>
+    <span style="color:#75715e"># we return from the function.</span>
+    <span style="color:#66d9ef">var</span> planet: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> _sectors[sector]<span style="color:#f92672">.</span>planet
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> planet:
+        <span style="color:#66d9ef">return</span>
+
+    _rng<span style="color:#f92672">.</span>seed <span style="color:#f92672">=</span> make_seed_for(sector<span style="color:#f92672">.</span>x, sector<span style="color:#f92672">.</span>y, <span style="color:#e6db74">&quot;moons&quot;</span>)
+
+    <span style="color:#75715e"># We keep generating random numbers and moons as long as we fall within the</span>
+    <span style="color:#75715e"># moon generation chance value. If the random number is above that threshold</span>
+    <span style="color:#75715e"># or we reach the maximum number of moons, we end the loop.</span>
+    <span style="color:#66d9ef">var</span> moon_count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">while</span> _rng<span style="color:#f92672">.</span>randf() <span style="color:#f92672">&lt;</span> moon_generation_chance <span style="color:#f92672">or</span> moon_count <span style="color:#f92672">==</span> max_moon_count:
+        <span style="color:#75715e"># For each moon, we start from the planet centre, and we generate a</span>
+        <span style="color:#75715e"># random position along a circle that&#39;s larger than the planet.</span>
+        <span style="color:#66d9ef">var</span> random_offset: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> (
+            <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>UP<span style="color:#f92672">.</span>rotated(_rng<span style="color:#f92672">.</span>randf_range(<span style="color:#f92672">-</span>PI, PI))
+            <span style="color:#f92672">*</span> planet<span style="color:#f92672">.</span>scale
+            <span style="color:#f92672">*</span> PLANET_BASE_SIZE
+            <span style="color:#f92672">*</span> <span style="color:#ae81ff">3.0</span>
+        )
+        moon_count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        <span style="color:#75715e"># The Moon&#39;s position is the planet&#39;s center with the added offset, and</span>
+        <span style="color:#75715e"># in this example, we don&#39;t randomize the Moon&#39;s scale. It is always a</span>
+        <span style="color:#75715e"># third of the planet&#39;s.</span>
+        _sectors[sector]<span style="color:#f92672">.</span>moons<span style="color:#f92672">.</span>append(
+            {position <span style="color:#f92672">=</span> planet<span style="color:#f92672">.</span>position <span style="color:#f92672">+</span> random_offset, scale <span style="color:#f92672">=</span> planet<span style="color:#f92672">.</span>scale <span style="color:#f92672">/</span> <span style="color:#ae81ff">3.0</span>}
+        )
+</pre>
+<h2 id="connecting-planets-with-travel-routes">Connecting planets with travel routes</h2>
+<p>If two neighboring sectors both have a planet, we want to connect them via a travel route.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>To do so, we loop over the neighbors and store dictionaries with <code>source</code> and <code>destination</code> keys if we find a planet.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># The fourth layer attempts to connect planets in neighbouring sectors. The</span>
+<span style="color:#75715e"># condition for a travel route to form is to have a planet in this sector and in</span>
+<span style="color:#75715e"># one of the eight surrounding ones.</span>
+<span style="color:#66d9ef">func</span> _generate_travel_lanes_at(sector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _sectors[sector]<span style="color:#f92672">.</span>travel_lanes:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># If there is no planet, there is no travel route to generate, so we return.</span>
+    <span style="color:#66d9ef">var</span> planet: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> _sectors[sector]<span style="color:#f92672">.</span>planet
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> planet:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># If there is a planet here, we loop over each neighboring sector and create</span>
+    <span style="color:#75715e"># a travel route that connects this planet&#39;s position to the neighboring</span>
+    <span style="color:#75715e"># one.</span>
+    <span style="color:#66d9ef">for</span> neighbor <span style="color:#f92672">in</span> NEIGHBORS:
+        <span style="color:#66d9ef">var</span> neighbor_sector: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> sector <span style="color:#f92672">+</span> neighbor
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _sectors[neighbor_sector]<span style="color:#f92672">.</span>planet:
+            <span style="color:#66d9ef">continue</span>
+
+        <span style="color:#66d9ef">var</span> neighbor_position: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> _sectors[neighbor_sector]<span style="color:#f92672">.</span>planet<span style="color:#f92672">.</span>position
+        _sectors[sector]<span style="color:#f92672">.</span>travel_lanes<span style="color:#f92672">.</span>append(
+            {source <span style="color:#f92672">=</span> planet<span style="color:#f92672">.</span>position, destination <span style="color:#f92672">=</span> neighbor_position}
+        )
+</pre>
+<h2 id="generating-asteroid-belts">Generating asteroid belts</h2>
+<p>If there is a planet in a sector with no moons or travel routes, we generate an asteroid belt around the planet. To do so, again, we keep rolling dices as long as we don’t have too many asteroids and the generated number is below a threshold.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>We place asteroids randomly in a disc around the planet.</p>
+<p>This is similar to the <code>_generate_moons_at()</code> function, only the rules to generate asteroids and some values differ.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## The probability of asteroids being generated next to a planet.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> asteroid_generation_chance :<span style="color:#f92672">=</span> <span style="color:#ae81ff">3.0</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">4.0</span>
+<span style="color:#75715e">## The maximum number of asteroids we can generate in one sector.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> max_asteroid_count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+
+
+<span style="color:#75715e"># The last layer generates asteroids. This one has more conditions than the</span>
+<span style="color:#75715e"># previous ones and makes use of multiple layers&#39; data.</span>
+<span style="color:#75715e">#</span>
+<span style="color:#75715e"># The conditions to spawn an asteroid belt are:</span>
+<span style="color:#75715e">#</span>
+<span style="color:#75715e"># 1. This sector has a planet.</span>
+<span style="color:#75715e"># 2. This sector does not have any moon.</span>
+<span style="color:#75715e"># 3. The sector does not have any trade route. The idea is that if it did,</span>
+<span style="color:#75715e"># miners and travellers who have already mined and depleted the asteroids.</span>
+<span style="color:#66d9ef">func</span> _generate_asteroids_at(sector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _sectors[sector]<span style="color:#f92672">.</span>asteroids:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># Here, we check for the presence of a planet and the absence of moons and</span>
+    <span style="color:#75715e"># travel routes.</span>
+    <span style="color:#66d9ef">var</span> planet: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> _sectors[sector]<span style="color:#f92672">.</span>planet
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> planet <span style="color:#f92672">or</span> _sectors[sector]<span style="color:#f92672">.</span>moons <span style="color:#f92672">or</span> _sectors[sector]<span style="color:#f92672">.</span>travel_lanes:
+        <span style="color:#66d9ef">return</span>
+
+    _rng<span style="color:#f92672">.</span>seed <span style="color:#f92672">=</span> make_seed_for(sector<span style="color:#f92672">.</span>x, sector<span style="color:#f92672">.</span>y, <span style="color:#e6db74">&quot;asteroids&quot;</span>)
+
+    <span style="color:#75715e"># The generation here is similar to the moons, except the values are</span>
+    <span style="color:#75715e"># different. Instead of placing the asteroids along a circle surrounding the</span>
+    <span style="color:#75715e"># planet, we scatter them in a larger area.</span>
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">while</span> _rng<span style="color:#f92672">.</span>randf() <span style="color:#f92672">&lt;</span> asteroid_generation_chance <span style="color:#f92672">and</span> count <span style="color:#f92672">&lt;</span> max_asteroid_count:
+        count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+
+        <span style="color:#66d9ef">var</span> random_offset: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> (
+            <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>UP<span style="color:#f92672">.</span>rotated(_rng<span style="color:#f92672">.</span>randf_range(<span style="color:#f92672">-</span>PI, PI))
+            <span style="color:#f92672">*</span> planet<span style="color:#f92672">.</span>scale
+            <span style="color:#f92672">*</span> PLANET_BASE_SIZE
+            <span style="color:#f92672">*</span> _rng<span style="color:#f92672">.</span>randf_range(<span style="color:#ae81ff">3.0</span>, <span style="color:#ae81ff">4.0</span>)
+        )
+        _sectors[sector]<span style="color:#f92672">.</span>asteroids<span style="color:#f92672">.</span>append(
+            {position <span style="color:#f92672">=</span> planet<span style="color:#f92672">.</span>position <span style="color:#f92672">+</span> random_offset, scale <span style="color:#f92672">=</span> planet<span style="color:#f92672">.</span>scale <span style="color:#f92672">/</span> <span style="color:#ae81ff">5.0</span>}
+        )
+</pre>
+<p>At this point, you can test the game and visualize the procedural generation. You should see planets in beige, moons in blue, and asteroids in red.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>Now, we have one task left: generating new sectors as the player explores the world.</p>
+<h2 id="updating-generation-when-the-player-moves">Updating generation when the player moves</h2>
+<p>Our <code>generate()</code> method doesn’t work like the parent class’s, so we need to also override <code>_update_sectors()</code> and <code>_update_along_axis()</code> accordingly. The code’s mostly the same as before, except we don’t generate new sectors in <code>_update_along_axis()</code>. Instead, we only clear sectors’ outside the player’s range and call <code>generate()</code> separately to re-generate the world.</p>
+<p>Performance-wise, this isn’t the most optimized way of doing things, but this code is in the spirit of keeping the code prototyping-friendly. The way we wrote it, we can freely modify the layers’ functions and update the generation.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Since our generation algorithm is more complex than the default generation, we</span>
+<span style="color:#75715e"># override `_update_along_axis()` to only delete and then call generate again to</span>
+<span style="color:#75715e"># fill in any created gaps in the layers.</span>
+<span style="color:#66d9ef">func</span> _update_sectors(difference: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    _update_along_axis(AXIS_X, difference<span style="color:#f92672">.</span>x)
+    _update_along_axis(AXIS_Y, difference<span style="color:#f92672">.</span>y)
+    generate()
+
+
+<span style="color:#75715e"># As our `generate()` method is different from the parent class, we need to</span>
+<span style="color:#75715e"># override the `_update_along_axis()` method as well so it does not directly</span>
+<span style="color:#75715e"># generate individual new sectors.</span>
+<span style="color:#75715e"># That is because we need to process entire layers at a time.</span>
+<span style="color:#75715e"># Most of the code is the same as in the previous lessons, so I will only</span>
+<span style="color:#75715e"># comment on the changes.</span>
+<span style="color:#66d9ef">func</span> _update_along_axis(axis: <span style="color:#a6e22e">int</span>, difference: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> difference <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> (axis <span style="color:#f92672">!=</span> AXIS_X <span style="color:#f92672">and</span> axis <span style="color:#f92672">!=</span> AXIS_Y):
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">var</span> axis_current :<span style="color:#f92672">=</span> _current_sector<span style="color:#f92672">.</span>x <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X <span style="color:#66d9ef">else</span> _current_sector<span style="color:#f92672">.</span>y
+    <span style="color:#66d9ef">var</span> other_axis_min :<span style="color:#f92672">=</span> (
+        (_current_sector<span style="color:#f92672">.</span>y <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X <span style="color:#66d9ef">else</span> _current_sector<span style="color:#f92672">.</span>x)
+        <span style="color:#f92672">-</span> _half_sector_count
+    )
+    <span style="color:#66d9ef">var</span> other_axis_max :<span style="color:#f92672">=</span> (
+        (_current_sector<span style="color:#f92672">.</span>y <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X <span style="color:#66d9ef">else</span> _current_sector<span style="color:#f92672">.</span>x)
+        <span style="color:#f92672">+</span> _half_sector_count
+    )
+
+    <span style="color:#66d9ef">var</span> axis_modifier: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> difference <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> sector_index <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1</span>, abs(difference) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>):
+        <span style="color:#66d9ef">var</span> axis_key :<span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(axis_current <span style="color:#f92672">+</span> (_half_sector_count <span style="color:#f92672">-</span> axis_modifier) <span style="color:#f92672">*</span> <span style="color:#f92672">-</span>sign(difference))
+
+        <span style="color:#66d9ef">for</span> other <span style="color:#f92672">in</span> range(other_axis_min, other_axis_max):
+            <span style="color:#66d9ef">var</span> key :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(
+                axis_key <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X <span style="color:#66d9ef">else</span> other, other <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X <span style="color:#66d9ef">else</span> axis_key
+            )
+            <span style="color:#75715e"># As we only store dictionaries representing the world state,</span>
+            <span style="color:#75715e"># instead of instantiating and nodes, we only have to erase the</span>
+            <span style="color:#75715e"># corresponding keys in our `_sectors` dictionary.</span>
+            _sectors<span style="color:#f92672">.</span>erase(key)
+
+    <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X:
+        _current_sector<span style="color:#f92672">.</span>x <span style="color:#f92672">+=</span> difference
+    <span style="color:#66d9ef">else</span>:
+        _current_sector<span style="color:#f92672">.</span>y <span style="color:#f92672">+=</span> difference
+</pre>
+<p>Lastly, we add the same code as for the noise-based world generators to update sectors as the player moves around.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _player :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>Player
+
+
+<span style="color:#75715e"># Finally, the physics process code to update the generation as the player moves</span>
+<span style="color:#75715e"># is the same as usual.</span>
+<span style="color:#66d9ef">func</span> _physics_process(_delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> sector_offset :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO
+
+    <span style="color:#66d9ef">var</span> sector_location :<span style="color:#f92672">=</span> _current_sector <span style="color:#f92672">*</span> sector_size
+
+    <span style="color:#66d9ef">if</span> _player<span style="color:#f92672">.</span>global_position<span style="color:#f92672">.</span>distance_squared_to(sector_location) <span style="color:#f92672">&gt;</span> _total_sector_count:
+        sector_offset <span style="color:#f92672">=</span> (_player<span style="color:#f92672">.</span>global_position <span style="color:#f92672">-</span> sector_location) <span style="color:#f92672">/</span> sector_size
+        sector_offset<span style="color:#f92672">.</span>x <span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(sector_offset<span style="color:#f92672">.</span>x)
+        sector_offset<span style="color:#f92672">.</span>y <span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(sector_offset<span style="color:#f92672">.</span>y)
+
+        _update_sectors(sector_offset)
+        _grid_drawer<span style="color:#f92672">.</span>move_grid_to(_current_sector)
+</pre>
+<h2 id="code-reference">Code reference</h2>
+<p>Here’s the complete <code>LayeredWorldGenerator.gd</code> script, without comments.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name LayeredWorldGenerator
+<span style="color:#66d9ef">extends</span> WorldGenerator
+
+<span style="color:#66d9ef">const</span> PLANET_BASE_SIZE :<span style="color:#f92672">=</span> <span style="color:#ae81ff">96</span>
+<span style="color:#66d9ef">const</span> MOON_BASE_SIZE :<span style="color:#f92672">=</span> <span style="color:#ae81ff">32</span>
+<span style="color:#66d9ef">const</span> ASTEROID_BASE_SIZE :<span style="color:#f92672">=</span> <span style="color:#ae81ff">16</span>
+
+<span style="color:#66d9ef">const</span> NEIGHBORS :<span style="color:#f92672">=</span> [
+    <span style="color:#a6e22e">Vector2</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>),
+    <span style="color:#a6e22e">Vector2</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>),
+    <span style="color:#a6e22e">Vector2</span>(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>),
+    <span style="color:#a6e22e">Vector2</span>(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>),
+    <span style="color:#a6e22e">Vector2</span>(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>),
+    <span style="color:#a6e22e">Vector2</span>(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>),
+    <span style="color:#a6e22e">Vector2</span>(<span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>),
+    <span style="color:#a6e22e">Vector2</span>(<span style="color:#ae81ff">1</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+]
+
+<span style="color:#66d9ef">const</span> LAYERS <span style="color:#f92672">=</span> {
+    seeds <span style="color:#f92672">=</span> [],
+    planet <span style="color:#f92672">=</span> {},
+    moons <span style="color:#f92672">=</span> [],
+    travel_lanes <span style="color:#f92672">=</span> [],
+    asteroids <span style="color:#f92672">=</span> [],
+}
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> show_debug :<span style="color:#f92672">=</span> true <span style="color:#66d9ef">setget</span> _set_show_debug
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> sector_margin_proportion :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.1</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> planet_generation_area_threshold :<span style="color:#f92672">=</span> <span style="color:#ae81ff">5000.0</span>
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> moon_generation_chance :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.1</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">3.0</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> max_moon_count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> asteroid_generation_chance :<span style="color:#f92672">=</span> <span style="color:#ae81ff">3.0</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">4.0</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> max_asteroid_count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _sector_margin :<span style="color:#f92672">=</span> sector_size <span style="color:#f92672">*</span> sector_margin_proportion
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _player :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>Player
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _grid_drawer :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>GridDrawer
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    generate()
+    _grid_drawer<span style="color:#f92672">.</span>setup(sector_size, sector_axis_count)
+    _grid_drawer<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> show_debug
+
+
+<span style="color:#66d9ef">func</span> _physics_process(_delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> sector_offset :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO
+
+    <span style="color:#66d9ef">var</span> sector_location :<span style="color:#f92672">=</span> _current_sector <span style="color:#f92672">*</span> sector_size
+
+    <span style="color:#66d9ef">if</span> _player<span style="color:#f92672">.</span>global_position<span style="color:#f92672">.</span>distance_squared_to(sector_location) <span style="color:#f92672">&gt;</span> _total_sector_count:
+        sector_offset <span style="color:#f92672">=</span> (_player<span style="color:#f92672">.</span>global_position <span style="color:#f92672">-</span> sector_location) <span style="color:#f92672">/</span> sector_size
+        sector_offset<span style="color:#f92672">.</span>x <span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(sector_offset<span style="color:#f92672">.</span>x)
+        sector_offset<span style="color:#f92672">.</span>y <span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(sector_offset<span style="color:#f92672">.</span>y)
+
+        _update_sectors(sector_offset)
+        _grid_drawer<span style="color:#f92672">.</span>move_grid_to(_current_sector)
+
+
+<span style="color:#66d9ef">func</span> _draw() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> data <span style="color:#f92672">in</span> _sectors<span style="color:#f92672">.</span>values():
+        <span style="color:#66d9ef">if</span> show_debug <span style="color:#f92672">and</span> data<span style="color:#f92672">.</span>seeds:
+            <span style="color:#66d9ef">for</span> point <span style="color:#f92672">in</span> data<span style="color:#f92672">.</span>seeds:
+                draw_circle(point, <span style="color:#ae81ff">12</span>, <span style="color:#a6e22e">Color</span>(<span style="color:#ae81ff">0.5</span>, <span style="color:#ae81ff">0.5</span>, <span style="color:#ae81ff">0.5</span>, <span style="color:#ae81ff">0.5</span>))
+        <span style="color:#66d9ef">if</span> data<span style="color:#f92672">.</span>planet:
+            draw_circle(data<span style="color:#f92672">.</span>planet<span style="color:#f92672">.</span>position, PLANET_BASE_SIZE <span style="color:#f92672">*</span> data<span style="color:#f92672">.</span>planet<span style="color:#f92672">.</span>scale, <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>bisque)
+        <span style="color:#66d9ef">for</span> moon <span style="color:#f92672">in</span> data<span style="color:#f92672">.</span>moons:
+            draw_circle(moon<span style="color:#f92672">.</span>position, MOON_BASE_SIZE <span style="color:#f92672">*</span> moon<span style="color:#f92672">.</span>scale, <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>aquamarine)
+        <span style="color:#66d9ef">for</span> path <span style="color:#f92672">in</span> data<span style="color:#f92672">.</span>travel_lanes:
+            <span style="color:#66d9ef">var</span> start: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> path<span style="color:#f92672">.</span>source
+            <span style="color:#66d9ef">var</span> end: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> path<span style="color:#f92672">.</span>destination
+            draw_line(start, end, <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>cornflower, <span style="color:#ae81ff">6.0</span>)
+        <span style="color:#66d9ef">for</span> asteroid <span style="color:#f92672">in</span> data<span style="color:#f92672">.</span>asteroids:
+            draw_circle(asteroid<span style="color:#f92672">.</span>position, ASTEROID_BASE_SIZE <span style="color:#f92672">*</span> asteroid<span style="color:#f92672">.</span>scale, <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>orangered)
+
+
+<span style="color:#66d9ef">func</span> generate() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> index :<span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">for</span> layer <span style="color:#f92672">in</span> LAYERS:
+        index <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> range(
+            _current_sector<span style="color:#f92672">.</span>x <span style="color:#f92672">-</span> _half_sector_count <span style="color:#f92672">+</span> index,
+            _current_sector<span style="color:#f92672">.</span>x <span style="color:#f92672">+</span> _half_sector_count <span style="color:#f92672">-</span> index
+        ):
+            <span style="color:#66d9ef">for</span> y <span style="color:#f92672">in</span> range(
+                _current_sector<span style="color:#f92672">.</span>y <span style="color:#f92672">-</span> _half_sector_count <span style="color:#f92672">+</span> index,
+                _current_sector<span style="color:#f92672">.</span>y <span style="color:#f92672">+</span> _half_sector_count <span style="color:#f92672">-</span> index
+            ):
+                <span style="color:#66d9ef">var</span> sector <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(x, y)
+                match layer:
+                    <span style="color:#e6db74">&quot;seeds&quot;</span>:
+                        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _sectors<span style="color:#f92672">.</span>has(sector):
+                            _sectors[sector] <span style="color:#f92672">=</span> LAYERS<span style="color:#f92672">.</span>duplicate(true)
+                        _generate_seeds_at(sector)
+                    <span style="color:#e6db74">&quot;planet&quot;</span>:
+                        _generate_planets_at(sector)
+                    <span style="color:#e6db74">&quot;moons&quot;</span>:
+                        _generate_moons_at(sector)
+                    <span style="color:#e6db74">&quot;travel_lanes&quot;</span>:
+                        _generate_travel_lanes_at(sector)
+                    <span style="color:#e6db74">&quot;asteroids&quot;</span>:
+                        _generate_asteroids_at(sector)
+    update()
+
+
+<span style="color:#66d9ef">func</span> _update_sectors(difference: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    _update_along_axis(AXIS_X, difference<span style="color:#f92672">.</span>x)
+    _update_along_axis(AXIS_Y, difference<span style="color:#f92672">.</span>y)
+    generate()
+
+
+<span style="color:#66d9ef">func</span> _update_along_axis(axis: <span style="color:#a6e22e">int</span>, difference: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> difference <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> (axis <span style="color:#f92672">!=</span> AXIS_X <span style="color:#f92672">and</span> axis <span style="color:#f92672">!=</span> AXIS_Y):
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">var</span> axis_current :<span style="color:#f92672">=</span> _current_sector<span style="color:#f92672">.</span>x <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X <span style="color:#66d9ef">else</span> _current_sector<span style="color:#f92672">.</span>y
+    <span style="color:#66d9ef">var</span> other_axis_min :<span style="color:#f92672">=</span> (
+        (_current_sector<span style="color:#f92672">.</span>y <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X <span style="color:#66d9ef">else</span> _current_sector<span style="color:#f92672">.</span>x)
+        <span style="color:#f92672">-</span> _half_sector_count
+    )
+    <span style="color:#66d9ef">var</span> other_axis_max :<span style="color:#f92672">=</span> (
+        (_current_sector<span style="color:#f92672">.</span>y <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X <span style="color:#66d9ef">else</span> _current_sector<span style="color:#f92672">.</span>x)
+        <span style="color:#f92672">+</span> _half_sector_count
+    )
+
+    <span style="color:#66d9ef">var</span> axis_modifier: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> difference <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> sector_index <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1</span>, abs(difference) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>):
+        <span style="color:#66d9ef">var</span> axis_key :<span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(axis_current <span style="color:#f92672">+</span> (_half_sector_count <span style="color:#f92672">-</span> axis_modifier) <span style="color:#f92672">*</span> <span style="color:#f92672">-</span>sign(difference))
+
+        <span style="color:#66d9ef">for</span> other <span style="color:#f92672">in</span> range(other_axis_min, other_axis_max):
+            <span style="color:#66d9ef">var</span> key :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(
+                axis_key <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X <span style="color:#66d9ef">else</span> other, other <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X <span style="color:#66d9ef">else</span> axis_key
+            )
+            _sectors<span style="color:#f92672">.</span>erase(key)
+
+    <span style="color:#66d9ef">if</span> axis <span style="color:#f92672">==</span> AXIS_X:
+        _current_sector<span style="color:#f92672">.</span>x <span style="color:#f92672">+=</span> difference
+    <span style="color:#66d9ef">else</span>:
+        _current_sector<span style="color:#f92672">.</span>y <span style="color:#f92672">+=</span> difference
+
+
+<span style="color:#66d9ef">func</span> _generate_seeds_at(sector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _sectors[sector]<span style="color:#f92672">.</span>seeds:
+        <span style="color:#66d9ef">return</span>
+
+    _rng<span style="color:#f92672">.</span>seed <span style="color:#f92672">=</span> make_seed_for(sector<span style="color:#f92672">.</span>x, sector<span style="color:#f92672">.</span>y, <span style="color:#e6db74">&quot;seeds&quot;</span>)
+
+    <span style="color:#66d9ef">var</span> half_size :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(_half_sector_size, _half_sector_size)
+    <span style="color:#66d9ef">var</span> margin :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(_sector_margin, _sector_margin)
+    <span style="color:#66d9ef">var</span> top_left :<span style="color:#f92672">=</span> sector <span style="color:#f92672">*</span> sector_size <span style="color:#f92672">-</span> half_size <span style="color:#f92672">+</span> margin
+    <span style="color:#66d9ef">var</span> bottom_right :<span style="color:#f92672">=</span> sector <span style="color:#f92672">*</span> sector_size <span style="color:#f92672">+</span> half_size <span style="color:#f92672">-</span> margin
+
+    <span style="color:#66d9ef">var</span> seeds :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> _i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">3</span>):
+        <span style="color:#66d9ef">var</span> seed_position :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(
+            _rng<span style="color:#f92672">.</span>randf_range(top_left<span style="color:#f92672">.</span>x, bottom_right<span style="color:#f92672">.</span>x),
+            _rng<span style="color:#f92672">.</span>randf_range(top_left<span style="color:#f92672">.</span>y, bottom_right<span style="color:#f92672">.</span>y)
+        )
+        seeds<span style="color:#f92672">.</span>append(seed_position)
+    _sectors[sector]<span style="color:#f92672">.</span>seeds <span style="color:#f92672">=</span> seeds
+
+
+<span style="color:#66d9ef">func</span> _generate_planets_at(sector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _sectors[sector]<span style="color:#f92672">.</span>planet:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">var</span> vertices: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> _sectors[sector]<span style="color:#f92672">.</span>seeds
+    <span style="color:#66d9ef">var</span> area :<span style="color:#f92672">=</span> _calculate_triangle_area(vertices[<span style="color:#ae81ff">0</span>], vertices[<span style="color:#ae81ff">1</span>], vertices[<span style="color:#ae81ff">2</span>])
+
+    <span style="color:#66d9ef">if</span> area <span style="color:#f92672">&lt;</span> planet_generation_area_threshold:
+        _sectors[sector]<span style="color:#f92672">.</span>planet <span style="color:#f92672">=</span> {
+            position <span style="color:#f92672">=</span> _calculate_triangle_epicenter(vertices[<span style="color:#ae81ff">0</span>], vertices[<span style="color:#ae81ff">1</span>], vertices[<span style="color:#ae81ff">2</span>]),
+            scale <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">+</span> area <span style="color:#f92672">/</span> (planet_generation_area_threshold <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>)
+        }
+
+
+<span style="color:#66d9ef">func</span> _generate_moons_at(sector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _sectors[sector]<span style="color:#f92672">.</span>moons <span style="color:#f92672">!=</span> []:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">var</span> planet: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> _sectors[sector]<span style="color:#f92672">.</span>planet
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> planet:
+        <span style="color:#66d9ef">return</span>
+
+    _rng<span style="color:#f92672">.</span>seed <span style="color:#f92672">=</span> make_seed_for(sector<span style="color:#f92672">.</span>x, sector<span style="color:#f92672">.</span>y, <span style="color:#e6db74">&quot;moons&quot;</span>)
+
+    <span style="color:#66d9ef">var</span> moon_count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">while</span> _rng<span style="color:#f92672">.</span>randf() <span style="color:#f92672">&lt;</span> moon_generation_chance <span style="color:#f92672">or</span> moon_count <span style="color:#f92672">==</span> max_moon_count:
+        <span style="color:#66d9ef">var</span> random_offset: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> (
+            <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>UP<span style="color:#f92672">.</span>rotated(_rng<span style="color:#f92672">.</span>randf_range(<span style="color:#f92672">-</span>PI, PI))
+            <span style="color:#f92672">*</span> planet<span style="color:#f92672">.</span>scale
+            <span style="color:#f92672">*</span> PLANET_BASE_SIZE
+            <span style="color:#f92672">*</span> <span style="color:#ae81ff">3.0</span>
+        )
+        moon_count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        _sectors[sector]<span style="color:#f92672">.</span>moons<span style="color:#f92672">.</span>append(
+            {position <span style="color:#f92672">=</span> planet<span style="color:#f92672">.</span>position <span style="color:#f92672">+</span> random_offset, scale <span style="color:#f92672">=</span> planet<span style="color:#f92672">.</span>scale <span style="color:#f92672">/</span> <span style="color:#ae81ff">3.0</span>}
+        )
+
+
+<span style="color:#66d9ef">func</span> _generate_travel_lanes_at(sector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _sectors[sector]<span style="color:#f92672">.</span>travel_lanes:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">var</span> planet: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> _sectors[sector]<span style="color:#f92672">.</span>planet
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> planet:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">for</span> neighbor <span style="color:#f92672">in</span> NEIGHBORS:
+        <span style="color:#66d9ef">var</span> neighbor_sector: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> sector <span style="color:#f92672">+</span> neighbor
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _sectors[neighbor_sector]<span style="color:#f92672">.</span>planet:
+            <span style="color:#66d9ef">continue</span>
+
+        <span style="color:#66d9ef">var</span> neighbor_position: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> _sectors[neighbor_sector]<span style="color:#f92672">.</span>planet<span style="color:#f92672">.</span>position
+        _sectors[sector]<span style="color:#f92672">.</span>travel_lanes<span style="color:#f92672">.</span>append(
+            {source <span style="color:#f92672">=</span> planet<span style="color:#f92672">.</span>position, destination <span style="color:#f92672">=</span> neighbor_position}
+        )
+
+
+<span style="color:#66d9ef">func</span> _generate_asteroids_at(sector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _sectors[sector]<span style="color:#f92672">.</span>asteroids:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">var</span> planet: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> _sectors[sector]<span style="color:#f92672">.</span>planet
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> planet <span style="color:#f92672">or</span> _sectors[sector]<span style="color:#f92672">.</span>moons <span style="color:#f92672">or</span> _sectors[sector]<span style="color:#f92672">.</span>travel_lanes:
+        <span style="color:#66d9ef">return</span>
+
+    _rng<span style="color:#f92672">.</span>seed <span style="color:#f92672">=</span> make_seed_for(sector<span style="color:#f92672">.</span>x, sector<span style="color:#f92672">.</span>y, <span style="color:#e6db74">&quot;asteroids&quot;</span>)
+
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">while</span> _rng<span style="color:#f92672">.</span>randf() <span style="color:#f92672">&lt;</span> asteroid_generation_chance <span style="color:#f92672">and</span> count <span style="color:#f92672">&lt;</span> max_asteroid_count:
+        count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+
+        <span style="color:#66d9ef">var</span> random_offset: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> (
+            <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>UP<span style="color:#f92672">.</span>rotated(_rng<span style="color:#f92672">.</span>randf_range(<span style="color:#f92672">-</span>PI, PI))
+            <span style="color:#f92672">*</span> planet<span style="color:#f92672">.</span>scale
+            <span style="color:#f92672">*</span> PLANET_BASE_SIZE
+            <span style="color:#f92672">*</span> _rng<span style="color:#f92672">.</span>randf_range(<span style="color:#ae81ff">3.0</span>, <span style="color:#ae81ff">4.0</span>)
+        )
+        _sectors[sector]<span style="color:#f92672">.</span>asteroids<span style="color:#f92672">.</span>append(
+            {position <span style="color:#f92672">=</span> planet<span style="color:#f92672">.</span>position <span style="color:#f92672">+</span> random_offset, scale <span style="color:#f92672">=</span> planet<span style="color:#f92672">.</span>scale <span style="color:#f92672">/</span> <span style="color:#ae81ff">5.0</span>}
+        )
+
+
+<span style="color:#66d9ef">func</span> _calculate_triangle_area(a: <span style="color:#a6e22e">Vector2</span>, b: <span style="color:#a6e22e">Vector2</span>, c: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">float</span>:
+    <span style="color:#66d9ef">return</span> abs(a<span style="color:#f92672">.</span>x <span style="color:#f92672">*</span> (b<span style="color:#f92672">.</span>y <span style="color:#f92672">-</span> c<span style="color:#f92672">.</span>y) <span style="color:#f92672">+</span> b<span style="color:#f92672">.</span>x <span style="color:#f92672">*</span> (c<span style="color:#f92672">.</span>y <span style="color:#f92672">-</span> a<span style="color:#f92672">.</span>y) <span style="color:#f92672">+</span> c<span style="color:#f92672">.</span>x <span style="color:#f92672">*</span> (a<span style="color:#f92672">.</span>y <span style="color:#f92672">-</span> b<span style="color:#f92672">.</span>y)) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>
+
+
+<span style="color:#66d9ef">func</span> _calculate_triangle_epicenter(a: <span style="color:#a6e22e">Vector2</span>, b: <span style="color:#a6e22e">Vector2</span>, c: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Vector2</span>:
+    <span style="color:#66d9ef">return</span> (a <span style="color:#f92672">+</span> b <span style="color:#f92672">+</span> c) <span style="color:#f92672">/</span> <span style="color:#ae81ff">3.0</span>
+
+
+<span style="color:#66d9ef">func</span> _set_show_debug(value: <span style="color:#a6e22e">bool</span>) <span style="color:#f92672">-&gt;</span> void:
+    show_debug <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+    _grid_drawer<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> show_debug
+    update()
+</pre>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpbrAsNorKY7</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="drawing-the-procedural-level">Drawing the procedural level</h1>
+<p>Now that we covered the <code>_update_*()</code> functions, we can look at the functions that place the actual rooms.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _generate_level() <span style="color:#f92672">-&gt;</span> void:
+    _reset()
+    _update_start_position()
+    <span style="color:#66d9ef">while</span> _state<span style="color:#f92672">.</span>offset<span style="color:#f92672">.</span>y <span style="color:#f92672">&lt;</span> grid_size<span style="color:#f92672">.</span>y:
+    _update_room_type()
+    _update_next_position()
+    _update_down_counter()
+
+    _place_walls()
+    _place_path_rooms()
+    _place_side_rooms()
+</pre>
+<p>In this part we’ll cover the <code>_place_walls()</code>, <code>_place_path_rooms()</code> and <code>_place_side_rooms()</code> functions.</p>
+<h2 id="placing-the-outer-walls">Placing the outer walls</h2>
+<p>We place the outer walls of the level with <code>_place_walls()</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _place_walls(type: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> cell_grid_size :<span style="color:#f92672">=</span> _grid_to_map(grid_size)
+
+    <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> [<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, cell_grid_size<span style="color:#f92672">.</span>x]:
+        <span style="color:#66d9ef">for</span> y <span style="color:#f92672">in</span> range(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, cell_grid_size<span style="color:#f92672">.</span>y <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>):
+            level<span style="color:#f92672">.</span>set_cell(x, y, type)
+
+    <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> range(cell_grid_size<span style="color:#f92672">.</span>x <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>):
+        <span style="color:#66d9ef">for</span> y <span style="color:#f92672">in</span> [<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, cell_grid_size<span style="color:#f92672">.</span>y]:
+            level<span style="color:#f92672">.</span>set_cell(x, y, type)
+</pre>
+<p>This function takes a <code>type</code> parameter which has the value <code>0</code> by default. This corresponds to our wall tile. We get the grid size of the <em>TileMap</em> via <code>_grid_to_map(grid_size)</code>. This function is covered at the end of this part.</p>
+<p>We then iterate over the two <code>x</code> positions: <code>-1</code> and <code>cell_grid_size.x</code>. For each of these we go through all the cells from <code>-1</code> to <code>cell_grid_size.y</code> and set the cell with <code>TileMap.set_cell()</code>. This creates the left and right boundaries of our level.</p>
+<p>We do the same for all the horizontal cells between <code>0</code> and <code>cell_grid_size.x</code> at the two <code>Y</code> boundaries: <code>-1</code> and <code>cell_grid_size.y</code>. This creates the top and bottom boundaries of our level.</p>
+<h2 id="placing-the-path-rooms">Placing the path rooms</h2>
+<p>Next we have the <code>_place_path_rooms()</code> function.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _place_path_rooms() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> path <span style="color:#f92672">in</span> _state<span style="color:#f92672">.</span>path:
+        yield(timer, <span style="color:#e6db74">&quot;timeout&quot;</span>)
+        _copy_room(path<span style="color:#f92672">.</span>offset, path<span style="color:#f92672">.</span>type)
+    emit_signal(<span style="color:#e6db74">&quot;path_completed&quot;</span>)
+</pre>
+<p>This is a straightforward loop over <code>_state.path</code>. For each element we use <code>_copy_room()</code> to place the appropriate cells from the <em>Rooms</em> scene.</p>
+<p>To delay the room placement, we wait on the <em>Timer</em>’s <code>timeout</code> signal using <code>yield()</code>.</p>
+<p>At the end of the process we call <code>emit_signal(&quot;path_completed&quot;)</code> so that the next function <code>_place_side_rooms()</code> will start. We’ll cover <code>_copy_room()</code> after we look at <code>_place_side_rooms</code>.</p>
+<h2 id="placing-the-side-rooms">Placing the side rooms</h2>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _place_side_rooms() <span style="color:#f92672">-&gt;</span> void:
+    yield(self, <span style="color:#e6db74">&quot;path_completed&quot;</span>)
+    <span style="color:#66d9ef">var</span> rooms_max_index: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> _rooms<span style="color:#f92672">.</span>Type<span style="color:#f92672">.</span>size() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">for</span> key <span style="color:#f92672">in</span> _state<span style="color:#f92672">.</span>empty_cells:
+        <span style="color:#66d9ef">var</span> type :<span style="color:#f92672">=</span> _rng<span style="color:#f92672">.</span>randi_range(<span style="color:#ae81ff">0</span>, rooms_max_index)
+        _copy_room(key, type)
+</pre>
+<p>When the <code>path_completed</code> signal is emitted, we again use <code>_copy_room()</code> to place cells for each position from <code>_state.empty_cells</code>. Remember that <code>_state.empty_cells</code> is a dictionary which stores the positions as keys. We pick a room type at random since it doesn’t change the valid path. These rooms can safely be <code>Type.SIDE</code> as well.</p>
+<p>Let’s now take a look at the <code>_copy_room()</code> utility function.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _copy_room(offset: <span style="color:#a6e22e">Vector2</span>, type: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> map_offset :<span style="color:#f92672">=</span> _grid_to_map(offset)
+    <span style="color:#66d9ef">var</span> data: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> _rooms<span style="color:#f92672">.</span>get_room_data(type)
+    <span style="color:#66d9ef">for</span> d <span style="color:#f92672">in</span> data:
+        level<span style="color:#f92672">.</span>set_cellv(map_offset <span style="color:#f92672">+</span> d<span style="color:#f92672">.</span>offset, d<span style="color:#f92672">.</span>cell)
+</pre>
+<p>Given an <code>offset</code> position in grid coordinates, we first convert it to <em>TileMap</em> coordinates with <code>_grid_to_map()</code>. Then we get the room data and loop over it, setting the appropriate cell with <code>set_cellv()</code>.</p>
+<h2 id="converting-grid-coordinates">Converting grid coordinates</h2>
+<p>The last functions that we need to cover are the <code>_grid_*()</code> functions.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _grid_to_map(vector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Vector2</span>:
+    <span style="color:#66d9ef">return</span> _rooms<span style="color:#f92672">.</span>room_size <span style="color:#f92672">*</span> vector
+
+<span style="color:#66d9ef">func</span> _grid_to_world(vector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Vector2</span>:
+    <span style="color:#66d9ef">return</span> _rooms<span style="color:#f92672">.</span>cell_size <span style="color:#f92672">*</span> _rooms<span style="color:#f92672">.</span>room_size <span style="color:#f92672">*</span> vector
+</pre>
+<p><code>_grid_to_map()</code> maps a vector on the level grid to a position on the <code>level</code> <em>TileMap</em>.</p>
+<p><code>_grid_to_world()</code> maps a vector from the level grid to its position in pixels. This is its position in the world.</p>
+<p>Recall that <code>_grid_to_world()</code> was used in the <code>_setup_camera()</code> function to calculate the <code>camera.position</code> property.</p>
+<h2 id="references">References</h2>
+<p>Here is the full <code>RandomWalker.gd</code> for reference.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node2D</span>
+
+
+<span style="color:#66d9ef">signal</span> path_completed
+
+<span style="color:#66d9ef">const</span> STEP :<span style="color:#f92672">=</span> [<span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>LEFT, <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>LEFT, <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>RIGHT, <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>RIGHT, <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>DOWN]
+
+<span style="color:#66d9ef">export</span> (<span style="color:#a6e22e">PackedScene</span>) <span style="color:#66d9ef">var</span> Rooms :<span style="color:#f92672">=</span> preload(<span style="color:#e6db74">&quot;Rooms.tscn&quot;</span>)
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> grid_size :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">6</span>)
+
+<span style="color:#66d9ef">var</span> _rooms: <span style="color:#a6e22e">Node2D</span> <span style="color:#f92672">=</span> null
+<span style="color:#66d9ef">var</span> _rng :<span style="color:#f92672">=</span> RandomNumberGenerator<span style="color:#f92672">.</span>new()
+<span style="color:#66d9ef">var</span> _state :<span style="color:#f92672">=</span> {}
+<span style="color:#66d9ef">var</span> _horizontal_chance :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> camera: <span style="color:#a6e22e">Camera2D</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Camera2D</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> timer: <span style="color:#a6e22e">Timer</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Timer</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> level: <span style="color:#a6e22e">TileMap</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>Level
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    _rng<span style="color:#f92672">.</span>randomize()
+
+    _rooms <span style="color:#f92672">=</span> Rooms<span style="color:#f92672">.</span>instance()
+    _horizontal_chance <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">-</span> STEP<span style="color:#f92672">.</span>count(<span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>DOWN) <span style="color:#f92672">/</span> <span style="color:#a6e22e">float</span>(STEP<span style="color:#f92672">.</span>size())
+
+    _setup_camera()
+    _generate_level()
+
+
+<span style="color:#66d9ef">func</span> _setup_camera() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> world_size :<span style="color:#f92672">=</span> _grid_to_world(grid_size)
+    camera<span style="color:#f92672">.</span>position <span style="color:#f92672">=</span>  world_size <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>
+
+    <span style="color:#66d9ef">var</span> ratio :<span style="color:#f92672">=</span> world_size <span style="color:#f92672">/</span> <span style="color:#a6e22e">OS</span><span style="color:#f92672">.</span>window_size
+    <span style="color:#66d9ef">var</span> zoom_max :<span style="color:#f92672">=</span> max(ratio<span style="color:#f92672">.</span>x, ratio<span style="color:#f92672">.</span>y) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+    camera<span style="color:#f92672">.</span>zoom <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(zoom_max, zoom_max)
+
+
+<span style="color:#66d9ef">func</span> _generate_level() <span style="color:#f92672">-&gt;</span> void:
+    _reset()
+    _update_start_position()
+    <span style="color:#66d9ef">while</span> _state<span style="color:#f92672">.</span>offset<span style="color:#f92672">.</span>y <span style="color:#f92672">&lt;</span> grid_size<span style="color:#f92672">.</span>y:
+        _update_room_type()
+        _update_next_position()
+        _update_down_counter()
+
+    _place_walls()
+    _place_path_rooms()
+    _place_side_rooms()
+
+
+<span style="color:#66d9ef">func</span> _reset() <span style="color:#f92672">-&gt;</span> void:
+    _state <span style="color:#f92672">=</span> {
+        <span style="color:#e6db74">&quot;random_index&quot;</span>: <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>,
+        <span style="color:#e6db74">&quot;offset&quot;</span>: <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO,
+        <span style="color:#e6db74">&quot;delta&quot;</span>: <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO,
+        <span style="color:#e6db74">&quot;down_counter&quot;</span>: <span style="color:#ae81ff">0</span>,
+        <span style="color:#e6db74">&quot;path&quot;</span>: [],
+        <span style="color:#e6db74">&quot;empty_cells&quot;</span>: {}
+    }
+    <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> range(grid_size<span style="color:#f92672">.</span>x):
+        <span style="color:#66d9ef">for</span> y <span style="color:#f92672">in</span> range(grid_size<span style="color:#f92672">.</span>y):
+            _state<span style="color:#f92672">.</span>empty_cells[<span style="color:#a6e22e">Vector2</span>(x, y)] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+
+<span style="color:#66d9ef">func</span> _update_start_position() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> x :<span style="color:#f92672">=</span> _rng<span style="color:#f92672">.</span>randi_range(<span style="color:#ae81ff">0</span>, grid_size<span style="color:#f92672">.</span>x <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)
+    _state<span style="color:#f92672">.</span>offset <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(x, <span style="color:#ae81ff">0</span>)
+
+
+<span style="color:#66d9ef">func</span> _update_room_type() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _state<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>empty():
+        <span style="color:#66d9ef">var</span> last: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> _state<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>back()
+
+        <span style="color:#66d9ef">if</span> last<span style="color:#f92672">.</span>type <span style="color:#f92672">in</span> _rooms<span style="color:#f92672">.</span>BOTTOM_CLOSED <span style="color:#f92672">and</span> _state<span style="color:#f92672">.</span>delta<span style="color:#f92672">.</span>is_equal_approx(<span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>DOWN):
+            <span style="color:#66d9ef">var</span> index :<span style="color:#f92672">=</span> _rng<span style="color:#f92672">.</span>randi_range(<span style="color:#ae81ff">0</span>, _rooms<span style="color:#f92672">.</span>BOTTOM_OPENED<span style="color:#f92672">.</span>size() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)
+            <span style="color:#66d9ef">var</span> type: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> (
+                _rooms<span style="color:#f92672">.</span>BOTTOM_OPENED[index]
+                <span style="color:#66d9ef">if</span> _state<span style="color:#f92672">.</span>down_counter <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>
+                <span style="color:#66d9ef">else</span> _rooms<span style="color:#f92672">.</span>Type<span style="color:#f92672">.</span>LRTB
+            )
+            _state<span style="color:#f92672">.</span>path[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>type <span style="color:#f92672">=</span> type
+
+    <span style="color:#66d9ef">var</span> type: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> (
+        _rooms<span style="color:#f92672">.</span>Type<span style="color:#f92672">.</span>LRT
+        <span style="color:#66d9ef">if</span> _state<span style="color:#f92672">.</span>delta<span style="color:#f92672">.</span>is_equal_approx(<span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>DOWN)
+        <span style="color:#66d9ef">else</span> _rng<span style="color:#f92672">.</span>randi_range(<span style="color:#ae81ff">1</span>, _rooms<span style="color:#f92672">.</span>Type<span style="color:#f92672">.</span>size() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)
+    )
+
+    _state<span style="color:#f92672">.</span>empty_cells<span style="color:#f92672">.</span>erase(_state<span style="color:#f92672">.</span>offset)
+    _state<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>push_back({<span style="color:#e6db74">&quot;offset&quot;</span>: _state<span style="color:#f92672">.</span>offset, <span style="color:#e6db74">&quot;type&quot;</span>: type})
+
+
+<span style="color:#66d9ef">func</span> _update_next_position() <span style="color:#f92672">-&gt;</span> void:
+    _state<span style="color:#f92672">.</span>random_index <span style="color:#f92672">=</span> (
+        _rng<span style="color:#f92672">.</span>randi_range(<span style="color:#ae81ff">0</span>, STEP<span style="color:#f92672">.</span>size() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)
+        <span style="color:#66d9ef">if</span> _state<span style="color:#f92672">.</span>random_index <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>
+        <span style="color:#66d9ef">else</span> _state<span style="color:#f92672">.</span>random_index
+    )
+    _state<span style="color:#f92672">.</span>delta <span style="color:#f92672">=</span> STEP[_state<span style="color:#f92672">.</span>random_index]
+
+    <span style="color:#66d9ef">var</span> horizontal_chance :<span style="color:#f92672">=</span> _rng<span style="color:#f92672">.</span>randf()
+    <span style="color:#66d9ef">if</span> _state<span style="color:#f92672">.</span>delta<span style="color:#f92672">.</span>is_equal_approx(<span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>LEFT):
+        _state<span style="color:#f92672">.</span>random_index <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">if</span> _state<span style="color:#f92672">.</span>offset<span style="color:#f92672">.</span>x <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">and</span> horizontal_chance <span style="color:#f92672">&lt;</span> _horizontal_chance <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">4</span>
+    <span style="color:#66d9ef">elif</span> _state<span style="color:#f92672">.</span>delta<span style="color:#f92672">.</span>is_equal_approx(<span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>RIGHT):
+        _state<span style="color:#f92672">.</span>random_index <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span> <span style="color:#66d9ef">if</span> _state<span style="color:#f92672">.</span>offset<span style="color:#f92672">.</span>x <span style="color:#f92672">&lt;</span> grid_size<span style="color:#f92672">.</span>x <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">and</span> horizontal_chance <span style="color:#f92672">&lt;</span> _horizontal_chance <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">4</span>
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">if</span> _state<span style="color:#f92672">.</span>offset<span style="color:#f92672">.</span>x <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">and</span> _state<span style="color:#f92672">.</span>offset<span style="color:#f92672">.</span>x <span style="color:#f92672">&lt;</span> grid_size<span style="color:#f92672">.</span>x <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>:
+            _state<span style="color:#f92672">.</span>random_index <span style="color:#f92672">=</span> _rng<span style="color:#f92672">.</span>randi_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">4</span>)
+        <span style="color:#66d9ef">elif</span> _state<span style="color:#f92672">.</span>offset<span style="color:#f92672">.</span>x <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+            _state<span style="color:#f92672">.</span>random_index <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span> <span style="color:#66d9ef">if</span> horizontal_chance <span style="color:#f92672">&lt;</span> _horizontal_chance <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">4</span>
+        <span style="color:#66d9ef">elif</span> _state<span style="color:#f92672">.</span>offset<span style="color:#f92672">.</span>x <span style="color:#f92672">==</span> grid_size<span style="color:#f92672">.</span>x <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>:
+            _state<span style="color:#f92672">.</span>random_index <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">if</span> horizontal_chance <span style="color:#f92672">&lt;</span> _horizontal_chance <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">4</span>
+
+    _state<span style="color:#f92672">.</span>delta <span style="color:#f92672">=</span> STEP[_state<span style="color:#f92672">.</span>random_index]
+    _state<span style="color:#f92672">.</span>offset <span style="color:#f92672">+=</span> _state<span style="color:#f92672">.</span>delta
+
+
+<span style="color:#66d9ef">func</span> _update_down_counter() <span style="color:#f92672">-&gt;</span> void:
+    _state<span style="color:#f92672">.</span>down_counter <span style="color:#f92672">=</span> (
+        _state<span style="color:#f92672">.</span>down_counter <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+        <span style="color:#66d9ef">if</span> _state<span style="color:#f92672">.</span>delta<span style="color:#f92672">.</span>is_equal_approx(<span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>DOWN)
+        <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">0</span>
+    )
+
+
+<span style="color:#66d9ef">func</span> _place_walls(type: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> cell_grid_size :<span style="color:#f92672">=</span> _grid_to_map(grid_size)
+
+    <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> [<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, cell_grid_size<span style="color:#f92672">.</span>x]:
+        <span style="color:#66d9ef">for</span> y <span style="color:#f92672">in</span> range(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, cell_grid_size<span style="color:#f92672">.</span>y <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>):
+            level<span style="color:#f92672">.</span>set_cell(x, y, type)
+
+    <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> range(cell_grid_size<span style="color:#f92672">.</span>x <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>):
+        <span style="color:#66d9ef">for</span> y <span style="color:#f92672">in</span> [<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, cell_grid_size<span style="color:#f92672">.</span>y]:
+            level<span style="color:#f92672">.</span>set_cell(x, y, type)
+
+
+<span style="color:#66d9ef">func</span> _place_path_rooms() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> path <span style="color:#f92672">in</span> _state<span style="color:#f92672">.</span>path:
+        yield(timer, <span style="color:#e6db74">&quot;timeout&quot;</span>)
+        _copy_room(path<span style="color:#f92672">.</span>offset, path<span style="color:#f92672">.</span>type)
+    emit_signal(<span style="color:#e6db74">&quot;path_completed&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _place_side_rooms() <span style="color:#f92672">-&gt;</span> void:
+    yield(self, <span style="color:#e6db74">&quot;path_completed&quot;</span>)
+    <span style="color:#66d9ef">var</span> rooms_max_index: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> _rooms<span style="color:#f92672">.</span>Type<span style="color:#f92672">.</span>size() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">for</span> key <span style="color:#f92672">in</span> _state<span style="color:#f92672">.</span>empty_cells:
+        <span style="color:#66d9ef">var</span> type :<span style="color:#f92672">=</span> _rng<span style="color:#f92672">.</span>randi_range(<span style="color:#ae81ff">0</span>, rooms_max_index)
+        _copy_room(key, type)
+
+
+<span style="color:#66d9ef">func</span> _copy_room(offset: <span style="color:#a6e22e">Vector2</span>, type: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> map_offset :<span style="color:#f92672">=</span> _grid_to_map(offset)
+    <span style="color:#66d9ef">var</span> data: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> _rooms<span style="color:#f92672">.</span>get_room_data(type)
+    <span style="color:#66d9ef">for</span> d <span style="color:#f92672">in</span> data:
+        level<span style="color:#f92672">.</span>set_cellv(map_offset <span style="color:#f92672">+</span> d<span style="color:#f92672">.</span>offset, d<span style="color:#f92672">.</span>cell)
+
+
+<span style="color:#66d9ef">func</span> _grid_to_map(vector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Vector2</span>:
+    <span style="color:#66d9ef">return</span> _rooms<span style="color:#f92672">.</span>room_size <span style="color:#f92672">*</span> vector
+
+
+<span style="color:#66d9ef">func</span> _grid_to_world(vector: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Vector2</span>:
+    <span style="color:#66d9ef">return</span> _rooms<span style="color:#f92672">.</span>cell_size <span style="color:#f92672">*</span> _rooms<span style="color:#f92672">.</span>room_size <span style="color:#f92672">*</span> vector
+</pre>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpmPNM4Dj3h0</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="the-strategy-pattern">The Strategy pattern</h1>
+<p>The Strategy pattern defines a <em>family</em> of algorithms, each coded in a separate class with the same interface.</p>
+<p>Another class can then use them interchangeably and delegate the implementation details to those sub-classes.</p>
+<p>The pattern mostly helps to prevent a class from growing too big by splitting some of its features into multiple files and classes, separating concerns. It also helps to avoid merge conflicts when working with a team.</p>
+<h2 id="the-problem">The problem</h2>
+<p>You are making a multiplayer game.</p>
+<p>You have a lot of communication with that central server to make the game function, keep it fair and cheat-free, and save data so players can leave and come back without losing their progress.</p>
+<p>Since the entire game needs to ask the server questions and send requests frequently, you make your <code>ServerConnection</code> class a global singleton in Godot’s Autoload tab.</p>
+<p>When you need to save some data, you call <code>save_player_data()</code>, and when you want to send some gameplay update, like an input event or a change in position, you call <code>send_player_update()</code>.</p>
+<p>Likewise, you may also have functions like <code>send_player_chat()</code>, <code>choose_game_lobby()</code>, <code>get_friends_list()</code>, and so on.</p>
+<p>Your <code>ServerConnection</code> class soon grows large. Whenever you want to make a change, you need to scroll through the endless list of functions to find the one to edit.</p>
+<p>Then you have teammates. When one teammate tries to change the player data storage function while another tries to change the player update loop, the source control complains about merge conflicts.</p>
+<p>They both tried to change the same file simultaneously, and now you have to pick and choose which parts you need to keep.</p>
+<p>There has to be a better way, right?</p>
+<h2 id="the-solution">The solution</h2>
+<p>Enter the Strategy pattern.</p>
+<p>In this pattern, you wrap an algorithm or set of work inside an object with a known interface.</p>
+<p>The strategy-caller delegates the work of figuring out <em>how</em> to do a task to the strategies.</p>
+<p>Following the <code>ServerConnection</code> example, instead of putting all the work inside the class, we could split it into different modules.</p>
+<p>You have the <code>Storage</code> module, the <code>FriendsList</code> module, along with <code>Chat</code> and <code>GameData</code>. Each one exposes some functions, like <code>save_data()</code> or <code>send_message()</code>.</p>
+<p>The <code>ServerConnection</code> class does not need to know <em>how</em> the function call will happen. <em>How</em> is a job for the modules.</p>
+<p>Those modules are the strategies. They are special classes that extend those interfaces.</p>
+<p>The use of the strategy pattern splits the work a single class has to do into specialized classes, which you can freely use to delegate tasks without knowing how each strategy works.</p>
+<p>You can even swap out one strategy for another for the same module. For example, you can replace the chat module that sends data to the server with one that pretends to so you can test your chat code even when you’re offline.</p>
+<p>That’s where the idea of interchangeability comes in handy. As all strategy classes follow the same code interface, you can replace them anytime.</p>
+<h2 id="implementations">Implementations</h2>
+<p>Let’s look at some examples of how you would build this pattern in Godot.</p>
+<p>We’ll continue with the server connection and chat theme. We have a central <code>ServerConnection</code> class, and we want to split it up into modules responsible for individual parts.</p>
+<p><em>Note that the code below is for demonstration only. Real-world network code would get a bit big, so I’ve made a simple fictional example.</em></p>
+<p><em>To see how we use the idea behind this pattern in a real-world example, see the <a href="https://github.com/heroiclabs/nakama-godot-demo">Nakama Godot demo</a>. In particular, the <code>Autoload/Delegates/</code> directory.</em></p>
+<p>All strategies have a known public interface that gets overridden by sub-classes.</p>
+<p>Our chat code should be able to call a function to send a message, and connect to a signal to receive them from the game server.</p>
+<p>We begin with a base class that exposes that interface. We also add a function we can call to establish a connection and configure everything.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name ChatStrategy
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Reference</span>
+
+<span style="color:#75715e">## Emitted by the strategy when a message arrives.</span>
+<span style="color:#66d9ef">signal</span> received_message(message)
+
+
+<span style="color:#75715e">## Sets up the chat connection and connects to required signals using built-in data.</span>
+<span style="color:#66d9ef">func</span> setup() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+
+
+<span style="color:#75715e">## Sends a message to the server if connected. Otherwise, prints an error message.</span>
+<span style="color:#66d9ef">func</span> send_message(message) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+</pre>
+<p>This is the base for our strategy and all that the connection class needs to know about. To make it actually useful, we extend it and replace those <code>pass</code> statements with useful work.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name ServerChatStrategy
+<span style="color:#66d9ef">extends</span> ChatStrategy
+
+<span style="color:#66d9ef">var</span> server_address <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+<span style="color:#66d9ef">var</span> connection: Connection
+<span style="color:#66d9ef">var</span> game_id <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+
+
+<span style="color:#66d9ef">func</span> setup() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># If we lack an address to connect to, complain and return.</span>
+    <span style="color:#66d9ef">if</span> server_address<span style="color:#f92672">.</span>empty():
+        print(<span style="color:#e6db74">&quot;Error, no server to connect to.&quot;</span>)
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># Use a third-party code library of some kind to connect to the server.</span>
+    <span style="color:#75715e"># Because connecting takes time, we use a yield statement to wait until the</span>
+    <span style="color:#75715e"># job finishes.</span>
+    connection <span style="color:#f92672">=</span> yield(NetworkAPI<span style="color:#f92672">.</span>connect_async(server_address, <span style="color:#ae81ff">5555</span>), <span style="color:#e6db74">&quot;completed&quot;</span>)
+    
+    <span style="color:#75715e"># If we failed to connect, complain and return.</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> connection:
+        print(<span style="color:#e6db74">&quot;Error, cannot connect to server </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">:5555&quot;</span> <span style="color:#f92672">%</span> [server_address])
+        <span style="color:#66d9ef">return</span>
+    
+    <span style="color:#75715e"># Get data out of the connection and connect signals.</span>
+    game_id <span style="color:#f92672">=</span> connection<span style="color:#f92672">.</span>get_room_id()
+    connection<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;received_message&quot;</span>, self, <span style="color:#e6db74">&quot;_on_received_message&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> send_message(message) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># If we&#39;re not connected, complain and return.</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> connection:
+        print(<span style="color:#e6db74">&quot;Error, no connection.&quot;</span>)
+        <span style="color:#66d9ef">return</span>
+    
+    <span style="color:#75715e"># Encode the data into a format the server expects.</span>
+    <span style="color:#66d9ef">var</span> data <span style="color:#f92672">=</span> {<span style="color:#e6db74">&quot;msg&quot;</span>: message}
+    
+    <span style="color:#75715e"># Because sending a message over the internet takes time, we use a yield</span>
+    <span style="color:#75715e"># statement to wait until the job finishes.</span>
+    <span style="color:#66d9ef">var</span> result <span style="color:#f92672">=</span> yield(connection<span style="color:#f92672">.</span>send_chat_message_async(game_id, data), <span style="color:#e6db74">&quot;completed&quot;</span>)
+    
+    <span style="color:#75715e"># If something went wrong, complain and return.</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> result<span style="color:#f92672">.</span>error_code <span style="color:#f92672">==</span> OK:
+        print(<span style="color:#e6db74">&quot;Error, failed to send chat. Error code </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [result<span style="color:#f92672">.</span>error_code])
+
+
+<span style="color:#66d9ef">func</span> _on_received_message(sender, message) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Echo the message into a format our game expects.</span>
+    emit_signal(<span style="color:#e6db74">&quot;received_message&quot;</span>, <span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">: </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [sender, message])
+</pre>
+<p>We can create different kinds of strategies that have the same interface. For example, you can create a class that is all about testing without actually needing to connect to a server, which takes time or would fail because the server isn’t online yet.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name TestChatStrategy
+<span style="color:#66d9ef">extends</span> ChatStrategy
+
+
+<span style="color:#66d9ef">func</span> send_message(message) <span style="color:#f92672">-&gt;</span> void:
+    emit_signal(<span style="color:#e6db74">&quot;received_message&quot;</span>, <span style="color:#e6db74">&quot;Test, echoing back: </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [message])
+</pre>
+<p>Now, we can replace the chat functions in <code>ServerConnection</code> that made it so long with the appropriate strategy.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">const</span> TESTING :<span style="color:#f92672">=</span> false
+<span style="color:#66d9ef">var</span> chat: ChatStrategy
+
+
+<span style="color:#66d9ef">func</span> setup() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> TESTING:
+        chat <span style="color:#f92672">=</span> TestChatStrategy<span style="color:#f92672">.</span>new()
+    <span style="color:#66d9ef">else</span>:
+        chat <span style="color:#f92672">=</span> ServerChatStrategy<span style="color:#f92672">.</span>new()
+        chat<span style="color:#f92672">.</span>server_address <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;127.0.0.1&quot;</span>
+    chat<span style="color:#f92672">.</span>setup()
+    chat<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;received_message&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Chat_received_message&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> send_chat_message(message: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> chat:
+        <span style="color:#66d9ef">return</span>
+    
+    chat<span style="color:#f92672">.</span>send_message(message)
+    GUI<span style="color:#f92672">.</span>print_chat_message(message)
+
+
+<span style="color:#66d9ef">func</span> _on_Chat_received_message(message: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    GUI<span style="color:#f92672">.</span>print_chat_message(message)
+</pre>
+<p>Now, your teammate working on chat connection can edit <code>ServerChatStrategy.gd</code> without impacting the developer working server storage.</p>
+<p>This also makes <code>ServerConnection</code> a lot smaller as you can get rid of every private function that deals with the logic of sending or receiving messages.</p>
+<p>Those details are part of the strategy now. Your <code>ServerConnection</code> class delegates the work to specialists.</p>
+<p>It uses the single-responsibility principle for Object-Oriented Programming.</p>
+<p><code>ServerConnection</code>’s job is connecting to servers. <code>ChatStrategy</code>’s job is to handle the chat.</p>
+<p>You can apply this idea to <code>DataStorage</code>, <code>FriendList</code>, so on and so forth. How granular you get depends on your particular project.</p>
+<p>Still, the Strategy pattern is there to help you break down your classes that are growing too large and too unwieldy into iteration-friendly chunks and delegates.</p>
+</body>
+</html>

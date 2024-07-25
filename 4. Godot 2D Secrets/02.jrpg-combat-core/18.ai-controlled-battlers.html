@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpcIneLqpoT1</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="ai-controlled-battlers">AI-controlled battlers</h1>
+<p>The next lessons are dedicated to Artificial Intelligence (AI). We finally have everything in place to design it.</p>
+<p>The AI is going to work in the following way:</p>
+<ol type="1">
+<li>At the start of each turn, the AI gathers information about the battlefield.</li>
+<li>It then chooses an action and a set of targets based on that information.</li>
+</ol>
+<p>We are going to use another programming pattern here called subclass sandbox. In short, it consists of using inheritance to have a base class with all the methods we need to design different kinds of AIs. Then, we inherit from that class to define specific behaviors, like an AI that favors healing or that is aggressive.</p>
+<p class="note">
+There’s once again a great guide dedicated to it in the game programming patterns ebook: <a href="http://gameprogrammingpatterns.com/subclass-sandbox.html">Subclass Sandbox</a>
+</p>
+<p>In this lesson, we will write the code that gathers information about the state of the battlefield.</p>
+<h2 id="probing-the-battlefield">Probing the battlefield</h2>
+<p>The state of combat changes after every battler’s turn. The information that’s relevant to an A also depends on its own stats and actions.</p>
+<p>That is why we will have functions that get called at the start of every turn and calculate the battlefield’s state.</p>
+<p>Gathering information means making whatever calculations you want to use for your AI. We will see a few here, but the ones you will need in your project entirely depend on how you want your battlers to behave.</p>
+<p>Let’s start by defining some properties and values the AI needs to get from the outside.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name BattlerAI
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#75715e"># The actor that has this AI brain.</span>
+<span style="color:#66d9ef">var</span> _actor: Battler
+<span style="color:#75715e"># An array of battlers in the AI&#39;s party, including the `_actor`.</span>
+<span style="color:#66d9ef">var</span> _party :<span style="color:#f92672">=</span> []
+<span style="color:#75715e"># An array of battlers that are in the opposing party.</span>
+<span style="color:#66d9ef">var</span> _opponents :<span style="color:#f92672">=</span> []
+
+
+<span style="color:#75715e"># Filters and saves the list of party members and opponents.</span>
+<span style="color:#66d9ef">func</span> setup(actor: Battler, battlers: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> void:
+    _actor <span style="color:#f92672">=</span> actor
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        <span style="color:#66d9ef">var</span> is_opponent: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> battler<span style="color:#f92672">.</span>is_party_member <span style="color:#f92672">!=</span> actor<span style="color:#f92672">.</span>is_party_member
+        <span style="color:#66d9ef">if</span> is_opponent:
+            _opponents<span style="color:#f92672">.</span>append(battler)
+        <span style="color:#66d9ef">else</span>:
+            _party<span style="color:#f92672">.</span>append(battler)
+</pre>
+<p>Here is the <code>_gather_information()</code> function. It calls many other functions and stores their return values in a dictionary.</p>
+<p>Pay attention to the <code>info</code> dictionary’s keys below, which represent the information we calculate and store. We will then look at individual functions.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Finds key information about the state of the battle so the agent can take a decision.</span>
+<span style="color:#66d9ef">func</span> _gather_information() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Dictionary</span>:
+    <span style="color:#75715e"># We first filter available actions, that is, actions the agent can use this turn.</span>
+    <span style="color:#66d9ef">var</span> actions :<span style="color:#f92672">=</span> _get_available_actions()
+    <span style="color:#66d9ef">var</span> attack_actions :<span style="color:#f92672">=</span> _get_attack_actions_from(actions)
+    <span style="color:#66d9ef">var</span> defensive_actions :<span style="color:#f92672">=</span> _get_defensive_actions_from(actions)
+
+    <span style="color:#75715e"># We then populate a dictionary with the information we want the agent to have.</span>
+    <span style="color:#66d9ef">var</span> info :<span style="color:#f92672">=</span> {
+        weakest_target <span style="color:#f92672">=</span> _get_battler_with_lowest_health(_opponents),
+        weakest_ally <span style="color:#f92672">=</span> _get_battler_with_lowest_health(_party),
+        health_status <span style="color:#f92672">=</span> _get_health_status(_actor),
+        fallen_party_count <span style="color:#f92672">=</span> _count_fallen_party(),
+        fallen_opponents_count <span style="color:#f92672">=</span> _count_fallen_opponents(),
+        available_actions <span style="color:#f92672">=</span> actions,
+        attack_actions <span style="color:#f92672">=</span> attack_actions,
+        defensive_actions <span style="color:#f92672">=</span> defensive_actions,
+        strongest_action <span style="color:#f92672">=</span> _find_most_damaging_action_from(attack_actions),
+    }
+    <span style="color:#66d9ef">return</span> info
+</pre>
+<p>Most of these functions involve comparison, counting, or arithmetics. Let’s go through them in order, starting with filtering actions. All three methods below work in a similar way: for each action in an array, we append it to a new array if it meets a condition.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Returns an array of actions the agent can use this turn.</span>
+<span style="color:#66d9ef">func</span> _get_available_actions() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> actions :<span style="color:#f92672">=</span> []
+    <span style="color:#75715e"># Note that `Battler.actions` is an array of `ActionData`.</span>
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> _actor<span style="color:#f92672">.</span>actions:
+        <span style="color:#75715e"># We call `ActionData.can_be_used_by()` to ensure the agent can use the action this turn.</span>
+        <span style="color:#66d9ef">if</span> action<span style="color:#f92672">.</span>can_be_used_by(_actor):
+            actions<span style="color:#f92672">.</span>append(action)
+    <span style="color:#66d9ef">return</span> actions
+
+
+<span style="color:#75715e"># Returns actions of type `AttackActionData` in `available_actions`.</span>
+<span style="color:#66d9ef">func</span> _get_attack_actions_from(available_actions: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> attack_actions :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> available_actions:
+        <span style="color:#66d9ef">if</span> action is AttackActionData:
+            attack_actions<span style="color:#f92672">.</span>append(action)
+    <span style="color:#66d9ef">return</span> attack_actions
+
+
+<span style="color:#75715e"># Returns actions that are *not* of type `AttackActionData` in `available_actions`.</span>
+<span style="color:#66d9ef">func</span> _get_defensive_actions_from(available_actions: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> defensive_actions :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> available_actions:
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> action is AttackActionData:
+            defensive_actions<span style="color:#f92672">.</span>append(action)
+    <span style="color:#66d9ef">return</span> defensive_actions
+</pre>
+<p>That’s how we get <code>actions</code>, <code>attack_actions</code>, and <code>defensive_actions</code> in <code>_gather_information()</code>.</p>
+<p>Next is finding the ally and opponent with the lowest health, called respectively <code>weakest_ally</code> and <code>weakest_target</code> above.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Returns the battler with the lowest health in the `battlers` array.</span>
+<span style="color:#66d9ef">func</span> _get_battler_with_lowest_health(battlers: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> Battler:
+    <span style="color:#66d9ef">var</span> weakest: Battler <span style="color:#f92672">=</span> battlers[<span style="color:#ae81ff">0</span>]
+    <span style="color:#75715e"># We loop over battlers and compare their health with the current lowest.</span>
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        <span style="color:#75715e"># If the current battler has a lower health than `weakest`, we assign it to `weakest`.</span>
+        <span style="color:#66d9ef">if</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">&lt;</span> weakest<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health:
+            weakest <span style="color:#f92672">=</span> battler
+    <span style="color:#66d9ef">return</span> weakest
+</pre>
+<p>We define arbitrary health percentages for the health status we can later use for the AI to make decisions. For instance, it could suicide when its health is critical. Here, you could instead store the agent’s remaining health ratio.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">enum</span> HealthStatus { CRITICAL, LOW, MEDIUM, HIGH, FULL }
+
+
+<span style="color:#75715e"># Returns `true` if the `battler`&#39;s health is below a given ratio.</span>
+<span style="color:#66d9ef">func</span> _is_health_below(battler: Battler, ratio: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#75715e"># We ensure the ratio is in the [0.0, 1.0] range.</span>
+    ratio <span style="color:#f92672">=</span> clamp(ratio, <span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">1.0</span>)
+    <span style="color:#66d9ef">return</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">&lt;</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>max_health <span style="color:#f92672">*</span> ratio
+
+
+<span style="color:#75715e"># Returns a member of the `HealthStatus` enum depending of the agent&#39;s current health ratio.</span>
+<span style="color:#66d9ef">func</span> _get_health_status(battler: Battler) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">if</span> _is_health_below(battler, <span style="color:#ae81ff">0.1</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>CRITICAL
+    <span style="color:#66d9ef">elif</span> _is_health_below(battler, <span style="color:#ae81ff">0.3</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>LOW
+    <span style="color:#66d9ef">elif</span> _is_health_below(battler, <span style="color:#ae81ff">0.6</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>MEDIUM
+    <span style="color:#66d9ef">elif</span> _is_health_below(battler, <span style="color:#ae81ff">1.0</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>HIGH
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>FULL
+</pre>
+<p>Next up is counting fallen allies and opponents. Both functions follow a similar logic. To implement it, we could check if the battler’s health is at <code>0</code>, but let’s add a method to the Battler class.</p>
+<p>Open <code>Battler.gd</code> and add the <code>is_fallen()</code> method.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> is_fallen() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">return</span> stats<span style="color:#f92672">.</span>health <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+</pre>
+<p>Back to <code>BattlerAI.gd</code>, add:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Returns the count of fallen party members.</span>
+<span style="color:#66d9ef">func</span> _count_fallen_party() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> ally <span style="color:#f92672">in</span> _party:
+        <span style="color:#66d9ef">if</span> ally<span style="color:#f92672">.</span>is_fallen():
+            count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">return</span> count
+
+
+<span style="color:#75715e"># Returns the count of fallen opponents.</span>
+<span style="color:#66d9ef">func</span> _count_fallen_opponents() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> opponent <span style="color:#f92672">in</span> _opponents:
+        <span style="color:#66d9ef">if</span> opponent<span style="color:#f92672">.</span>is_fallen():
+            count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">return</span> count
+</pre>
+<p>Next is finding the most damaging attack action. Below, we only calculate theoretical maximum damage. We don’t account for a potential target’s defense or other stats like evasion.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _find_most_damaging_action_from(attack_actions: <span style="color:#a6e22e">Array</span>):
+    <span style="color:#66d9ef">var</span> strongest_action
+    <span style="color:#75715e"># The strongest action is the one that will inflict the most total damage, in theory.</span>
+    <span style="color:#66d9ef">var</span> highest_damage :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> attack_actions:
+        <span style="color:#66d9ef">var</span> total_damage <span style="color:#f92672">=</span> action<span style="color:#f92672">.</span>calculate_potential_damage_for(_actor)
+        <span style="color:#75715e"># We loop over all actions and always keep the one with the highest potential damage.</span>
+        <span style="color:#66d9ef">if</span> total_damage <span style="color:#f92672">&gt;</span> highest_damage:
+            strongest_action <span style="color:#f92672">=</span> action
+            highest_damage <span style="color:#f92672">=</span> total_damage
+    <span style="color:#66d9ef">return</span> strongest_action
+</pre>
+<p>You can see we need a <code>calculate_potential_damage_for()</code> method on our action data. Open <code>AttackActionData.gd</code> and add this method.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Returns the total damage for the action, factoring in damage dealt by a status effect.</span>
+<span style="color:#66d9ef">func</span> calculate_potential_damage_for(battler) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> total_damage: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(Formulas<span style="color:#f92672">.</span>calculate_potential_damage(self, battler))
+    <span style="color:#66d9ef">return</span> total_damage
+</pre>
+<p>We will later extend it with potential damage dealt by a status effect.</p>
+<p class="note">
+You can calculate the potential of each action over each target in different ways. For instance, you could calculate a score for each of them based on the battlers’ stats and other values. Whatever best serves your game’s design.
+</p>
+<p>Back to <code>BattlerAI.gd</code>, let’s wrap up with some more functions for now. Note that you can add more as you move forward with the project: whatever allows you to better define your AI’s behavior. Here are two more. One is the opposite of <code>_is_health_below()</code>, and the other tells you if a battler is weak to a given action.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Returns true if the `battler`&#39;s health ratio is above `ratio`.</span>
+<span style="color:#66d9ef">func</span> _is_health_above(battler: Battler, ratio: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    ratio <span style="color:#f92672">=</span> clamp(ratio, <span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">1.0</span>)
+    <span style="color:#66d9ef">return</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">&gt;</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>max_health <span style="color:#f92672">*</span> ratio
+
+
+<span style="color:#75715e"># Returns `true` if the `battler` is weak to the `action`&#39;s element.</span>
+<span style="color:#66d9ef">func</span> _is_weak_to(battler: Battler, action: ActionData) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">return</span> action<span style="color:#f92672">.</span>element <span style="color:#f92672">in</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>weaknesses
+</pre>
+<p>These two can always come in handy. For example, if the AI’s health is above a given threshold, it can use one strategy, and another one when its health becomes low.</p>
+<p>Here is one more useful information we can calculate using <code>_is_weak_to()</code>: storing actions that are effective against a given opponent.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># For each ActionData key, stores an array of opponents that are weak to this action.</span>
+<span style="color:#66d9ef">var</span> _weaknesses_dict :<span style="color:#f92672">=</span> {}
+
+
+<span style="color:#75715e"># We extend the `setup()` function to initialize our `_weaknesses_dict`.</span>
+<span style="color:#66d9ef">func</span> setup(actor: Battler, battlers: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    _calculate_weaknesses()
+
+
+<span style="color:#66d9ef">func</span> _calculate_weaknesses() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> _actor<span style="color:#f92672">.</span>actions:
+        <span style="color:#75715e"># This initializes the dictionary `_weaknesses_dict`, creating a key for each `action`.</span>
+        _weaknesses_dict[action] <span style="color:#f92672">=</span> []
+        <span style="color:#66d9ef">for</span> opponent <span style="color:#f92672">in</span> _opponents:
+            <span style="color:#75715e"># We loop over each action and opponent. If the opponent is weak to the action,</span>
+            <span style="color:#75715e"># we store it in our list of weak opponents.</span>
+            <span style="color:#66d9ef">if</span> _is_weak_to(opponent, action):
+                _weaknesses_dict[action]<span style="color:#f92672">.</span>append(opponent)
+</pre>
+<p>Notice how our AI is becoming omniscient. It knows which opponent is the weakest and which action is effective against whom.</p>
+<p>The easiest way to code an artificial intelligence in game is to start with perfect information. You can then introduce a random bias or patterns in the agent’s decisions to make it interesting to battle against.</p>
+<h2 id="the-ais-code-so-far">The AI’s code so far</h2>
+<p>Here is all the code we wrote in this lesson:</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name BattlerAI
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">enum</span> HealthStatus { CRITICAL, LOW, MEDIUM, HIGH, FULL }
+
+<span style="color:#66d9ef">var</span> _actor: Battler
+<span style="color:#66d9ef">var</span> _party :<span style="color:#f92672">=</span> []
+<span style="color:#66d9ef">var</span> _opponents :<span style="color:#f92672">=</span> []
+
+<span style="color:#66d9ef">var</span> _weaknesses_dict :<span style="color:#f92672">=</span> {}
+
+
+<span style="color:#66d9ef">func</span> setup(actor: Battler, battlers: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> void:
+    _actor <span style="color:#f92672">=</span> actor
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        <span style="color:#66d9ef">var</span> is_opponent: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> battler<span style="color:#f92672">.</span>is_party_member <span style="color:#f92672">!=</span> actor<span style="color:#f92672">.</span>is_party_member
+        <span style="color:#66d9ef">if</span> is_opponent:
+            _opponents<span style="color:#f92672">.</span>append(battler)
+        <span style="color:#66d9ef">else</span>:
+            _party<span style="color:#f92672">.</span>append(battler)
+    _calculate_weaknesses()
+
+
+<span style="color:#66d9ef">func</span> _gather_information() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Dictionary</span>:
+    <span style="color:#66d9ef">var</span> actions :<span style="color:#f92672">=</span> _get_available_actions()
+    <span style="color:#66d9ef">var</span> attack_actions :<span style="color:#f92672">=</span> _get_attack_actions_from(actions)
+    <span style="color:#66d9ef">var</span> defensive_actions :<span style="color:#f92672">=</span> _get_defensive_actions_from(actions)
+
+    <span style="color:#66d9ef">var</span> info :<span style="color:#f92672">=</span> {
+        weakest_target <span style="color:#f92672">=</span> _get_battler_with_lowest_health(_opponents),
+        weakest_ally <span style="color:#f92672">=</span> _get_battler_with_lowest_health(_party),
+        health_status <span style="color:#f92672">=</span> _get_health_status(_actor),
+        fallen_party_count <span style="color:#f92672">=</span> _count_fallen_party(),
+        fallen_opponents_count <span style="color:#f92672">=</span> _count_fallen_opponents(),
+        available_actions <span style="color:#f92672">=</span> actions,
+        attack_actions <span style="color:#f92672">=</span> attack_actions,
+        defensive_actions <span style="color:#f92672">=</span> defensive_actions,
+        strongest_action <span style="color:#f92672">=</span> _find_most_damaging_action_from(attack_actions),
+    }
+    <span style="color:#66d9ef">return</span> info
+
+
+<span style="color:#66d9ef">func</span> _get_available_actions() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> actions :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> _actor<span style="color:#f92672">.</span>actions:
+        <span style="color:#66d9ef">if</span> action<span style="color:#f92672">.</span>can_be_used_by(_actor):
+            actions<span style="color:#f92672">.</span>append(action)
+    <span style="color:#66d9ef">return</span> actions
+
+
+<span style="color:#66d9ef">func</span> _get_attack_actions_from(available_actions: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> attack_actions :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> available_actions:
+        <span style="color:#66d9ef">if</span> action is AttackActionData:
+            attack_actions<span style="color:#f92672">.</span>append(action)
+    <span style="color:#66d9ef">return</span> attack_actions
+
+
+<span style="color:#66d9ef">func</span> _get_defensive_actions_from(available_actions: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> defensive_actions :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> available_actions:
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> action is AttackActionData:
+            defensive_actions<span style="color:#f92672">.</span>append(action)
+    <span style="color:#66d9ef">return</span> defensive_actions
+
+
+<span style="color:#66d9ef">func</span> _get_battler_with_lowest_health(battlers: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> Battler:
+    <span style="color:#66d9ef">var</span> weakest: Battler <span style="color:#f92672">=</span> battlers[<span style="color:#ae81ff">0</span>]
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        <span style="color:#66d9ef">if</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">&lt;</span> weakest<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health:
+            weakest <span style="color:#f92672">=</span> battler
+    <span style="color:#66d9ef">return</span> weakest
+
+
+<span style="color:#66d9ef">func</span> _is_health_below(battler: Battler, ratio: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    ratio <span style="color:#f92672">=</span> clamp(ratio, <span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">1.0</span>)
+    <span style="color:#66d9ef">return</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">&lt;</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>max_health <span style="color:#f92672">*</span> ratio
+
+
+<span style="color:#66d9ef">func</span> _is_health_above(battler: Battler, ratio: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    ratio <span style="color:#f92672">=</span> clamp(ratio, <span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">1.0</span>)
+    <span style="color:#66d9ef">return</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">&gt;</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>max_health <span style="color:#f92672">*</span> ratio
+
+
+<span style="color:#66d9ef">func</span> _get_health_status(battler: Battler) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">if</span> _is_health_below(battler, <span style="color:#ae81ff">0.1</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>CRITICAL
+    <span style="color:#66d9ef">elif</span> _is_health_below(battler, <span style="color:#ae81ff">0.3</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>LOW
+    <span style="color:#66d9ef">elif</span> _is_health_below(battler, <span style="color:#ae81ff">0.6</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>MEDIUM
+    <span style="color:#66d9ef">elif</span> _is_health_below(battler, <span style="color:#ae81ff">1.0</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>HIGH
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>FULL
+
+
+<span style="color:#66d9ef">func</span> _count_fallen_party() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> ally <span style="color:#f92672">in</span> _party:
+        <span style="color:#66d9ef">if</span> ally<span style="color:#f92672">.</span>is_fallen():
+            count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">return</span> count
+
+
+<span style="color:#66d9ef">func</span> _count_fallen_opponents() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> opponent <span style="color:#f92672">in</span> _opponents:
+        <span style="color:#66d9ef">if</span> opponent<span style="color:#f92672">.</span>is_fallen():
+            count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">return</span> count
+
+
+<span style="color:#66d9ef">func</span> _find_most_damaging_action_from(attack_actions: <span style="color:#a6e22e">Array</span>):
+    <span style="color:#66d9ef">var</span> strongest_action
+    <span style="color:#66d9ef">var</span> highest_damage :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> attack_actions:
+        <span style="color:#66d9ef">var</span> total_damage <span style="color:#f92672">=</span> action<span style="color:#f92672">.</span>calculate_potential_damage_for(_actor)
+        <span style="color:#66d9ef">if</span> total_damage <span style="color:#f92672">&gt;</span> highest_damage:
+            strongest_action <span style="color:#f92672">=</span> action
+            highest_damage <span style="color:#f92672">=</span> total_damage
+    <span style="color:#66d9ef">return</span> strongest_action
+
+
+<span style="color:#66d9ef">func</span> _is_weak_to(battler: Battler, action: ActionData) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">return</span> action<span style="color:#f92672">.</span>element <span style="color:#f92672">in</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>weaknesses
+
+
+<span style="color:#66d9ef">func</span> _calculate_weaknesses() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> _actor<span style="color:#f92672">.</span>actions:
+        _weaknesses_dict[action] <span style="color:#f92672">=</span> []
+        <span style="color:#66d9ef">for</span> opponent <span style="color:#f92672">in</span> _opponents:
+            <span style="color:#66d9ef">if</span> _is_weak_to(opponent, action):
+                _weaknesses_dict[action]<span style="color:#f92672">.</span>append(opponent)
+</pre>
+</body>
+</html>

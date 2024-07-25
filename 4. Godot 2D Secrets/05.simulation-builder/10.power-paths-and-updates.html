@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tmpq1cCcHi1V9</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="sending-power-from-sources-to-receivers">Sending power from sources to receivers</h1>
+<p>In this lesson, we’ll implement sending electricity from power sources to receivers, following wires.</p>
+<p>Our power system has two main jobs:</p>
+<ol type="1">
+<li>It keeps track of power providers and total available power in the system.</li>
+<li>It notifies receivers to tell them how much power is available to them.</li>
+</ol>
+<p>We’ll keep track of the total power in the system by way of “power paths” (the <code>PowerSystem.paths</code> variable), an array of map positions that begin with a power source followed by one or more power receivers.</p>
+<p>The power system runs a loop over those paths, notifying entities about the power in use and traveling from entity to entity. It also keeps a tally of the energy used in that particular path.</p>
+<h2 id="building-power-paths">Building power paths</h2>
+<p>Let’s write the code to trace paths between power sources and receivers. To do so, we need to start from each source and loop over all the cells that contain wires.</p>
+<p>We’ll use two functions to do so: <code>_retrace_paths()</code>, that re-calculates all power paths, and <code>_trace_path_from()</code>, which traces one path recursively from a given cell.</p>
+<p><em>Note we’re still working in <code>PowerSystem.gd</code>.</em></p>
+<p>Here’s how the code generally works:</p>
+<ol type="1">
+<li>For every power source, we’ll add them to an array and begin to travel outwards into the neighboring cells in a loop.</li>
+<li>As long as there is a power mover or a power receiver, we keep traveling outwards until there are no more cells to visit.</li>
+<li>Power receivers go into the array which creates a path that goes from source directly to receivers.</li>
+</ol>
+<p>Here’s the code.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Replace all paths with new ones based on the components&#39; current state.</span>
+<span style="color:#66d9ef">func</span> _retrace_paths() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Clear old paths.</span>
+    paths<span style="color:#f92672">.</span>clear()
+
+    <span style="color:#75715e"># For each power source...</span>
+    <span style="color:#66d9ef">for</span> source <span style="color:#f92672">in</span> power_sources<span style="color:#f92672">.</span>keys():
+        <span style="color:#75715e"># ...start a brand new path trace so all cells are possible contenders,</span>
+        cells_travelled<span style="color:#f92672">.</span>clear()
+        
+        <span style="color:#75715e"># trace the path the current cell location, with an array with the source&#39;s cell as index 0.</span>
+        <span style="color:#66d9ef">var</span> path :<span style="color:#f92672">=</span> _trace_path_from(source, [source])
+
+        <span style="color:#75715e"># And we add the result to the `paths` array.</span>
+        paths<span style="color:#f92672">.</span>push_back(path)
+</pre>
+<p>We use a recursive function to trace individual paths. We keep track of a current cell and cells that are already visited and check the neighbors one cell at a time.</p>
+<p>It will be a big function, so we’ll break its code down into several steps. The initial code starts filling the <code>cells_travelled</code> array and then looks for power receivers in neighbor cells.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Recursively trace a path from the source cell outwards, skipping already</span>
+<span style="color:#75715e">## visited cells, going through cells recognized by the power system.</span>
+<span style="color:#66d9ef">func</span> _trace_path_from(cellv: <span style="color:#a6e22e">Vector2</span>, path: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#75715e"># As soon as we reach any given cell, we keep track that we&#39;ve already visited it.</span>
+    <span style="color:#75715e"># Recursive functions are sensitive to overflowing, so this ensures we won&#39;t</span>
+    <span style="color:#75715e"># travel back and forth between two cells forever until the game crashes.</span>
+    cells_travelled<span style="color:#f92672">.</span>push_back(cellv)
+
+    <span style="color:#75715e"># The default direction for most components, like the generator, is omni-directional,</span>
+    <span style="color:#75715e"># that&#39;s UP + LEFT + RIGHT + DOWN in our Types.</span>
+    <span style="color:#66d9ef">var</span> direction :<span style="color:#f92672">=</span> <span style="color:#ae81ff">15</span>
+    <span style="color:#75715e"># If the current cell is a power source component, use _its_ direction instead.</span>
+    <span style="color:#66d9ef">if</span> power_sources<span style="color:#f92672">.</span>has(cellv):
+        direction <span style="color:#f92672">=</span> power_sources[cellv]<span style="color:#f92672">.</span>output_direction
+
+    <span style="color:#75715e"># Get the power receivers that are neighbors to this cell, if there are any,</span>
+    <span style="color:#75715e"># based on the direction.</span>
+    <span style="color:#66d9ef">var</span> receivers :<span style="color:#f92672">=</span> _find_neighbors_in(cellv, power_receivers, direction)
+</pre>
+<p>Let’s pause the implementation of <code>_trace_path_from()</code> for a second and add the missing <code>_find_neighbors_in()</code> function</p>
+<p>To find the neighbors, we can use our trusty <code>Types</code> class’ direction enum while specifying the dictionary we’re actually trying to look inside of.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## For each neighbor in the given direction, check if it exists in the collection we specify,</span>
+<span style="color:#75715e">## and return an array of map positions with those that do.</span>
+<span style="color:#66d9ef">func</span> _find_neighbors_in(cellv: <span style="color:#a6e22e">Vector2</span>, collection: <span style="color:#a6e22e">Dictionary</span>, output_directions: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">15</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> neighbors :<span style="color:#f92672">=</span> []
+    <span style="color:#75715e"># For each of UP, DOWN, LEFT and RIGHT</span>
+    <span style="color:#66d9ef">for</span> neighbor <span style="color:#f92672">in</span> Types<span style="color:#f92672">.</span>NEIGHBORS<span style="color:#f92672">.</span>keys():
+        
+        <span style="color:#75715e"># With binary numbers, comparing two values with the &quot;&amp;&quot; operator compares binary bit of the two numbers,</span>
+        <span style="color:#75715e"># resulting in a number whose bits that match are 1 and those that don&#39;t are 0.</span>
+        <span style="color:#75715e"># For example, in binary, 1 is 0001, 2 is 0010, 3 is 0011, and 4 is 0100.</span>
+        <span style="color:#75715e"># We can say that 3 contains 1 and 2 because 3 has both rightmost bits set to `1`,</span>
+        <span style="color:#75715e"># but `4 &amp; 3` results in 0 because none of their bits match.</span>
+        <span style="color:#75715e"># We can leverage these properties when working with flags to compare them. This is a common pattern, and we&#39;ll use it for our direction values.</span>
+        
+        <span style="color:#75715e"># This condition means &quot;if the current neighbor flag has bits that match the</span>
+        <span style="color:#75715e"># specified direction&quot;:</span>
+        <span style="color:#66d9ef">if</span> neighbor <span style="color:#f92672">&amp;</span> output_directions <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+            
+            <span style="color:#75715e"># Calculate its map coordinate</span>
+            <span style="color:#66d9ef">var</span> key: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> cellv <span style="color:#f92672">+</span> Types<span style="color:#f92672">.</span>NEIGHBORS[neighbor]
+            
+            <span style="color:#75715e"># If it&#39;s in the specified collection, add it to the neighbors array</span>
+            <span style="color:#66d9ef">if</span> collection<span style="color:#f92672">.</span>has(key):
+                neighbors<span style="color:#f92672">.</span>push_back(key)
+
+    <span style="color:#75715e"># Return the array of neighbors that match the collection</span>
+    <span style="color:#66d9ef">return</span> neighbors
+</pre>
+<p>With this helper function completed, we can go back to the <code>_trace_path_from()</code> function and start looping over each of the power receivers we found, if any.</p>
+<p>We need to compare the direction power is traveling <em>in</em> to the direction the power receiver can receive power <em>from</em>. A power receiver that takes power from its left side needs the power to be traveling left to right and vice versa. We code a helper function to get the integer out of the current traveling direction.</p>
+<p>We add the following code at the end of <code>_trace_path_from()</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _trace_path_from(cellv: <span style="color:#a6e22e">Vector2</span>, path: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#75715e"># ...</span>
+    <span style="color:#66d9ef">for</span> receiver <span style="color:#f92672">in</span> receivers:
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> receiver <span style="color:#f92672">in</span> cells_travelled <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> receiver <span style="color:#f92672">in</span> path:
+            <span style="color:#75715e"># Create an integer that indicates the direction power is</span>
+            <span style="color:#75715e"># traveling in to compare it to the receiver&#39;s direction.</span>
+            <span style="color:#75715e"># For example, if the power is traveling from left to right but the receiver</span>
+            <span style="color:#75715e"># does not accept power coming from _its_ left, it should not be in the list.</span>
+            <span style="color:#66d9ef">var</span> combined_direction :<span style="color:#f92672">=</span> _combine_directions(receiver, cellv)
+
+
+<span style="color:#75715e">## Compare a source to a target map position and return a direction integer</span>
+<span style="color:#75715e">## that indicates the direction power is traveling in.</span>
+<span style="color:#66d9ef">func</span> _combine_directions(receiver: <span style="color:#a6e22e">Vector2</span>, cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">if</span> receiver<span style="color:#f92672">.</span>x <span style="color:#f92672">&lt;</span> cellv<span style="color:#f92672">.</span>x:
+        <span style="color:#66d9ef">return</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>LEFT
+    <span style="color:#66d9ef">elif</span> receiver<span style="color:#f92672">.</span>x <span style="color:#f92672">&gt;</span> cellv<span style="color:#f92672">.</span>x:
+        <span style="color:#66d9ef">return</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>RIGHT
+    <span style="color:#66d9ef">elif</span> receiver<span style="color:#f92672">.</span>y <span style="color:#f92672">&lt;</span> cellv<span style="color:#f92672">.</span>y:
+        <span style="color:#66d9ef">return</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>UP
+    <span style="color:#66d9ef">elif</span> receiver<span style="color:#f92672">.</span>y <span style="color:#f92672">&gt;</span> cellv<span style="color:#f92672">.</span>y:
+        <span style="color:#66d9ef">return</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>DOWN
+
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+</pre>
+<p>Which we can then use the combined <code>direction</code> value to see if the receiver is valid and add it to the path or if we should skip it.</p>
+<p>Then, we can exit out of the loop and start planning to travel down any other wires around the current cell and repeat the process all over again.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _trace_path_from(cellv: <span style="color:#a6e22e">Vector2</span>, path: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#75715e"># ...</span>
+    <span style="color:#75715e">#for receiver in receivers:</span>
+        <span style="color:#75715e">#if not receiver in cells_travelled:</span>
+            <span style="color:#75715e"># var combined_direction := _combine_directions(receiver, cellv)</span>
+            <span style="color:#75715e"># Get the power receiver</span>
+            <span style="color:#66d9ef">var</span> power_receiver: PowerReceiver <span style="color:#f92672">=</span> power_receivers[receiver]
+            <span style="color:#75715e"># If the current direction does not match any of the receiver&#39;s possible</span>
+            <span style="color:#75715e"># directions (using the binary and operator, &amp;, to check if the number fits</span>
+            <span style="color:#75715e"># inside the other), skip this receiver and move on to the next one.</span>
+            <span style="color:#66d9ef">if</span> (
+                (
+                    combined_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>RIGHT <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>
+                    <span style="color:#f92672">and</span> power_receiver<span style="color:#f92672">.</span>input_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>LEFT <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+                )
+                <span style="color:#f92672">or</span> (
+                    combined_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>DOWN <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>
+                    <span style="color:#f92672">and</span> power_receiver<span style="color:#f92672">.</span>input_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>UP <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+                )
+                <span style="color:#f92672">or</span> (
+                    combined_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>LEFT <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>
+                    <span style="color:#f92672">and</span> power_receiver<span style="color:#f92672">.</span>input_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>RIGHT <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+                )
+                <span style="color:#f92672">or</span> (
+                    combined_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>UP <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>
+                    <span style="color:#f92672">and</span> power_receiver<span style="color:#f92672">.</span>input_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>DOWN <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+                )
+            ):
+                <span style="color:#66d9ef">continue</span>
+                
+            <span style="color:#75715e"># Otherwise, add it to the path.</span>
+            path<span style="color:#f92672">.</span>push_back(receiver)
+
+    <span style="color:#75715e"># We&#39;ve done the receivers. Now, we check for any possible wires so we can keep</span>
+    <span style="color:#75715e"># traveling.</span>
+    <span style="color:#66d9ef">var</span> movers :<span style="color:#f92672">=</span> _find_neighbors_in(cellv, power_movers, direction)
+
+    <span style="color:#75715e"># Call this same function again from the new cell position for any wire that</span>
+    <span style="color:#75715e"># found and travel from there, and return the result, so long as we</span>
+    <span style="color:#75715e"># did not visit it already.</span>
+    <span style="color:#75715e"># This is what makes the function recursive, that is to say, calling itself.</span>
+    <span style="color:#66d9ef">for</span> mover <span style="color:#f92672">in</span> movers:
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> mover <span style="color:#f92672">in</span> cells_travelled:
+            path <span style="color:#f92672">=</span> _trace_path_from(mover, path)
+
+    <span style="color:#75715e"># Return the final array</span>
+    <span style="color:#66d9ef">return</span> path
+</pre>
+<p>The result is an array like <code>[(17, 7), (24, 7), (22, 3)]</code> that represents the 2D location on our map of a power source followed by the location of one or more power receivers. The power movers are not in the list to keep the arrays small and easy to iterate over.</p>
+<h2 id="steps-and-theory-to-provide-power">Steps and theory to provide power</h2>
+<p>To provide power, we need to iterate over each path and keep a running tally of how much power is in the system at a given time.</p>
+<p>We go over each path, which has its own power source, then iterate over each receiver to provide it power. At least, so long as we have some still available. Otherwise, we send <code>0</code>. That means we need to keep a running tally of the available power and how much power the receivers request.</p>
+<p>To notify the power sources and receivers of this power draw and provision, we use their signals, which will notify the entities to do something, like storing power or burning fuel.</p>
+<p>That’s where the signal we defined in the previous lesson, <code>Events.systems_ticked</code>, comes into play.</p>
+<p>We add the following callback function to the <code>PowerSystem.gd</code> script.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## For each system tick, calculate the power for each path and notify</span>
+<span style="color:#75715e">## the components.</span>
+<span style="color:#66d9ef">func</span> _on_systems_ticked(delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># We&#39;re in a new tick, so clear all power received and start over.</span>
+    receivers_already_provided<span style="color:#f92672">.</span>clear()
+
+    <span style="color:#75715e"># For each power path,</span>
+    <span style="color:#66d9ef">for</span> path <span style="color:#f92672">in</span> paths:
+        <span style="color:#75715e"># Get the path&#39;s power source, which is the first element</span>
+        <span style="color:#66d9ef">var</span> power_source: PowerSource <span style="color:#f92672">=</span> power_sources[path[<span style="color:#ae81ff">0</span>]]
+
+        <span style="color:#75715e"># Get the effective power the source has to give. It cannot provide more than that amount.</span>
+        <span style="color:#66d9ef">var</span> source_power :<span style="color:#f92672">=</span> power_source<span style="color:#f92672">.</span>get_effective_power()
+        <span style="color:#75715e"># In this variable, we keep a tally of how much power remains in the path. It begins at the</span>
+        <span style="color:#75715e"># source power.</span>
+        <span style="color:#66d9ef">var</span> remaining_power :<span style="color:#f92672">=</span> source_power
+        
+        <span style="color:#75715e"># A running tally of the power drawn by receivers in this path.</span>
+        <span style="color:#66d9ef">var</span> power_draw :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+
+        <span style="color:#75715e"># For each power receiver in the path (elements of the `path` array after index 0)</span>
+        <span style="color:#66d9ef">for</span> cell <span style="color:#f92672">in</span> path<span style="color:#f92672">.</span>slice(<span style="color:#ae81ff">1</span>, path<span style="color:#f92672">.</span>size()<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>):
+            <span style="color:#75715e"># If, for some reason, the element is not in our list, skip it.</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> power_receivers<span style="color:#f92672">.</span>has(cell):
+                <span style="color:#66d9ef">continue</span>
+
+            <span style="color:#75715e"># Get the actual power receiver component and calculate how much power</span>
+            <span style="color:#75715e"># it desires.</span>
+            <span style="color:#66d9ef">var</span> power_receiver: PowerReceiver <span style="color:#f92672">=</span> power_receivers[cell]
+            <span style="color:#66d9ef">var</span> power_required :<span style="color:#f92672">=</span> power_receiver<span style="color:#f92672">.</span>get_effective_power()
+
+            <span style="color:#75715e"># Keep track of the total amount of power each receiver has already</span>
+            <span style="color:#75715e"># received, in case of more than one power source. Subtract the power</span>
+            <span style="color:#75715e"># the receiver still needs so we don&#39;t draw more than necessary.</span>
+            <span style="color:#66d9ef">if</span> receivers_already_provided<span style="color:#f92672">.</span>has(cell):
+                <span style="color:#66d9ef">var</span> receiver_total: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> receivers_already_provided[cell]
+                <span style="color:#66d9ef">if</span> receiver_total <span style="color:#f92672">&gt;=</span> power_required:
+                    <span style="color:#66d9ef">continue</span>
+                <span style="color:#66d9ef">else</span>:
+                    power_required <span style="color:#f92672">-=</span> receiver_total
+
+            <span style="color:#75715e"># Notify the receiver of the power available to it from this source.</span>
+            power_receiver<span style="color:#f92672">.</span>emit_signal(
+                <span style="color:#e6db74">&quot;received_power&quot;</span>, min(remaining_power, power_required), delta
+            )
+
+            <span style="color:#75715e"># Add to the tally of the power required from this power source.</span>
+            <span style="color:#75715e"># We keep it clamped so that the machine cannot draw more power than</span>
+            <span style="color:#75715e"># the machine can provide.</span>
+            power_draw <span style="color:#f92672">=</span> min(source_power, power_draw <span style="color:#f92672">+</span> power_required)
+
+            <span style="color:#75715e"># Add to the running tally for this particular cell for</span>
+            <span style="color:#75715e"># any future power source. Add it if it does not exist.</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> receivers_already_provided<span style="color:#f92672">.</span>has(cell):
+                receivers_already_provided[cell] <span style="color:#f92672">=</span> min(remaining_power, power_required)
+            <span style="color:#66d9ef">else</span>:
+                receivers_already_provided[cell] <span style="color:#f92672">+=</span> min(remaining_power, power_required)
+
+            <span style="color:#75715e"># Reduce the amount of power still available to other receivers by the</span>
+            <span style="color:#75715e"># amount that _this_ receiver took. We clamp it to 0 so it cannot provide</span>
+            <span style="color:#75715e"># negative power.</span>
+            remaining_power <span style="color:#f92672">=</span> max(<span style="color:#ae81ff">0</span>, remaining_power <span style="color:#f92672">-</span> power_required)
+            
+            <span style="color:#75715e"># At this point, if we have no power left, then just break.</span>
+            <span style="color:#75715e"># Any other machine on the path will not be able to update with 0</span>
+            <span style="color:#75715e"># power anyway, so we can skip them.</span>
+            <span style="color:#66d9ef">if</span> remaining_power <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+                <span style="color:#66d9ef">break</span>
+
+        <span style="color:#75715e"># Notify the power source of the amount of power that it provided.</span>
+        power_source<span style="color:#f92672">.</span>emit_signal(<span style="color:#e6db74">&quot;power_updated&quot;</span>, power_draw, delta)
+</pre>
+<h2 id="triggering-updates-from-simulation">Triggering updates from simulation</h2>
+<p>All we have left is to update the simulation at regular intervals.</p>
+<p>We could do that from <code>_process()</code> or <code>_physics_process()</code>, but we don’t need it to update 60 or more times per second. Running it less often will give us better performance as the player’s system, and factory grows in size and complexity.</p>
+<p>In that case, we’ll update 30 times per second.</p>
+<p><em>If you code a heavy simulation game, an option is to code a smart system that keeps track of effective frame times and adapts the update frequency to keep the player experience running smoothly, even if the simulation itself runs a bit slow.</em></p>
+<p>We head back to <code>Simulation.gd</code>, where we add a configurable update time and instantiate our <code>PowerSystem</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">#...</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> simulation_speed :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">30.0</span>
+
+<span style="color:#75715e">#...</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _power_system :<span style="color:#f92672">=</span> PowerSystem<span style="color:#f92672">.</span>new()
+</pre>
+<p>To actually trigger the signal, we can add a <em>Timer</em> node as a child of <em>Simulation</em>, connect its <code>timeout</code> to the <em>Simulation</em> node, and emit the <code>Events.systems_ticked</code> signal in the <code>_on_Timer_timeout()</code> callback.</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAS4AAADYCAIAAADanpmkAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFyGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIwLTEyLTIzVDE1OjMwOjE1LTA1OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDIwLTEyLTIzVDE1OjMwOjE1LTA1OjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMC0xMi0yM1QxNTozMDoxNS0wNTowMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo2MTYwOWFjOC0yMzNlLTU4NDQtOTgxMy1mMzQxODUzYzg5NzIiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDo1MTg3NDUxMC0wODZkLWY5NGUtOTAyOC0y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" /></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready():
+    <span style="color:#f92672">$</span><span style="color:#a6e22e">Timer</span><span style="color:#f92672">.</span>start(simulation_speed)
+    <span style="color:#75715e">#...</span>
+
+
+<span style="color:#66d9ef">func</span> _on_Timer_timeout() <span style="color:#f92672">-&gt;</span> void:
+    Events<span style="color:#f92672">.</span>emit_signal(<span style="color:#e6db74">&quot;systems_ticked&quot;</span>, simulation_speed)
+</pre>
+<p>Make sure that the timer is <strong>not</strong> set to <code>one_shot</code>.</p>
+<p>If you add an engine and go into the power system and set a breakpoint or <code>print(remaining_power)</code> call in <code>PowerSystem._on_system_ticked()</code>, you should be able to follow the update cycle and see the available power as the engine primes itself from zero to full power!</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAh4AAAB6CAIAAAB/W814AAAACXBIWXMAAAsTAAALEwEAmpwYAAAFyGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIwLTEyLTIzVDE1OjI4OjE3LTA1OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDIwLTEyLTIzVDE1OjI4OjE4LTA1OjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMC0xMi0yM1QxNToyODoxOC0wNTowMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpmOTVhYzEwZS1iNjdkLTRlNGEtYjI4ZC0yZWZhYzI5ODg4NTMiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDphNWVjZGIwNS0yZmQ4LWZjNGItYjQwOS0z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" /></p>
+<h2 id="code-reference">Code reference</h2>
+<p>Here are the new and modified scripts in this lesson.</p>
+<p>First is <code>PowerSystem.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _retrace_paths() <span style="color:#f92672">-&gt;</span> void:
+    paths<span style="color:#f92672">.</span>clear()
+
+    <span style="color:#66d9ef">for</span> source <span style="color:#f92672">in</span> power_sources<span style="color:#f92672">.</span>keys():
+        cells_travelled<span style="color:#f92672">.</span>clear()
+        <span style="color:#66d9ef">var</span> path :<span style="color:#f92672">=</span> _trace_path_from(source, [source])
+        paths<span style="color:#f92672">.</span>push_back(path)
+
+
+<span style="color:#66d9ef">func</span> _trace_path_from(cellv: <span style="color:#a6e22e">Vector2</span>, path: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    cells_travelled<span style="color:#f92672">.</span>push_back(cellv)
+
+    <span style="color:#66d9ef">var</span> direction :<span style="color:#f92672">=</span> <span style="color:#ae81ff">15</span>
+    <span style="color:#66d9ef">if</span> power_sources<span style="color:#f92672">.</span>has(cellv):
+        direction <span style="color:#f92672">=</span> power_sources[cellv]<span style="color:#f92672">.</span>output_direction
+
+    <span style="color:#66d9ef">var</span> receivers :<span style="color:#f92672">=</span> _find_neighbors_in(cellv, power_receivers, direction)
+    <span style="color:#66d9ef">for</span> receiver <span style="color:#f92672">in</span> receivers:
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> receiver <span style="color:#f92672">in</span> cells_travelled <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> receiver <span style="color:#f92672">in</span> path:
+            <span style="color:#66d9ef">var</span> combined_direction :<span style="color:#f92672">=</span> _combine_directions(receiver, cellv)
+            <span style="color:#66d9ef">var</span> power_receiver: PowerReceiver <span style="color:#f92672">=</span> power_receivers[receiver]
+            <span style="color:#66d9ef">if</span> (
+                (
+                    combined_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>RIGHT <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>
+                    <span style="color:#f92672">and</span> power_receiver<span style="color:#f92672">.</span>input_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>LEFT <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+                )
+                <span style="color:#f92672">or</span> (
+                    combined_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>DOWN <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>
+                    <span style="color:#f92672">and</span> power_receiver<span style="color:#f92672">.</span>input_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>UP <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+                )
+                <span style="color:#f92672">or</span> (
+                    combined_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>LEFT <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>
+                    <span style="color:#f92672">and</span> power_receiver<span style="color:#f92672">.</span>input_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>RIGHT <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+                )
+                <span style="color:#f92672">or</span> (
+                    combined_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>UP <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>
+                    <span style="color:#f92672">and</span> power_receiver<span style="color:#f92672">.</span>input_direction <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>DOWN <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+                )
+            ):
+                <span style="color:#66d9ef">continue</span>
+                
+            path<span style="color:#f92672">.</span>push_back(receiver)
+
+    <span style="color:#66d9ef">var</span> movers :<span style="color:#f92672">=</span> _find_neighbors_in(cellv, power_movers, direction)
+    <span style="color:#66d9ef">for</span> mover <span style="color:#f92672">in</span> movers:
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> mover <span style="color:#f92672">in</span> cells_travelled:
+            path <span style="color:#f92672">=</span> _trace_path_from(mover, path)
+
+    <span style="color:#66d9ef">return</span> path
+
+
+<span style="color:#66d9ef">func</span> _combine_directions(receiver: <span style="color:#a6e22e">Vector2</span>, cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">if</span> receiver<span style="color:#f92672">.</span>x <span style="color:#f92672">&lt;</span> cellv<span style="color:#f92672">.</span>x:
+        <span style="color:#66d9ef">return</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>LEFT
+    <span style="color:#66d9ef">elif</span> receiver<span style="color:#f92672">.</span>x <span style="color:#f92672">&gt;</span> cellv<span style="color:#f92672">.</span>x:
+        <span style="color:#66d9ef">return</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>RIGHT
+    <span style="color:#66d9ef">elif</span> receiver<span style="color:#f92672">.</span>y <span style="color:#f92672">&lt;</span> cellv<span style="color:#f92672">.</span>y:
+        <span style="color:#66d9ef">return</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>UP
+    <span style="color:#66d9ef">elif</span> receiver<span style="color:#f92672">.</span>y <span style="color:#f92672">&gt;</span> cellv<span style="color:#f92672">.</span>y:
+        <span style="color:#66d9ef">return</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>DOWN
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+
+
+<span style="color:#66d9ef">func</span> _find_neighbors_in(cellv: <span style="color:#a6e22e">Vector2</span>, collection: <span style="color:#a6e22e">Dictionary</span>, output_directions: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">15</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> neighbors :<span style="color:#f92672">=</span> []
+
+    <span style="color:#66d9ef">for</span> neighbor <span style="color:#f92672">in</span> Types<span style="color:#f92672">.</span>NEIGHBORS<span style="color:#f92672">.</span>keys():
+        <span style="color:#66d9ef">if</span> neighbor <span style="color:#f92672">&amp;</span> output_directions <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+            <span style="color:#66d9ef">var</span> key: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> cellv <span style="color:#f92672">+</span> Types<span style="color:#f92672">.</span>NEIGHBORS[neighbor]
+            <span style="color:#66d9ef">if</span> collection<span style="color:#f92672">.</span>has(key):
+                neighbors<span style="color:#f92672">.</span>push_back(key)
+
+    <span style="color:#66d9ef">return</span> neighbors
+
+
+<span style="color:#66d9ef">func</span> _on_systems_ticked(delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    receivers_already_provided<span style="color:#f92672">.</span>clear()
+
+    <span style="color:#66d9ef">for</span> path <span style="color:#f92672">in</span> paths:
+        <span style="color:#66d9ef">var</span> power_source: PowerSource <span style="color:#f92672">=</span> power_sources[path[<span style="color:#ae81ff">0</span>]]
+
+        <span style="color:#66d9ef">var</span> source_power :<span style="color:#f92672">=</span> power_source<span style="color:#f92672">.</span>get_effective_power()
+        <span style="color:#66d9ef">var</span> remaining_power :<span style="color:#f92672">=</span> source_power
+        
+        <span style="color:#66d9ef">var</span> power_draw :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+
+        <span style="color:#66d9ef">for</span> cell <span style="color:#f92672">in</span> path<span style="color:#f92672">.</span>slice(<span style="color:#ae81ff">1</span>, path<span style="color:#f92672">.</span>size()<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>):
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> power_receivers<span style="color:#f92672">.</span>has(cell):
+                <span style="color:#66d9ef">continue</span>
+
+            <span style="color:#66d9ef">var</span> power_receiver: PowerReceiver <span style="color:#f92672">=</span> power_receivers[cell]
+            <span style="color:#66d9ef">var</span> power_required :<span style="color:#f92672">=</span> power_receiver<span style="color:#f92672">.</span>get_effective_power()
+
+            <span style="color:#66d9ef">if</span> receivers_already_provided<span style="color:#f92672">.</span>has(cell):
+                <span style="color:#66d9ef">var</span> receiver_total: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> receivers_already_provided[cell]
+                <span style="color:#66d9ef">if</span> receiver_total <span style="color:#f92672">&gt;=</span> power_required:
+                    <span style="color:#66d9ef">continue</span>
+                <span style="color:#66d9ef">else</span>:
+                    power_required <span style="color:#f92672">-=</span> receiver_total
+
+            power_receiver<span style="color:#f92672">.</span>emit_signal(
+                <span style="color:#e6db74">&quot;received_power&quot;</span>, min(remaining_power, power_required), delta
+            )
+
+            power_draw <span style="color:#f92672">=</span> min(source_power, power_draw <span style="color:#f92672">+</span> power_required)
+
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> receivers_already_provided<span style="color:#f92672">.</span>has(cell):
+                receivers_already_provided[cell] <span style="color:#f92672">=</span> min(remaining_power, power_required)
+            <span style="color:#66d9ef">else</span>:
+                receivers_already_provided[cell] <span style="color:#f92672">+=</span> min(remaining_power, power_required)
+
+            remaining_power <span style="color:#f92672">=</span> max(<span style="color:#ae81ff">0</span>, remaining_power <span style="color:#f92672">-</span> power_required)
+            
+            <span style="color:#66d9ef">if</span> remaining_power <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+                <span style="color:#66d9ef">break</span>
+
+        power_source<span style="color:#f92672">.</span>emit_signal(<span style="color:#e6db74">&quot;power_updated&quot;</span>, power_draw, delta)
+</pre>
+<p>And <code>Simulation.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">const</span> BARRIER_ID :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+<span style="color:#66d9ef">const</span> INVISIBLE_BARRIER_ID :<span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>
+
+<span style="color:#66d9ef">var</span> _tracker :<span style="color:#f92672">=</span> EntityTracker<span style="color:#f92672">.</span>new()
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> simulation_speed :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">30.0</span>
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _ground :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>GameWorld<span style="color:#f92672">/</span>GroundTiles
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _entity_placer :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>GameWorld<span style="color:#f92672">/</span><span style="color:#a6e22e">YSort</span><span style="color:#f92672">/</span>EntityPlacer
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _player :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>GameWorld<span style="color:#f92672">/</span><span style="color:#a6e22e">YSort</span><span style="color:#f92672">/</span>Player
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _flat_entities :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>GameWorld<span style="color:#f92672">/</span>FlatEntities
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _power_system :<span style="color:#f92672">=</span> PowerSystem<span style="color:#f92672">.</span>new()
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#f92672">$</span><span style="color:#a6e22e">Timer</span><span style="color:#f92672">.</span>start(simulation_speed)
+    _entity_placer<span style="color:#f92672">.</span>setup(_tracker, _ground, _flat_entities, _player)
+    <span style="color:#66d9ef">var</span> barriers: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_used_cells_by_id(BARRIER_ID)
+
+    <span style="color:#66d9ef">for</span> cellv <span style="color:#f92672">in</span> barriers:
+        _ground<span style="color:#f92672">.</span>set_cellv(cellv, INVISIBLE_BARRIER_ID)
+
+
+<span style="color:#66d9ef">func</span> _on_Timer_timeout() <span style="color:#f92672">-&gt;</span> void:
+    Events<span style="color:#f92672">.</span>emit_signal(<span style="color:#e6db74">&quot;systems_ticked&quot;</span>, simulation_speed)
+</pre>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpHpbqVT28ka</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="variations-on-2d-outlines">Variations on 2D outlines</h1>
+<p>Sometimes, you may need or want your outlines to be inside your sprites instead of expanding outward. Vector drawing programs often offer the following options: outer, inner, or in-and-out stroke.</p>
+<p>In this lesson, we’re going to see how to produce the last two types of outlines.</p>
+<h2 id="inner-outline">Inner outline</h2>
+<p>To draw a stroke <em>inside</em> of the sprite instead of the outside, we have to use texture samples differently. Instead of taking their total, we instead take the inverse of their product. This gives us an alpha value where pixels along edges become highlighted and any that are in the middle become transparent.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">float</span> outline <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, <span style="color:#ae81ff">0</span>)).a;
+outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#ae81ff">0</span>, size.y)).a;
+outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, <span style="color:#ae81ff">0</span>)).a;
+outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span>size.y)).a;
+outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, size.y)).a;
+outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, size.y)).a;
+outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, <span style="color:#f92672">-</span>size.y)).a;
+outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, <span style="color:#f92672">-</span>size.y)).a;
+outline <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">-</span> outline;
+</pre>
+<p>We grab the original sprite color and interpolate it with the line color. Though instead of taking the difference between the outline and the original alpha, we take its product to clip any pixels that lie outside the sprite.</p>
+<pre style="color:#f8f8f2;background-color:#272822">vec4 color <span style="color:#f92672">=</span> texture(TEXTURE, UV);
+vec4 outlined_result <span style="color:#f92672">=</span> mix(color, line_color, outline <span style="color:#f92672">*</span> color.a);
+</pre>
+<p>But if we output this color as the result and make the line color transparent, it would inline our sprite with a transparent color and hide parts of it. To fix this, we interpolate the result with the original color a second time, using the result’s alpha as the delta.</p>
+<pre style="color:#f8f8f2;background-color:#272822">COLOR <span style="color:#f92672">=</span> mix(color, outlined_result, outlined_result.a);
+</pre>
+<p>This gives us the following final shader code:</p>
+<pre style="color:#f8f8f2;background-color:#272822">shader_type canvas_item;
+
+uniform vec4 line_color : hint_color <span style="color:#f92672">=</span> vec4(<span style="color:#ae81ff">1</span>);
+uniform <span style="color:#66d9ef">float</span> line_thickness : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">10</span>) <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span>;
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fragment</span>() {
+    vec2 size <span style="color:#f92672">=</span> TEXTURE_PIXEL_SIZE <span style="color:#f92672">*</span> line_thickness;
+
+    <span style="color:#66d9ef">float</span> outline <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, <span style="color:#ae81ff">0</span>)).a;
+    outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#ae81ff">0</span>, size.y)).a;
+    outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, <span style="color:#ae81ff">0</span>)).a;
+    outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span>size.y)).a;
+    outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, size.y)).a;
+    outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, size.y)).a;
+    outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, <span style="color:#f92672">-</span>size.y)).a;
+    outline <span style="color:#f92672">*=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, <span style="color:#f92672">-</span>size.y)).a;
+    outline <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">-</span> outline;
+
+    vec4 color <span style="color:#f92672">=</span> texture(TEXTURE, UV);
+    vec4 outlined_result <span style="color:#f92672">=</span> mix(color, line_color, outline <span style="color:#f92672">*</span> color.a);
+    COLOR <span style="color:#f92672">=</span> mix(color, outlined_result, outlined_result.a);
+}
+</pre>
+<h2 id="in-and-out-outline">In-and-out outline</h2>
+<p>Having both inline and outline is simple in concept; we mix the two results. But to avoid sampling twice as many times, we need to use the samples in different ways.</p>
+<p>We separate the texture samples from the math, putting them into individual variables. Because we’re dealing with two lines instead of one, we also divide the thickness by two so that an in-outline is the same thickness as an inline or outline of the same value.</p>
+<pre style="color:#f8f8f2;background-color:#272822">vec2 size <span style="color:#f92672">=</span> TEXTURE_PIXEL_SIZE <span style="color:#f92672">*</span> line_thickness <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>;
+
+<span style="color:#66d9ef">float</span> l <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, <span style="color:#ae81ff">0</span>)).a;
+<span style="color:#66d9ef">float</span> u <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#ae81ff">0</span>, size.y)).a;
+<span style="color:#66d9ef">float</span> r <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, <span style="color:#ae81ff">0</span>)).a;
+<span style="color:#66d9ef">float</span> d <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span>size.y)).a;
+<span style="color:#66d9ef">float</span> lu <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, size.y)).a;
+<span style="color:#66d9ef">float</span> ru <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, size.y)).a;
+<span style="color:#66d9ef">float</span> ld <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, <span style="color:#f92672">-</span>size.y)).a;
+<span style="color:#66d9ef">float</span> rd <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, <span style="color:#f92672">-</span>size.y)).a;
+
+vec4 color <span style="color:#f92672">=</span> texture(TEXTURE, UV);
+</pre>
+<p>The math for both remains the same, just summed up into separate lines. An outer stroke is the sum of all those samples, clamped to <code>1.0</code>. An inner one is the inverse product of those samples.</p>
+<p>We also change the way we use the original color’s alpha for each operation here. The result gives us an alpha value for both the outline and the inline. Unless both are <code>0.0</code>, one will be <code>1.0</code> while the other will be <code>0.0</code>, so we can sum them together to get a combination.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">float</span> outline <span style="color:#f92672">=</span> min(<span style="color:#ae81ff">1.0</span>, l<span style="color:#f92672">+</span>r<span style="color:#f92672">+</span>u<span style="color:#f92672">+</span>d<span style="color:#f92672">+</span>lu<span style="color:#f92672">+</span>ru<span style="color:#f92672">+</span>ld<span style="color:#f92672">+</span>rd) <span style="color:#f92672">-</span> color.a;
+<span style="color:#66d9ef">float</span> <span style="color:#66d9ef">inline</span> <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1.0</span> <span style="color:#f92672">-</span> l <span style="color:#f92672">*</span> r <span style="color:#f92672">*</span> u <span style="color:#f92672">*</span> d <span style="color:#f92672">*</span> lu <span style="color:#f92672">*</span> ru <span style="color:#f92672">*</span> rd <span style="color:#f92672">*</span> ld) <span style="color:#f92672">*</span> color.a;
+
+vec4 outlined_result <span style="color:#f92672">=</span> mix(color, line_color, outline <span style="color:#f92672">+</span> <span style="color:#66d9ef">inline</span>);
+</pre>
+<p>Like the inline shader, if we use this color as the result, a transparent line color will make the sprite’s inner edge transparent instead of replacing the color, so we have to mix this color with the result’s alpha.</p>
+<pre style="color:#f8f8f2;background-color:#272822">COLOR <span style="color:#f92672">=</span> mix(color, outlined_result, outlined_result.a);
+</pre>
+<p>Here is the final shader code:</p>
+<pre style="color:#f8f8f2;background-color:#272822">shader_type canvas_item;
+
+uniform vec4 line_color : hint_color <span style="color:#f92672">=</span> vec4(<span style="color:#ae81ff">1</span>);
+uniform <span style="color:#66d9ef">float</span> line_thickness : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">10</span>) <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span>;
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fragment</span>() {
+    vec2 size <span style="color:#f92672">=</span> TEXTURE_PIXEL_SIZE <span style="color:#f92672">*</span> line_thickness <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>;
+
+    <span style="color:#66d9ef">float</span> l <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, <span style="color:#ae81ff">0</span>)).a;
+    <span style="color:#66d9ef">float</span> u <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#ae81ff">0</span>, size.y)).a;
+    <span style="color:#66d9ef">float</span> r <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, <span style="color:#ae81ff">0</span>)).a;
+    <span style="color:#66d9ef">float</span> d <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span>size.y)).a;
+    <span style="color:#66d9ef">float</span> lu <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, size.y)).a;
+    <span style="color:#66d9ef">float</span> ru <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, size.y)).a;
+    <span style="color:#66d9ef">float</span> ld <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(<span style="color:#f92672">-</span>size.x, <span style="color:#f92672">-</span>size.y)).a;
+    <span style="color:#66d9ef">float</span> rd <span style="color:#f92672">=</span> texture(TEXTURE, UV <span style="color:#f92672">+</span> vec2(size.x, <span style="color:#f92672">-</span>size.y)).a;
+
+    vec4 color <span style="color:#f92672">=</span> texture(TEXTURE, UV);
+    <span style="color:#66d9ef">float</span> outline <span style="color:#f92672">=</span> min(<span style="color:#ae81ff">1.0</span>, l<span style="color:#f92672">+</span>r<span style="color:#f92672">+</span>u<span style="color:#f92672">+</span>d<span style="color:#f92672">+</span>lu<span style="color:#f92672">+</span>ru<span style="color:#f92672">+</span>ld<span style="color:#f92672">+</span>rd) <span style="color:#f92672">-</span> color.a;
+    <span style="color:#66d9ef">float</span> <span style="color:#66d9ef">inline</span> <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1.0</span> <span style="color:#f92672">-</span> l <span style="color:#f92672">*</span> r <span style="color:#f92672">*</span> u <span style="color:#f92672">*</span> d <span style="color:#f92672">*</span> lu <span style="color:#f92672">*</span> ru <span style="color:#f92672">*</span> rd <span style="color:#f92672">*</span> ld) <span style="color:#f92672">*</span> color.a;
+
+    vec4 outlined_result <span style="color:#f92672">=</span> mix(color, line_color, outline <span style="color:#f92672">+</span> <span style="color:#66d9ef">inline</span>);
+    COLOR <span style="color:#f92672">=</span> mix(color, outlined_result, outlined_result.a);
+}
+</pre>
+</body>
+</html>

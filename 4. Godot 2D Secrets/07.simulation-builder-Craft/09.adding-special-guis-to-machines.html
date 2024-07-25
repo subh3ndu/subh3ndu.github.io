@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpcnFEZZlKmc</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="adding-special-guis-to-machines">Adding special GUIs to machines</h1>
+<p>We’ve reached the part of the chapter where we begin diving into automated crafting.</p>
+<p>We have all that electricity coming out of a perpetual Stirling engine, and all we can do is store it in the battery. We need to put that energy to good use.</p>
+<p>By the end of the chapter, we’ll have ore turning into ingots and lumber into charcoal.</p>
+<p>The first step towards this illustrious result is to give entities and machines the ability to hold an inventory of their own.</p>
+<p>They’ll have three item slots: two for the inputs, namely fuel and raw material, and the third will hold the machine’s output, like a metal ingot.</p>
+<p>In this lesson, we’ll code the UI system’s foundations so that entities can hold an inventory.</p>
+<p>In the next lesson, we’ll create a chest entity that can hold some of your extra resources and old tools to test the result.</p>
+<h2 id="the-machine-gui-class-and-component">The machine GUI class and component</h2>
+<p>To give machines a dedicated interface and detect it, we’ll create a new component for them.</p>
+<p>This is a special node that will live as a child of machines that have a dedicated interface. It will hold a GUI scene instance in memory.</p>
+<p>Here’s how we’ll make it work:</p>
+<ol type="1">
+<li>When we want to open the machine’s GUI, we’ll grab that instanced scene and make it a child of the inventory window so that we can transfer items to and from our inventory.</li>
+<li>When the player closes the inventory, we’ll remove the machine’s GUI from the scene tree, but it will continue to live as an un-attached node in the component’s variables.</li>
+</ol>
+<p>In our implementation, items live inside inventory panels, so we need to keep the interface in memory at all times.</p>
+<p>Let’s get coding the system’s foundations.</p>
+<p>To identify the machines’ GUI and give them some unique functionality, we’ll make every machine GUI extend a dedicated class.</p>
+<p>Create a new script, <code>BaseMachineGUI.gd</code>, that extends <code>MarginContainer</code>. You can save it in the <code>GUI/</code> directory.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name BaseMachineGUI
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">MarginContainer</span>
+
+<span style="color:#75715e">## Emitted when a change happens, like an item being put into an inventory slot.</span>
+<span style="color:#66d9ef">signal</span> gui_status_changed
+
+<span style="color:#75715e">## We emit two signals to indicate when the interface opens and closes.</span>
+<span style="color:#66d9ef">signal</span> gui_opened
+<span style="color:#66d9ef">signal</span> gui_closed
+
+
+<span style="color:#66d9ef">func</span> _enter_tree() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Whenever the node appears in the scene tree, we emit &quot;gui_opened&quot;, but we</span>
+    <span style="color:#75715e"># emit it after one frame late using `call_deferred()`.</span>
+    <span style="color:#75715e"># This gives us the chance to call the `setup()` function below and</span>
+    <span style="color:#75715e"># initialize the interface first.</span>
+    call_deferred(<span style="color:#e6db74">&quot;emit_signal&quot;</span>, <span style="color:#e6db74">&quot;gui_opened&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _exit_tree() <span style="color:#f92672">-&gt;</span> void:
+    call_deferred(<span style="color:#e6db74">&quot;emit_signal&quot;</span>, <span style="color:#e6db74">&quot;gui_closed&quot;</span>)
+
+
+<span style="color:#75715e">## Sets up anything the interface needs before use. For example, we&#39;ll use the</span>
+<span style="color:#75715e">## `InventoryBar` class, which needs a reference to the `GUI` class.</span>
+<span style="color:#75715e">## We&#39;ll override this function in extended classes.</span>
+<span style="color:#66d9ef">func</span> setup(_gui: <span style="color:#a6e22e">Control</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+</pre>
+<p>We’ll now code a component GUI class to detect machines with an inventory window.</p>
+<p>Create a new script, <code>GUIComponent.gd</code>, in the <code>Systems/</code> directory.</p>
+<p>Like with the previous components, this class extends <code>Node</code>.</p>
+<p>Its job is to instance its GUI scene and prepare it for the <code>GUI</code> class to add to the scene tree whenever needed.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name GUIComponent
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#75715e">## We&#39;ll bubble up signals from `MachineGUI` to make it easier to connect to</span>
+<span style="color:#75715e">## them.</span>
+<span style="color:#66d9ef">signal</span> gui_status_changed
+<span style="color:#66d9ef">signal</span> gui_opened
+<span style="color:#66d9ef">signal</span> gui_closed
+
+<span style="color:#75715e">## This will store the instanced interfact for the machine.</span>
+<span style="color:#66d9ef">var</span> gui: BaseMachineGUI
+
+<span style="color:#75715e">## This is the scene we&#39;ll instance and save in the `gui` variable.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> GuiWindow: <span style="color:#a6e22e">PackedScene</span>
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># We must assign a scene to the `GuiWindow` for this code to work.</span>
+    assert(GuiWindow, <span style="color:#e6db74">&quot;You must assign a scene to the the Gui Window property.&quot;</span>)
+    gui <span style="color:#f92672">=</span> GuiWindow<span style="color:#f92672">.</span>instance()
+
+    <span style="color:#75715e"># We connect to the new instance&#39;s signals, but instead of using a custom</span>
+    <span style="color:#75715e"># function, we call `emit_signal()` while passing the signal name as a</span>
+    <span style="color:#75715e"># parameter.</span>
+    <span style="color:#75715e"># Doing this forwards signals automatically.</span>
+    gui<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;gui_status_changed&quot;</span>, self, <span style="color:#e6db74">&quot;emit_signal&quot;</span>, [<span style="color:#e6db74">&quot;gui_status_changed&quot;</span>])
+    gui<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;gui_opened&quot;</span>, self, <span style="color:#e6db74">&quot;emit_signal&quot;</span>, [<span style="color:#e6db74">&quot;gui_opened&quot;</span>])
+    gui<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;gui_closed&quot;</span>, self, <span style="color:#e6db74">&quot;emit_signal&quot;</span>, [<span style="color:#e6db74">&quot;gui_closed&quot;</span>])
+
+
+<span style="color:#66d9ef">func</span> _exit_tree() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> gui:
+        <span style="color:#75715e"># Because the gui instance is not likely to be in the scene tree when we</span>
+        <span style="color:#75715e"># quit the game or go back to the main menu, it will not be</span>
+        <span style="color:#75715e"># automatically be cleaned up in memory.</span>
+        <span style="color:#75715e">#</span>
+        <span style="color:#75715e"># Freeing it when this component exits the scene tree saves us from</span>
+        <span style="color:#75715e"># having a memory leak.</span>
+        gui<span style="color:#f92672">.</span>queue_free()
+</pre>
+<h2 id="having-the-gui-open-the-machine-gui">Having the GUI open the machine GUI</h2>
+<p>When the user clicks on an entity, like a chest, we must get its <code>GUIComponent</code>, grab that component’s <code>gui</code> property, and add it to the inventory window.</p>
+<p>When we close the inventory, we need to remove the machine’s interface from the scene tree.</p>
+<p>While <code>EntityPlacer</code> is the one who will keep track of when we click on an entity, <code>GUI</code> is the one that will do most of the work.</p>
+<p>Let’s start there: open up <code>GUI.gd</code> to add some functionality.</p>
+<p>We need to keep track of the machine’s GUI to remove it later. We also want to make it so the crafting window does <em>not</em> open when we open a machine’s GUI.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">#...</span>
+<span style="color:#75715e">## The currently opened entity GUI.</span>
+<span style="color:#66d9ef">var</span> _open_gui: <span style="color:#a6e22e">Control</span>
+
+
+<span style="color:#75715e">## Returns a `GUIComponent` from the scene tree of an entity.</span>
+<span style="color:#75715e">## Returns `null` if none is found.</span>
+<span style="color:#66d9ef">func</span> get_gui_component_from(entity: <span style="color:#a6e22e">Node</span>) <span style="color:#f92672">-&gt;</span> GUIComponent:
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> entity<span style="color:#f92672">.</span>get_children():
+        <span style="color:#66d9ef">if</span> child is GUIComponent:
+            <span style="color:#66d9ef">return</span> child
+
+    <span style="color:#66d9ef">return</span> null
+
+
+<span style="color:#75715e">## Adds the entity&#39;s GUI to the inventory window and displays the inventory</span>
+<span style="color:#75715e">## window.</span>
+<span style="color:#66d9ef">func</span> open_entity_gui(entity: Entity) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> component :<span style="color:#f92672">=</span> get_gui_component_from(entity)
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> component:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># If the inventory window is already open, we close it first. This ensures</span>
+    <span style="color:#75715e"># we close any currently opened gui from another entity first.</span>
+    <span style="color:#66d9ef">if</span> is_open:
+        _close_inventories()
+
+    _open_gui <span style="color:#f92672">=</span> component<span style="color:#f92672">.</span>gui
+
+    <span style="color:#75715e"># If the gui is not already in the inventory window, we add it. We also</span>
+    <span style="color:#75715e"># raise the child to the highest tree position so it appears above the</span>
+    <span style="color:#75715e"># inventory, instead of below it.</span>
+    <span style="color:#75715e"># That&#39;s necessary because the inventory uses a VBoxContainer.</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _open_gui<span style="color:#f92672">.</span>get_parent() <span style="color:#f92672">==</span> player_inventory<span style="color:#f92672">.</span>inventory_path:
+        player_inventory<span style="color:#f92672">.</span>inventory_path<span style="color:#f92672">.</span>add_child(_open_gui)
+        player_inventory<span style="color:#f92672">.</span>inventory_path<span style="color:#f92672">.</span>move_child(_open_gui, <span style="color:#ae81ff">0</span>)
+
+    <span style="color:#75715e"># We make sure to call `BaseMachineGUI.setup()`, then call</span>
+    <span style="color:#75715e"># `open_inventories()`, but without the crafting window.</span>
+    _open_gui<span style="color:#f92672">.</span>setup(self)
+    <span style="color:#75715e"># See below as we add a new argument to `_open_inventories()`.</span>
+    _open_inventories(false)
+
+
+<span style="color:#75715e"># We add a new `open_crafting` argument to the function to optionally hide the</span>
+<span style="color:#75715e"># crafting recipe list.</span>
+<span style="color:#75715e"># Making `open_crafting` an optional variable that defaults to `true` means we</span>
+<span style="color:#75715e"># don&#39;t have to go back to other functions and change them.</span>
+<span style="color:#66d9ef">func</span> _open_inventories(open_crafting :<span style="color:#f92672">=</span> true) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#75715e">#player_inventory.claim_quickbar(quickbar)</span>
+
+    <span style="color:#75715e"># If we should open the crafting window, then make it visible and update its</span>
+    <span style="color:#75715e"># recipes. Otherwise, we leave it hidden.</span>
+    <span style="color:#66d9ef">if</span> open_crafting:
+        <span style="color:#75715e"># These two lines were already there, we just move them into the</span>
+        <span style="color:#75715e"># conditional branch.</span>
+        crafting_window<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> true
+        crafting_window<span style="color:#f92672">.</span>update_recipes()
+
+
+<span style="color:#66d9ef">func</span> _close_inventories() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#75715e">#_claim_quickbar()</span>
+
+    <span style="color:#75715e"># If we have an open gui, then we remove it from the scene tree and clear</span>
+    <span style="color:#75715e"># the `_open_gui` property.</span>
+    <span style="color:#75715e"># We don&#39;t free it: that&#39;s the component&#39;s job.</span>
+    <span style="color:#66d9ef">if</span> _open_gui:
+        player_inventory<span style="color:#f92672">.</span>inventory_path<span style="color:#f92672">.</span>remove_child(_open_gui)
+        _open_gui <span style="color:#f92672">=</span> null
+</pre>
+<p>Like we did with power components, we can use groups to identify machines with a GUI component.</p>
+<p>Head to <code>Types.gd</code> to add a new constant for entities with GUI.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">const</span> GUI_ENTITIES :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;gui_entities&quot;</span>
+</pre>
+<p>Finally, we need to trigger that <code>open_entity_gui()</code> function from somewhere, and that will be in <code>EntityPlacer.gd</code>.</p>
+<p>So open that script up and head to <code>_unhandled_input()</code> to modify the “left_click” action.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#75715e">#if event.is_action_pressed(&quot;left_click&quot;):</span>
+        <span style="color:#75715e">#if has_placeable_blueprint:</span>
+            <span style="color:#75715e">#...</span>
+
+        <span style="color:#75715e"># If we are not holding onto a blueprint and we click on an occupied</span>
+        <span style="color:#75715e"># cell in range, and the entity is part of the GUI_ENTITIES, then call</span>
+        <span style="color:#75715e"># GUI&#39;s `open_entity_gui()`.</span>
+        <span style="color:#66d9ef">elif</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player:
+            <span style="color:#66d9ef">var</span> entity :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>get_entity_at(cellv)
+            <span style="color:#66d9ef">if</span> entity <span style="color:#f92672">and</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>GUI_ENTITIES):
+                _gui<span style="color:#f92672">.</span>open_entity_gui(entity)
+                _clear_hover_entity(cellv)
+    <span style="color:#75715e">#...</span>
+</pre>
+<p>We have the system laid out. All that’s left is to create the chest entity and its GUI.</p>
+<p>This lesson is getting a little long, so we’ll do that in the next one.</p>
+<h2 id="code-reference">Code reference</h2>
+<p><code>BaseMachineGUI.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name BaseMachineGUI
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">MarginContainer</span>
+
+<span style="color:#66d9ef">signal</span> gui_status_changed
+
+<span style="color:#66d9ef">signal</span> gui_opened
+<span style="color:#66d9ef">signal</span> gui_closed
+
+
+<span style="color:#66d9ef">func</span> _enter_tree() <span style="color:#f92672">-&gt;</span> void:
+    call_deferred(<span style="color:#e6db74">&quot;emit_signal&quot;</span>, <span style="color:#e6db74">&quot;gui_opened&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _exit_tree() <span style="color:#f92672">-&gt;</span> void:
+    call_deferred(<span style="color:#e6db74">&quot;emit_signal&quot;</span>, <span style="color:#e6db74">&quot;gui_closed&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> setup(_gui: <span style="color:#a6e22e">Control</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+</pre>
+<p><code>GUIComponent.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name GUIComponent
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">signal</span> gui_status_changed
+<span style="color:#66d9ef">signal</span> gui_opened
+<span style="color:#66d9ef">signal</span> gui_closed
+
+<span style="color:#66d9ef">var</span> gui: BaseMachineGUI
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> GuiWindow: <span style="color:#a6e22e">PackedScene</span>
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    assert(GuiWindow, <span style="color:#e6db74">&quot;You must assign a scene to the the Gui Window property.&quot;</span>)
+    gui <span style="color:#f92672">=</span> GuiWindow<span style="color:#f92672">.</span>instance()
+
+    gui<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;gui_status_changed&quot;</span>, self, <span style="color:#e6db74">&quot;emit_signal&quot;</span>, [<span style="color:#e6db74">&quot;gui_status_changed&quot;</span>])
+    gui<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;gui_opened&quot;</span>, self, <span style="color:#e6db74">&quot;emit_signal&quot;</span>, [<span style="color:#e6db74">&quot;gui_opened&quot;</span>])
+    gui<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;gui_closed&quot;</span>, self, <span style="color:#e6db74">&quot;emit_signal&quot;</span>, [<span style="color:#e6db74">&quot;gui_closed&quot;</span>])
+
+
+<span style="color:#66d9ef">func</span> _exit_tree() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> gui:
+        gui<span style="color:#f92672">.</span>queue_free()
+</pre>
+<p>In <code>GUI.gd</code>, we added one property, <code>_open_gui</code>, two functions, <code>get_gui_component_from()</code> and <code>open_entity_gui()</code>, and modified two existing functions, <code>_open_inventories()</code> and <code>_close_inventories()</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> _open_gui: <span style="color:#a6e22e">Control</span>
+
+
+<span style="color:#66d9ef">func</span> get_gui_component_from(entity: <span style="color:#a6e22e">Node</span>) <span style="color:#f92672">-&gt;</span> GUIComponent:
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> entity<span style="color:#f92672">.</span>get_children():
+        <span style="color:#66d9ef">if</span> child is GUIComponent:
+            <span style="color:#66d9ef">return</span> child
+
+    <span style="color:#66d9ef">return</span> null
+
+
+<span style="color:#66d9ef">func</span> open_entity_gui(entity: Entity) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> component :<span style="color:#f92672">=</span> get_gui_component_from(entity)
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> component:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">if</span> is_open:
+        _close_inventories()
+
+    _open_gui <span style="color:#f92672">=</span> component<span style="color:#f92672">.</span>gui
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _open_gui<span style="color:#f92672">.</span>get_parent() <span style="color:#f92672">==</span> player_inventory<span style="color:#f92672">.</span>inventory_path:
+        player_inventory<span style="color:#f92672">.</span>inventory_path<span style="color:#f92672">.</span>add_child(_open_gui)
+        player_inventory<span style="color:#f92672">.</span>inventory_path<span style="color:#f92672">.</span>move_child(_open_gui, <span style="color:#ae81ff">0</span>)
+
+    _open_gui<span style="color:#f92672">.</span>setup(self)
+    _open_inventories(false)
+
+
+<span style="color:#66d9ef">func</span> _open_inventories(open_crafting :<span style="color:#f92672">=</span> true) <span style="color:#f92672">-&gt;</span> void:
+    is_open <span style="color:#f92672">=</span> true
+    player_inventory<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> true
+    player_inventory<span style="color:#f92672">.</span>claim_quickbar(quickbar)
+
+    <span style="color:#66d9ef">if</span> open_crafting:
+        crafting_window<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> true
+        crafting_window<span style="color:#f92672">.</span>update_recipes()
+
+
+<span style="color:#66d9ef">func</span> _close_inventories() <span style="color:#f92672">-&gt;</span> void:
+    is_open <span style="color:#f92672">=</span> false
+    player_inventory<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> false
+    _claim_quickbar()
+    crafting_window<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> false
+
+    <span style="color:#66d9ef">if</span> _open_gui:
+        player_inventory<span style="color:#f92672">.</span>inventory_path<span style="color:#f92672">.</span>remove_child(_open_gui)
+        _open_gui <span style="color:#f92672">=</span> null
+</pre>
+<p>In <code>Types.gd</code>, we added one constant to keep track of a group name.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">const</span> GUI_ENTITIES :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;gui_entities&quot;</span>
+</pre>
+<p>And in <code>EntityPlacer.gd</code>, we updated the <code>_unhandled_input()</code> callback.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventMouseButton</span>:
+        _abort_deconstruct()
+
+    <span style="color:#66d9ef">var</span> global_mouse_position :<span style="color:#f92672">=</span> get_global_mouse_position()
+    
+    <span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">and</span> _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>placeable
+
+    <span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+        global_mouse_position<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position)
+        <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+    )
+    
+    <span style="color:#66d9ef">var</span> cellv :<span style="color:#f92672">=</span> world_to_map(global_mouse_position)
+    <span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>is_cell_occupied(cellv)
+    <span style="color:#66d9ef">var</span> is_on_ground :<span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;left_click&quot;</span>):
+        <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+                _place_entity(cellv)
+                _update_neighboring_flat_entities(cellv)
+
+        <span style="color:#66d9ef">elif</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player:
+            <span style="color:#66d9ef">var</span> entity :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>get_entity_at(cellv)
+            <span style="color:#66d9ef">if</span> entity <span style="color:#f92672">and</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>GUI_ENTITIES):
+                _gui<span style="color:#f92672">.</span>open_entity_gui(entity)
+                _clear_hover_entity(cellv)
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;right_click&quot;</span>) <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> has_placeable_blueprint:
+        <span style="color:#66d9ef">if</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player:
+            _deconstruct(global_mouse_position, cellv)
+
+    <span style="color:#66d9ef">elif</span> event is <span style="color:#a6e22e">InputEventMouseMotion</span>:
+        <span style="color:#66d9ef">if</span> cellv <span style="color:#f92672">!=</span> _current_deconstruct_location:
+            _abort_deconstruct()
+        
+        <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+            _move_blueprint_in_world(cellv)
+        <span style="color:#66d9ef">else</span>:
+            _update_hover(cellv)
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;drop&quot;</span>) <span style="color:#f92672">and</span> _gui<span style="color:#f92672">.</span>blueprint:
+        <span style="color:#66d9ef">if</span> is_on_ground:
+            _drop_entity(_gui<span style="color:#f92672">.</span>blueprint, global_mouse_position)
+            _gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">=</span> null
+    
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;rotate_blueprint&quot;</span>) <span style="color:#f92672">and</span> _gui<span style="color:#f92672">.</span>blueprint:
+        _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>rotate_blueprint()
+</pre>
+</body>
+</html>

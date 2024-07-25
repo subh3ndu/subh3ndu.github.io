@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tmp4xtipItikY</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="the-active-turn-queue">The active turn queue</h1>
+<p>Our battlers can already get ready to act conceptually, but we lack a way for them to take turns. We want the turn logic to be in a separate object. If one battler takes a turn, another battler shouldn’t access this information directly. Queueing and giving turns should be another object’s responsibility, and we’re going to start coding it in this lesson.</p>
+<p>By the end of this part, you will have the turn system’s foundation. As we haven’t coded actions yet, the battlers won’t perform attacks yet.</p>
+<p>We need a new scene to represent our combat arena. Create a new 2D scene with the following node structure and save it as <code>CombatDemo.tscn</code>.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>In the image above, <em>Bear</em> and <em>BugCat</em> are two instances of <code>Battler.tscn</code> that I renamed. They’re temporary. In a later lesson, we should replace them with separate scenes.</p>
+<p>In our demo, the <em>ActiveTurnQueue</em> node has the encounter’s battlers as its children, so we need the battler instances for testing.</p>
+<p>Add a new script to <em>ActiveTurnQueue</em> named <code>ActiveTurnQueue.gd</code>. Let’s start by storing the player’s party members and opponents to help us select targets later. Also, we connect to the battler’s <code>ready_to_act</code> signal.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Queues and delegates turns for all battlers.</span>
+class_name ActiveTurnQueue
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">var</span> _party_members :<span style="color:#f92672">=</span> []
+<span style="color:#66d9ef">var</span> _opponents :<span style="color:#f92672">=</span> []
+
+<span style="color:#75715e"># All battlers in the encounter are children of this node. We can get a list of all of them with</span>
+<span style="color:#75715e"># get_children()</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> battlers :<span style="color:#f92672">=</span> get_children()
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        <span style="color:#75715e"># Listen to each battler&#39;s ready_to_act signal, binding a reference to the battler to the callback.</span>
+        battler<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;ready_to_act&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Battler_ready_to_act&quot;</span>, [battler])
+        <span style="color:#66d9ef">if</span> battler<span style="color:#f92672">.</span>is_party_member:
+            _party_members<span style="color:#f92672">.</span>append(battler)
+        <span style="color:#66d9ef">else</span>:
+            _opponents<span style="color:#f92672">.</span>append(battler)
+</pre>
+<h2 id="time-scale-and-is_active">Time scale and is_active</h2>
+<p>In the previous lesson, we defined two public properties of the <code>Battler</code> class, <code>is_active</code> and <code>time_scale</code>. Let’s do the same on <code>ActiveTurnQueue</code> to pause or slow down all battlers.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Allows pausing the Active Time Battle during combat intro, a cutscene, or combat end.</span>
+<span style="color:#66d9ef">var</span> is_active :<span style="color:#f92672">=</span> true <span style="color:#66d9ef">setget</span> set_is_active
+<span style="color:#75715e"># Multiplier for the global pace of battle, to slow down time while the player is making decisions.</span>
+<span style="color:#75715e"># This is meant for accessibility and to control difficulty.</span>
+<span style="color:#66d9ef">var</span> time_scale :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#66d9ef">setget</span> set_time_scale
+
+
+<span style="color:#75715e"># Updates `is_active` on each battler.</span>
+<span style="color:#66d9ef">func</span> set_is_active(value: <span style="color:#a6e22e">bool</span>) <span style="color:#f92672">-&gt;</span> void:
+    is_active <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        battler<span style="color:#f92672">.</span>is_active <span style="color:#f92672">=</span> is_active
+
+
+<span style="color:#75715e"># Updates `time_scale` on each battler.</span>
+<span style="color:#66d9ef">func</span> set_time_scale(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    time_scale <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        battler<span style="color:#f92672">.</span>time_scale <span style="color:#f92672">=</span> time_scale
+</pre>
+<p>To slow down time, now, we can call <code>set_time_scale()</code> with a value in the <code>[0.0, 1.0]</code> range.</p>
+<h2 id="taking-turns">Taking turns</h2>
+<p>When a battler is ready to take a turn, we let it play its turn. While the <code>Battler.ready_to_act</code> signal does not tell us which battler is ready, we use the binding feature of the <code>connect()</code> method to know which battler is ready.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _on_Battler_ready_to_act(battler: Battler) <span style="color:#f92672">-&gt;</span> void:
+    _play_turn(battler)
+</pre>
+<p>Later, we will add more code to this callback function. This is why we don’t directly connect the <code>ready_to_act</code> signal to <code>_play_turn()</code>.</p>
+<p>We need to add the <code>_play_turn()</code> method, one of the most complex in the project. This large function asks the battler to pick an action and target(s). It has two branches:</p>
+<ol type="1">
+<li>If the battler is player-controlled, we let them select an action and target through menus. We will add the menus in a later lesson.</li>
+<li>If the battler is AI-controlled, we let the AI brain choose the action and target.</li>
+</ol>
+<p>We start with two variables to store the action and target(s).</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _play_turn(battler: Battler) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> action_data: ActionData
+    <span style="color:#66d9ef">var</span> targets :<span style="color:#f92672">=</span> []
+</pre>
+<p>ActionData isn’t defined yet, and this type hint will cause an error. When starting a new project, I often write the types I need before defining them. If you have experience working with an IDE in other languages, the program can define those for you. In GDScript’s case, we lack such a tool.</p>
+<p>The issue here is that an error will prevent you from using auto-completion, among other features. To address it, you have two options:</p>
+<ol type="1">
+<li>Temporarily remove the type hint.</li>
+<li>Create a file ActionData.gd with the line <code>class_name ActionData</code> at the top.</li>
+</ol>
+<p>Continuing with the function, we increase the battler’s energy by one. Keep in mind that we have yet to code the stats system. Calling code we have yet to define happens a lot when writing complex systems.</p>
+<p>Then, we list potential targets: battlers that are opponents and that we can select.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>energy <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+
+    <span style="color:#75715e"># The code below makes a list of selectable targets using `Battler.is_selectable`</span>
+    <span style="color:#66d9ef">var</span> potential_targets :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">var</span> opponents :<span style="color:#f92672">=</span> _opponents <span style="color:#66d9ef">if</span> battler<span style="color:#f92672">.</span>is_party_member <span style="color:#66d9ef">else</span> _party_members
+    <span style="color:#66d9ef">for</span> opponent <span style="color:#f92672">in</span> opponents:
+        <span style="color:#66d9ef">if</span> opponent<span style="color:#f92672">.</span>is_selectable:
+            potential_targets<span style="color:#f92672">.</span>append(opponent)
+</pre>
+<p>Here starts the first branch. If the player controls the battler, we need to let them use menus. For now, we write boilerplate code.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#66d9ef">if</span> battler<span style="color:#f92672">.</span>is_player_controlled():
+        <span style="color:#75715e"># We&#39;ll use the selection in the next lesson to move playable battlers</span>
+        <span style="color:#75715e"># forward. This value will also make the Heads-Up Display (HUD) for this</span>
+        <span style="color:#75715e"># battler move forward.</span>
+        battler<span style="color:#f92672">.</span>is_selected <span style="color:#f92672">=</span> true
+        <span style="color:#75715e"># This line slows down time while the player selects an action and</span>
+        <span style="color:#75715e"># target. The function `set_time_scale()` recursively assigns that value</span>
+        <span style="color:#75715e"># to all characters on the battlefield.</span>
+        set_time_scale(<span style="color:#ae81ff">0.05</span>)
+
+        <span style="color:#75715e"># Here is the meat of the player&#39;s turn. We use a while loop to wait for</span>
+        <span style="color:#75715e"># the player to select a valid action and target(s).</span>
+        <span style="color:#75715e">#</span>
+        <span style="color:#75715e"># For now, we have two boilerplate asynchronous functions,</span>
+        <span style="color:#75715e"># `_player_select_action_async()` and `_player_select_targets_async()`,</span>
+        <span style="color:#75715e"># that respectively return an action to perform and an array of targets.</span>
+        <span style="color:#75715e"># This seemingly complex setup will allow the player to cancel</span>
+        <span style="color:#75715e"># operations in menus.</span>
+        <span style="color:#66d9ef">var</span> is_selection_complete :<span style="color:#f92672">=</span> false
+        <span style="color:#75715e"># The loop keeps running until the player selected an action and target.</span>
+        <span style="color:#66d9ef">while</span> <span style="color:#f92672">not</span> is_selection_complete:
+            <span style="color:#75715e"># The player has to first select an action, then a target.</span>
+            <span style="color:#75715e"># We store the selected action in the `action_data` variable defined</span>
+            <span style="color:#75715e"># at the start of the function.</span>
+            action_data <span style="color:#f92672">=</span> yield(_player_select_action_async(battler), <span style="color:#e6db74">&quot;completed&quot;</span>)
+            <span style="color:#75715e"># If an action applies an effect to the battler only, we</span>
+            <span style="color:#75715e"># automatically set it as the target.</span>
+            <span style="color:#66d9ef">if</span> action_data<span style="color:#f92672">.</span>is_targeting_self:
+                targets <span style="color:#f92672">=</span> [battler]
+            <span style="color:#66d9ef">else</span>:
+                targets <span style="color:#f92672">=</span> yield(
+                    _player_select_targets_async(action_data, potential_targets), <span style="color:#e6db74">&quot;completed&quot;</span>
+                )
+            <span style="color:#75715e"># If the player selected a correct action and target, we can break</span>
+            <span style="color:#75715e"># out of the loop. I&#39;m using a variable here to make the code</span>
+            <span style="color:#75715e"># readable and clear. You could write a `while true` loop and use</span>
+            <span style="color:#75715e"># the break keyword instead, but doing so makes the code less</span>
+            <span style="color:#75715e"># explicit.</span>
+            is_selection_complete <span style="color:#f92672">=</span> action_data <span style="color:#f92672">!=</span> null <span style="color:#f92672">&amp;&amp;</span> targets <span style="color:#f92672">!=</span> []
+        <span style="color:#75715e"># The player-controlled battler is ready to act. We reset the time scale</span>
+        <span style="color:#75715e"># and deselect the battler.</span>
+        set_time_scale(<span style="color:#ae81ff">1.0</span>)
+        battler<span style="color:#f92672">.</span>is_selected <span style="color:#f92672">=</span> false
+</pre>
+<p>The second branch runs if the battler has an artificial intelligence. Until we code it, let’s hard-code the action and target.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#66d9ef">else</span>:
+        action_data <span style="color:#f92672">=</span> battler<span style="color:#f92672">.</span>actions[<span style="color:#ae81ff">0</span>]
+        targets <span style="color:#f92672">=</span> [potential_targets[<span style="color:#ae81ff">0</span>]]
+</pre>
+<p>We need to define two more functions so the code compiles without errors, <code>_player_select_targets_async()</code> and <code>_player_select_action_async()</code>. They’re also boilerplate for the time being. We need to design and implement menus before the player can select actions.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># We must use a placeholder `yield()` call to turn the methods into coroutines.</span>
+<span style="color:#75715e"># Otherwise, we can&#39;t use `yield()` in the `_play_turn()` method.</span>
+<span style="color:#66d9ef">func</span> _player_select_action_async(battler: Battler) <span style="color:#f92672">-&gt;</span> ActionData:
+    yield(get_tree(), <span style="color:#e6db74">&quot;idle_frame&quot;</span>)
+    <span style="color:#66d9ef">return</span> battler<span style="color:#f92672">.</span>actions[<span style="color:#ae81ff">0</span>]
+
+
+<span style="color:#66d9ef">func</span> _player_select_targets_async(_action: ActionData, opponents: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    yield(get_tree(), <span style="color:#e6db74">&quot;idle_frame&quot;</span>)
+    <span style="color:#66d9ef">return</span> [opponents[<span style="color:#ae81ff">0</span>]]
+</pre>
+<p>Note that both functions have the word <code>async</code> in their name. We use that suffix to indicate a function is a coroutine and will pause its execution. That’s why, in <code>_play_turn()</code>, we have to use the <code>yield</code> keyword.</p>
+<h2 id="the-code-so-far">The code so far</h2>
+<p>Here is the code we wrote for <code>ActiveTurnQueue.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Queues and delegates turns for all battlers.</span>
+class_name ActiveTurnQueue
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">var</span> is_active :<span style="color:#f92672">=</span> true <span style="color:#66d9ef">setget</span> set_is_active
+<span style="color:#66d9ef">var</span> time_scale :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#66d9ef">setget</span> set_time_scale
+
+<span style="color:#66d9ef">var</span> _party_members :<span style="color:#f92672">=</span> []
+<span style="color:#66d9ef">var</span> _opponents :<span style="color:#f92672">=</span> []
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> battlers :<span style="color:#f92672">=</span> get_children()
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        battler<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;ready_to_act&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Battler_ready_to_act&quot;</span>, [battler])
+        <span style="color:#66d9ef">if</span> battler<span style="color:#f92672">.</span>is_player_controlled():
+            _party_members<span style="color:#f92672">.</span>append(battler)
+        <span style="color:#66d9ef">else</span>:
+            _opponents<span style="color:#f92672">.</span>append(battler)
+
+
+<span style="color:#66d9ef">func</span> set_is_active(value: <span style="color:#a6e22e">bool</span>) <span style="color:#f92672">-&gt;</span> void:
+    is_active <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        battler<span style="color:#f92672">.</span>is_active <span style="color:#f92672">=</span> is_active
+
+
+<span style="color:#66d9ef">func</span> set_time_scale(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    time_scale <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        battler<span style="color:#f92672">.</span>time_scale <span style="color:#f92672">=</span> time_scale
+
+
+<span style="color:#66d9ef">func</span> _play_turn(battler: Battler) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> action_data: ActionData
+    <span style="color:#66d9ef">var</span> targets :<span style="color:#f92672">=</span> []
+
+    battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>energy <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+
+    <span style="color:#66d9ef">var</span> potential_targets :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">var</span> opponents :<span style="color:#f92672">=</span> _opponents <span style="color:#66d9ef">if</span> battler<span style="color:#f92672">.</span>is_party_member <span style="color:#66d9ef">else</span> _party_members
+    <span style="color:#66d9ef">for</span> opponent <span style="color:#f92672">in</span> opponents:
+        <span style="color:#66d9ef">if</span> opponent<span style="color:#f92672">.</span>is_selectable:
+            potential_targets<span style="color:#f92672">.</span>append(opponent)
+
+    <span style="color:#66d9ef">if</span> battler<span style="color:#f92672">.</span>is_player_controlled():
+        battler<span style="color:#f92672">.</span>is_selected <span style="color:#f92672">=</span> true
+        set_time_scale(<span style="color:#ae81ff">0.05</span>)
+
+        <span style="color:#66d9ef">var</span> is_selection_complete :<span style="color:#f92672">=</span> false
+        <span style="color:#66d9ef">while</span> <span style="color:#f92672">not</span> is_selection_complete:
+            action_data <span style="color:#f92672">=</span> yield(_player_select_action_async(battler), <span style="color:#e6db74">&quot;completed&quot;</span>)
+            <span style="color:#66d9ef">if</span> action_data<span style="color:#f92672">.</span>is_targeting_self:
+                targets <span style="color:#f92672">=</span> [battler]
+            <span style="color:#66d9ef">else</span>:
+                targets <span style="color:#f92672">=</span> yield(
+                    _player_select_targets_async(action_data, potential_targets), <span style="color:#e6db74">&quot;completed&quot;</span>
+                )
+            is_selection_complete <span style="color:#f92672">=</span> action_data <span style="color:#f92672">!=</span> null <span style="color:#f92672">&amp;&amp;</span> targets <span style="color:#f92672">!=</span> []
+        set_time_scale(<span style="color:#ae81ff">1.0</span>)
+        battler<span style="color:#f92672">.</span>is_selected <span style="color:#f92672">=</span> false
+    <span style="color:#66d9ef">else</span>:
+        action_data <span style="color:#f92672">=</span> battler<span style="color:#f92672">.</span>actions[<span style="color:#ae81ff">0</span>]
+        targets <span style="color:#f92672">=</span> [potential_targets[<span style="color:#ae81ff">0</span>]]
+
+
+<span style="color:#66d9ef">func</span> _player_select_action_async(battler: Battler) <span style="color:#f92672">-&gt;</span> ActionData:
+    yield(get_tree(), <span style="color:#e6db74">&quot;idle_frame&quot;</span>)
+    <span style="color:#66d9ef">return</span> battler<span style="color:#f92672">.</span>actions[<span style="color:#ae81ff">0</span>]
+
+
+<span style="color:#66d9ef">func</span> _player_select_targets_async(_action: ActionData, opponents: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    yield(get_tree(), <span style="color:#e6db74">&quot;idle_frame&quot;</span>)
+    <span style="color:#66d9ef">return</span> [opponents[<span style="color:#ae81ff">0</span>]]
+
+
+<span style="color:#66d9ef">func</span> _on_Battler_ready_to_act(battler: Battler) <span style="color:#f92672">-&gt;</span> void:
+    _play_turn(battler)
+</pre>
+</body>
+</html>

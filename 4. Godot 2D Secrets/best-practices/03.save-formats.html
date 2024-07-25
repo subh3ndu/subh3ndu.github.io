@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tmpdu9SM5hqXl</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="how-do-i-choose-a-save-format-for-my-game">How do I choose a save format for my game?</h1>
+<p>Frequently, we see questions come up about saving the player’s game data. The questions are often about what that file should look like.</p>
+<p>There’s no single answer as all situations are unique. But there are some guidelines you can follow to guide your choice better in the process.</p>
+<p>In this guide, you’ll learn:</p>
+<ol type="1">
+<li>How to choose an appropriate data format for your savegames.</li>
+<li>How to save data to binary, JSON, and native text with Godot.</li>
+<li>What are the pros and cons of each of these formats.</li>
+</ol>
+<h2 id="allowing-players-to-read-edit-save-data">Allowing players to read edit save data</h2>
+<p>If you want your players to either read or edit savegames, your file format should be text-based. Anyone can open such a file in a text editor to see and edit the data in a text editor.</p>
+<p>If you must store complex binary objects, you should store them separately to keep the text file lightweight and editable. For example, if the player can draw a flag in-game and you want to save that image to the disk, it should be separate from the savegame.</p>
+<p>Either that or you would have to create a tool for your player to see and edit the data.</p>
+<h2 id="preventing-players-from-reading-the-saved-data">Preventing players from reading the saved data</h2>
+<p>If you want to prevent players from reading the saved data, whether it’s to slow down cheating or data mining, you should use binary files.</p>
+<p>To do so, you will use the <code>store_*()</code> functions in Godot’s <a href="https://docs.godotengine.org/en/stable/classes/class_file.html">File</a> class. They convert values to chains of ones and zeros.</p>
+<p>Binary makes it harder for most people to use the data, although some still can. Programmers or people who are savvy with hex editors can figure out your system with some patience.</p>
+<p>To further slow them down while reverse-engineering your data format, you can save and load data in a particular order and omit variable names in the file.</p>
+<p>Binary also creates small and compact files since it takes out all the extra characters text-based files require for parsing. But you <em>must</em> load the file in the same order you saved it and need to encode certain variable types appropriately.</p>
+<p>Below, you’ll find an example of saving character data to binary. We will later show you how to save the same data in JSON, then a convenient and lightweight Godot text format.</p>
+<p>Each character has an age (integer), a name (text string), and a position on the map (Vector2).</p>
+<p>Here’s the data we’ll save:</p>
+<ol type="1">
+<li>Larry, 50 years old, at position <code>Vector2(120.206, 119.449)</code></li>
+<li>Harry, 25 years old, at position <code>Vector2(211.11, 107.883)</code></li>
+</ol>
+<p>With two characters, in binary, the savegame has a size of <strong>42 bytes</strong>.</p>
+<p>Here’s the code to save and load that binary data.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Exports relevant data for a character in binary to the provided `File`. Each piece of</span>
+<span style="color:#75715e">## data is in binary, non-human readable format.</span>
+<span style="color:#66d9ef">func</span> export_to_bin(file: <span style="color:#a6e22e">File</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Store an integer as a 32-bit number, a value between -2,147,483,648 and 2,147,483,647</span>
+    file<span style="color:#f92672">.</span>store_32(age)
+
+    <span style="color:#75715e"># Store the length of a string as a 32-bit number. In binary, we have no way to know</span>
+    <span style="color:#75715e"># if one byte or the next is part of a variable except by writing how many to expect.</span>
+    <span style="color:#75715e"># The result is the number of characters to load later, followed by the string.</span>
+    file<span style="color:#f92672">.</span>store_32(character_name<span style="color:#f92672">.</span>length())
+    file<span style="color:#f92672">.</span>store_string(character_name)
+
+    <span style="color:#75715e"># Store a Vector2 using its constituent X and Y parts as floating-point numbers:</span>
+    <span style="color:#75715e"># 32-bit numbers that have a decimal number component.</span>
+    file<span style="color:#f92672">.</span>store_float(position<span style="color:#f92672">.</span>x)
+    file<span style="color:#f92672">.</span>store_float(position<span style="color:#f92672">.</span>y)
+
+
+<span style="color:#75715e">## Imports the relevant class data from the provided binary `File`. Expects the</span>
+<span style="color:#75715e">## the caret to be at the start of the data. The data must load in the same order</span>
+<span style="color:#75715e">## it was saved in.</span>
+<span style="color:#66d9ef">func</span> import_from_bin(file: <span style="color:#a6e22e">File</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Gets an integer from a 32-bit piece of binary data.</span>
+    age <span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>get_32()
+
+    <span style="color:#75715e"># Gets the number of characters that make up the follow-up string, then</span>
+    <span style="color:#75715e"># get each one as an 8-bit number - one byte - and transform it into a string</span>
+    <span style="color:#75715e"># using the `char()` function. This uses the standardized ASCII table for the text.</span>
+    <span style="color:#66d9ef">var</span> name_length :<span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>get_32()
+    character_name <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> name_length:
+        character_name <span style="color:#f92672">+=</span> char(file<span style="color:#f92672">.</span>get_8())
+
+    <span style="color:#75715e">#Load a Vector2 out of its constituent X and Y parts from floating-point numbers.</span>
+    position<span style="color:#f92672">.</span>x <span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>get_float()
+    position<span style="color:#f92672">.</span>y <span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>get_float()
+</pre>
+<p>With the example above, you would call <code>export_to_bin()</code> once for each character you want to save.</p>
+<p>Here’s how you would use the code example you just saw.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">const</span> SAVE_BINARY :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;user://save.dat&quot;</span>
+
+<span style="color:#75715e">## Saves children to a binary file.</span>
+<span style="color:#66d9ef">func</span> save_binary() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Initializes a new `File` and opens the file in write mode, creating it</span>
+    <span style="color:#75715e"># if it&#39;s missing.</span>
+    <span style="color:#66d9ef">var</span> file :<span style="color:#f92672">=</span> <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>new()
+    file<span style="color:#f92672">.</span>open(SAVE_BINARY, <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>WRITE)
+
+    <span style="color:#75715e"># For each child, pass in the handle to the file and have the child write</span>
+    <span style="color:#75715e"># its data.</span>
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> get_children():
+        child<span style="color:#f92672">.</span>export_to_bin(file)
+
+    <span style="color:#75715e"># Clean up and close the file so the operating system can claim it</span>
+    file<span style="color:#f92672">.</span>close()
+
+
+<span style="color:#75715e">## Loads children from a binary file.</span>
+<span style="color:#66d9ef">func</span> load_binary() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Initializes a new `File` and open the file in read mode. If it&#39;s missing</span>
+    <span style="color:#75715e"># or otherwise un-openable, report it as an error and return.</span>
+    <span style="color:#66d9ef">var</span> file :<span style="color:#f92672">=</span> <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>new()
+    <span style="color:#66d9ef">var</span> error :<span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>open(SAVE_BINARY, <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>READ)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> error <span style="color:#f92672">==</span> OK:
+        print_error(<span style="color:#e6db74">&quot;Could not load file at </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> SAVE_BINARY)
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># Have each child import its data in the same order they were saved in.</span>
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> get_children():
+        child<span style="color:#f92672">.</span>import_from_bin(file)
+
+    <span style="color:#75715e"># Clean up and close the file so the operating system can claim it.</span>
+    file<span style="color:#f92672">.</span>close()
+</pre>
+<p>We directly apply the loaded data to child nodes, but you don’t necessarily have to do this to load the data. We used this example for simplicity.</p>
+<h2 id="taking-save-data-into-other-software">Taking save data into other software</h2>
+<p>What if you want to save and export data to use in other programs?</p>
+<p>When you step outside Godot, you want a format that is universal across platforms. There are popular text-based ones like YAML, TOML, or XML. In Godot, the format of choice is JSON, one of the best-supported ones out there.</p>
+<p>It’s lightweight, has universal support in other programming languages and libraries, is integral to web development, and supports complex objects through dictionaries and arrays. In JSON, the data’s order does not matter, except in arrays since dictionaries have no order. With it, you can save variable names as keys to make loading easier.</p>
+<p>Note that you don’t have to use a text-based interchange format. Other programming languages also have the concept of 8, 16, 32, or 64-bit numbers, strings, and variables. If you do not want to use a human-readable format like JSON, you can save in binary and use the other language’s facilities to load the data like C++’s <code>ifstream</code> or C’s <code>fread</code>.</p>
+<p>Once again, we’ll save our two characters, Larry and Harry. Here’s the JSON our code example outputs. Its final size is <strong>160 bytes</strong> non-minified, in this readable form, as opposed to the 42 bytes of our binary version.</p>
+<pre style="color:#f8f8f2;background-color:#272822">[
+  {
+    <span style="color:#f92672">&quot;age&quot;</span>: <span style="color:#ae81ff">50</span>,
+    <span style="color:#f92672">&quot;character_name&quot;</span>: <span style="color:#e6db74">&quot;Larry&quot;</span>,
+    <span style="color:#f92672">&quot;position&quot;</span>: {
+      <span style="color:#f92672">&quot;x&quot;</span>: <span style="color:#ae81ff">120.046242</span>,
+      <span style="color:#f92672">&quot;y&quot;</span>: <span style="color:#ae81ff">119.111282</span>
+    }
+  },
+  {
+    <span style="color:#f92672">&quot;age&quot;</span>: <span style="color:#ae81ff">25</span>,
+    <span style="color:#f92672">&quot;character_name&quot;</span>: <span style="color:#e6db74">&quot;Harry&quot;</span>,
+    <span style="color:#f92672">&quot;position&quot;</span>: {
+      <span style="color:#f92672">&quot;x&quot;</span>: <span style="color:#ae81ff">211.275574</span>,
+      <span style="color:#f92672">&quot;y&quot;</span>: <span style="color:#ae81ff">108.217361</span>
+    }
+  }
+]
+</pre>
+<p>Here’s the code that generates this JSON.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Exports relevant class data in a dictionary that will be converted into a JSON</span>
+<span style="color:#75715e">## format by by the saving class. The variable names match to make it easier to</span>
+<span style="color:#75715e">## read and load later.</span>
+<span style="color:#66d9ef">func</span> export_to_dict() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Dictionary</span>:
+    <span style="color:#66d9ef">return</span> {
+        <span style="color:#e6db74">&quot;age&quot;</span>: age,
+        <span style="color:#e6db74">&quot;character_name&quot;</span>: character_name,
+        <span style="color:#e6db74">&quot;position&quot;</span>: {<span style="color:#e6db74">&quot;x&quot;</span>: position<span style="color:#f92672">.</span>x, <span style="color:#e6db74">&quot;y&quot;</span>: position<span style="color:#f92672">.</span>y}
+    }
+
+
+<span style="color:#75715e">## Imports relevant class data from a dictionary that was loaded from JSON data.</span>
+<span style="color:#66d9ef">func</span> import_from_dict(dict: <span style="color:#a6e22e">Dictionary</span>) <span style="color:#f92672">-&gt;</span> void:
+    age <span style="color:#f92672">=</span> dict<span style="color:#f92672">.</span>age
+    character_name <span style="color:#f92672">=</span> dict<span style="color:#f92672">.</span>character_name
+    position<span style="color:#f92672">.</span>x <span style="color:#f92672">=</span> dict<span style="color:#f92672">.</span>position<span style="color:#f92672">.</span>x
+    position<span style="color:#f92672">.</span>y <span style="color:#f92672">=</span> dict<span style="color:#f92672">.</span>position<span style="color:#f92672">.</span>y
+</pre>
+<p>As you can see, all we have to do is to output and read a dictionary for each character. However, notice how we have to split our <code>position</code>, a Vector2, into two numbers.</p>
+<p>To save that data to a file, we store all our characters’ dictionary in an array and call <code>JSON.print()</code> to convert the data to a JSON string.</p>
+<p>To load the JSON from the disk, we use <code>JSON.parse()</code> instead.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">const</span> SAVE_JSON :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;user://save.json&quot;</span>
+
+<span style="color:#75715e">## The saving class&#39; method for saving a file to JSON.</span>
+<span style="color:#66d9ef">func</span> save_json() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Gather each dictionary from each children to save into a single array</span>
+    <span style="color:#66d9ef">var</span> output :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> get_children():
+        output<span style="color:#f92672">.</span>push_back(child<span style="color:#f92672">.</span>export_to_dict())
+
+    <span style="color:#75715e"># Convert the array, and its dictionaries, using the `JSON` singleton</span>
+    <span style="color:#75715e"># into a block of JSON. Note the second parameter that specifies how to</span>
+    <span style="color:#75715e"># indent the file. Without this parameter, the JSON would be on a single line.</span>
+    <span style="color:#66d9ef">var</span> json :<span style="color:#f92672">=</span> JSON<span style="color:#f92672">.</span>print(output, <span style="color:#e6db74">&quot;  &quot;</span>)
+
+    <span style="color:#75715e"># Save the resulting JSON to a file using the `File` class in write mode</span>
+    <span style="color:#66d9ef">var</span> file :<span style="color:#f92672">=</span> <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>new()
+    file<span style="color:#f92672">.</span>open(SAVE_JSON, <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>WRITE)
+
+    <span style="color:#75715e"># Since our JSON is indented, we can store the entire string in one call.</span>
+    file<span style="color:#f92672">.</span>store_string(json)
+
+    <span style="color:#75715e"># Clean up</span>
+    file<span style="color:#f92672">.</span>close()
+
+
+<span style="color:#75715e">## The saving class&#39; method for loading a file to JSON and spreading the data</span>
+<span style="color:#75715e">## back to its children.</span>
+<span style="color:#66d9ef">func</span> load_json() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Load the file using the `File` class in read mode. Report an error if the</span>
+    <span style="color:#75715e"># file is missing or cannot be opened.</span>
+    <span style="color:#66d9ef">var</span> file :<span style="color:#f92672">=</span> <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>new()
+    <span style="color:#66d9ef">var</span> error :<span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>open(SAVE_JSON, <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>READ)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> error <span style="color:#f92672">==</span> OK:
+        print_error(<span style="color:#e6db74">&quot;Could not load file at </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> SAVE_JSON)
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># Get the array of dictionaries from the file. Note that we load the entire</span>
+    <span style="color:#75715e"># file with get_as_text because our JSON is on multiple lines.</span>
+    <span style="color:#66d9ef">var</span> input :<span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>get_as_text()
+
+    <span style="color:#75715e"># Clean up</span>
+    file<span style="color:#f92672">.</span>close()
+
+    <span style="color:#75715e"># Use the JSON singleton to parse the string into an array of dictionaries.</span>
+    <span style="color:#75715e"># JSON.parse returns JSONParseResult, in case of errors, and the actual</span>
+    <span style="color:#75715e"># array is in the `result` property.</span>
+    <span style="color:#66d9ef">var</span> json: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> JSON<span style="color:#f92672">.</span>parse(input)<span style="color:#f92672">.</span>result
+
+    <span style="color:#75715e"># In the same order as they were saved, we iterate over each child and</span>
+    <span style="color:#75715e"># provide the dictionary from that part of the array.</span>
+    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> get_child_count():
+        get_child(i)<span style="color:#f92672">.</span>import_from_dict(json[i])
+</pre>
+<h2 id="saving-data-that-exists-solely-in-godot">Saving data that exists solely in Godot</h2>
+<p>A middle ground between a fully human-readable format like JSON and a fully non-human-readable format in binary is to save the data as strings of data.</p>
+<p>Godot provides the global functions <code>var2str</code> for saving. It will store the script location and variable data of even complex objects like Vector2 or String into a format that it’s able to read back with <code>str2var</code>, recreating the object as you saved it. The order matters since variable names and positions are not parsed, but it takes out the problem of encoding string lengths or individual components of primitives like X and Y.</p>
+<p>Here’s the data this approach produces. The final file size is <strong>77 bytes</strong>. It’s more than our binary’s 42 bytes, but less than JSON’s 160 bytes for an output that’s easy to read and to edit.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#ae81ff">50</span>
+<span style="color:#e6db74">&quot;Larry&quot;</span>
+<span style="color:#960050;background-color:#1e0010">Vector</span><span style="color:#ae81ff">2</span><span style="color:#960050;background-color:#1e0010">(</span> <span style="color:#ae81ff">120.206</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#ae81ff">119.449</span> <span style="color:#960050;background-color:#1e0010">)</span>
+<span style="color:#ae81ff">25</span>
+<span style="color:#e6db74">&quot;Harry&quot;</span>
+<span style="color:#960050;background-color:#1e0010">Vector</span><span style="color:#ae81ff">2</span><span style="color:#960050;background-color:#1e0010">(</span> <span style="color:#ae81ff">211.11</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#ae81ff">107.883</span> <span style="color:#960050;background-color:#1e0010">)</span>
+</pre>
+<p>Here’s the code to produce and load this output. We store one value per line.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Export the class&#39; relevant data as Godot-recognized data lines of strings</span>
+<span style="color:#75715e">## Each piece of data is saved in order as a line using `var2str` so Godot</span>
+<span style="color:#75715e">## can load it later.</span>
+<span style="color:#66d9ef">func</span> save_to_var(file: <span style="color:#a6e22e">File</span>) <span style="color:#f92672">-&gt;</span> void:
+    file<span style="color:#f92672">.</span>store_line(var2str(age))
+    file<span style="color:#f92672">.</span>store_line(var2str(character_name))
+    file<span style="color:#f92672">.</span>store_line(var2str(position))
+
+
+<span style="color:#75715e">## Import the class&#39; relevant data from data lines of strings.</span>
+<span style="color:#75715e">## Each piece of data is loaded in as a line, then run through the `str2var` to</span>
+<span style="color:#75715e">## turn it back into data. Must load in the same order it was saved in.</span>
+<span style="color:#66d9ef">func</span> load_from_var(file: <span style="color:#a6e22e">File</span>) <span style="color:#f92672">-&gt;</span> void:
+    age <span style="color:#f92672">=</span> str2var(file<span style="color:#f92672">.</span>get_line())
+    character_name <span style="color:#f92672">=</span> str2var(file<span style="color:#f92672">.</span>get_line())
+    position <span style="color:#f92672">=</span> str2var(file<span style="color:#f92672">.</span>get_line())
+</pre>
+<p>Notice how we can directly save a Vector2 with <code>var2str()</code>. You can convert any built-in type to text with this function.</p>
+<p>Loading is also the simplest with this approach, as shown by the code below. If your data isn’t meant to be imported in other programs, <code>var2str()</code> and <code>str2var()</code> are your most efficient tools to save and load information.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">const</span> SAVE_VAR :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;user://sav1.sav&quot;</span>
+
+<span style="color:#75715e">## The save class&#39; method to prompt its children to save their data to a file.</span>
+<span style="color:#66d9ef">func</span> save_var() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Instances a new `File` in write mode and iterate over each child to use it</span>
+    <span style="color:#75715e"># to save.</span>
+    <span style="color:#66d9ef">var</span> file :<span style="color:#f92672">=</span> <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>new()
+    file<span style="color:#f92672">.</span>open(SAVE_VAR, <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>WRITE)
+
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> get_children():
+        child<span style="color:#f92672">.</span>save_to_var(file)
+
+    <span style="color:#75715e"># Clean up</span>
+    file<span style="color:#f92672">.</span>close()
+
+
+<span style="color:#66d9ef">func</span> load_var() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Instances a new `File` in read mode and attempt to load the file, if it is</span>
+    <span style="color:#75715e"># open-able and readable.</span>
+    <span style="color:#66d9ef">var</span> file :<span style="color:#f92672">=</span> <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>new()
+    <span style="color:#66d9ef">var</span> error :<span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>open(SAVE_VAR, <span style="color:#a6e22e">File</span><span style="color:#f92672">.</span>READ)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> error <span style="color:#f92672">==</span> OK:
+        print_error(<span style="color:#e6db74">&quot;Could not load file at </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> SAVE_VAR)
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># Send the loaded file to each child in the same order they were saved to</span>
+    <span style="color:#75715e"># have them load their data.</span>
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> get_children():
+        child<span style="color:#f92672">.</span>load_from_var(file)
+
+    <span style="color:#75715e"># Clean up</span>
+    file<span style="color:#f92672">.</span>close()
+</pre>
+<h2 id="large-complex-save-files-with-relationships">Large, complex save files with relationships</h2>
+<p>Games with massive amounts of interconnected content, like MMOs or RTS,’ do not scale well with a single text or binary file.</p>
+<p>At that point, you should be looking into using a complete database system that can keep track of both data and relationships between data.</p>
+<p>This topic is beyond this guide’s scope, but if you’re in this situation, you can look into SQL databases. They’re commonly used in large-scale video games.</p>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tmpkx0Z8FiJco</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="the-scene-player">The scene player</h1>
+<p>In this lesson, we will code a system to sequence scenes. It will coordinate actions between the character displayer and the text box we created over the past two parts.</p>
+<p>The more your visual novel grows, the more systems and animations you will need to control and coordinate.</p>
+<p>That’s the scene player’s role. It should allow you to code a scalable system to empower the writers and designers to direct the game’s scenes.</p>
+<p>You may be surprised by the simplicity of the code we’ll write: it will mostly consist of a loop with a growing number of conditional blocks. Each block will delegate to a sub-system like the <code>TextBox</code>.</p>
+<p>It’s a solution that may not seem too smart, but that perfectly does the job for this kind of game. We’re keeping it simple.</p>
+<h2 id="creating-the-base-scene">Creating the base scene</h2>
+<p>Create a new <em>User Interface</em> scene and name the root node <em>ScenePlayer</em>.</p>
+<p>In it, we first add a background. Create a new <em>TextureRect</em> node named <em>Background</em> and apply <em>Layout -&gt; Full Rect</em> to it.</p>
+<p>We included a background image in the project, <code>industrial-building.jpg</code>. Drag-and-drop it onto the node’s <em>Texture</em> slot. You also want to turn its <em>Expand</em> property on so the texture expands to the node’s bounds.</p>
+<p>As a sibling of the <em>Background</em>, instantiate the <em>CharacterDisplayer</em> and the <em>TextBox</em>. That way, the parent <em>ScenePlayer</em> node will have access to both of them.</p>
+<p>We already have everything we need to get coding. Save the scene at the root of your project and attach a script to it.</p>
+<h2 id="setting-up-the-sceneplayers-script">Setting up the ScenePlayer’s script</h2>
+<p>We’ll start by setting just the basics of our scene player before designing our data format.</p>
+<p>Like our text box in character display, we want to design the scene player so another node can control it and sequence multiple scenes.</p>
+<p>Why? Your game will have more than just scenes. It may have a main menu, settings, a world map, maybe some mini-games with different gameplay, not just dialogues and choices.</p>
+<p>So we can use a higher-level system to handle the transitions between a menu, a scene, and another part of your game.</p>
+<p>To do that, we will define signals on the scene player. The <code>ScenePlayer</code> will play one scene and emit the <code>scene_finished</code> signal once it’s done.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Loads and plays a scene&#39;s dialogue sequences, delegating to other nodes to</span>
+<span style="color:#75715e">## display images or text.</span>
+class_name ScenePlayer
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#75715e">## Emitted when the scene finished playing. This corresponds to the &quot;next&quot; key</span>
+<span style="color:#75715e">## of the last played node having a value of `-1`.</span>
+<span style="color:#66d9ef">signal</span> scene_finished
+
+<span style="color:#75715e">## When we encounter this value in our scene&#39;s data, we&#39;ll end the scene.</span>
+<span style="color:#66d9ef">const</span> KEY_END_OF_SCENE :<span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+
+<span style="color:#75715e">## Stores all the data for the currently playing scene.</span>
+<span style="color:#66d9ef">var</span> _scene_data :<span style="color:#f92672">=</span> {}
+
+<span style="color:#75715e"># References to the scene&#39;s nodes we&#39;ll use in this script.</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _text_box :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>TextBox
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _character_displayer :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>CharacterDisplayer
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _background :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>Background
+</pre>
+<h2 id="using-and-designing-our-scene-data">Using and designing our scene data</h2>
+<p>A scene is a list of steps to perform, like displaying a text reply or animating a character appearing on one side.</p>
+<p>We can represent the steps with data. And before we write code that uses the data, we need to decide its format.</p>
+<p>The use of data is essential with any system of this kind as:</p>
+<ol type="1">
+<li>It allows you to create or use a tool to author the scenes and design that data, like an editor plug-in.</li>
+<li>You can refactor any game system as there is a strict separation between your data and how your scripts work.</li>
+<li>Compared to using GDScript directly, it prevents players from injecting unwanted code in your game.</li>
+</ol>
+<p>To expand a bit on the second point, we want to have each scene saved in a separate data file.</p>
+<p>The scene player loads a file and parses the data. It then looks at one event or step at a time, reads it, and calls functions on the text box, the character displayer, or another system.</p>
+<p>It creates a boundary between the data and the details of how the subsystems work, something that generally makes for easy refactoring.</p>
+<h3 id="considerations-to-design-a-data-format">Considerations to design a data format</h3>
+<p>To design a data format, you can start by writing down the list of every action or event you want to allow in your system.</p>
+<p>You want to be clear about how the game is supposed to play. In our visual novel, we want to support choices and, based on these choices, jump to different points in our scene. This requires a different data structure from linear conversations over which you have no control.</p>
+<p>You also want to think about how the data scales. Can you adapt it if you add or remove features moving forward?</p>
+<p>In this series, we will support the following features:</p>
+<ol type="1">
+<li>Displaying a text reply.</li>
+<li>Giving the player choices.</li>
+<li>Displaying and animating characters.</li>
+<li>Changing the background.</li>
+<li>Restarting the current scene.</li>
+<li>Fading the screen from and to black.</li>
+</ol>
+<p>We want to be able to combine some of them in one step, like animating a character and displaying text at the same time. So we need a structure that allows us to run multiple commands or events at once.</p>
+<p>Dictionaries are perfect for that. They can contain any number of key-value pairs, and we can quickly check if the key exists or not, allowing us to compose each step in the scene of one or more instructions.</p>
+<p>It’s a native datatype in GDScript, allowing us to get started in no time.</p>
+<p><em>Any alternative would be more complicated, like creating a mini-language as seen in the visual novel framework Ren’Py.</em></p>
+<p><em>To do so, you need to write a language parser and tokenizer, which takes a lot more time. It is mostly an option to consider if you are thinking of creating a custom editor from scratch. Because writing either a complete suite of tools that integrate into the editor or a mini-language might take about the same amount of work.</em></p>
+<h3 id="writing-down-some-data">Writing down some data</h3>
+<p>Here is how I get started with defining a concrete data format.</p>
+<p>I directly write it in GDScript, in the <code>ScenePlayer</code> script in this case, and write some test code like the <code>run_scene()</code> function we’ll implement in a moment.</p>
+<p>As we saw above, dictionaries are perfect for our needs, as we can have any number of key-value pairs on them.</p>
+<p>A scene can have many steps, so we need to store multiple dictionaries to run in sequence. When designing this tutorial series, I tried using both an array of dictionaries and a dictionary of dictionaries as the content of <code>_scene_data</code>.</p>
+<p>To support branching dialogues, I found that the second option was more efficient and convenient. Each value in <code>_scene_data</code> has a corresponding key, a unique ID that any other value can point to, creating a link between steps in our scene.</p>
+<p>I call these key-value pairs “nodes” of our scenes. Each node is a dictionary that generally contains a <code>next</code> key, the next node to process after the current one.</p>
+<p>Here’s an example to make it clearer. In <code>ScenePlayer.gd</code>, you can update <code>_scene_data</code> to hold the data below.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> _scene_data :<span style="color:#f92672">=</span> {
+    <span style="color:#ae81ff">0</span>: {
+        character <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;sophia&quot;</span>,
+        side <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;left&quot;</span>,
+        animation <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;enter&quot;</span>,
+        line <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;Hi there! My name&#39;s Sophia.&quot;</span>,
+        next <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+        },
+    <span style="color:#ae81ff">1</span>: {
+        character <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;dani&quot;</span>,
+        side <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;right&quot;</span>,
+        animation <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;enter&quot;</span>,
+        next <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>
+        },
+    <span style="color:#ae81ff">2</span>: {
+        character <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;dani&quot;</span>,
+        line <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;Hey, I&#39;m Dani.&quot;</span>,
+        next <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+       }
+    }
+</pre>
+<p>When designing the format, I look at the list of features it should support and use keys that are as simple as possible. For example, I wanted to display a character on a given side with a particular animation. Hence the keys: <code>character</code>, <code>side</code>, and <code>animation</code>.</p>
+<p>In this demo, animations and sides are always about characters, so I kept the keys simple. However, you may prefer to use explicit key prefixes, like writing <code>character_side</code> and <code>character_animation</code> instead.</p>
+<p>The first above node makes Sophia enter from the left while displaying the line “Hi there! My name’s Sophia.” Then, Dani enters from the right. Once the animation finishes, he replies, “Hey, I’m Dani.”</p>
+<p>To run the corresponding commands, we’ll look at each node’s keys. You can see we’re free to use some keys or not. Our code should take this into account.</p>
+<p>The scene reader follows what is essentially a linked list of nodes until one has a <code>next</code> key with a value of <code>-1</code>. This number, which I chose arbitrarily, marks the end of the scene.</p>
+<h2 id="running-a-scene">Running a scene</h2>
+<p>With some data in place, we can write the code that will run a scene. To do so, we add a <code>run_scene()</code> function, the heart of our dialogue system.</p>
+<p>It is a big loop that processes nodes in our scene data, reads their content, and requests other systems to act upon it.</p>
+<p>It starts with the first key-value pair in our <code>_scene_data</code> dictionary. In this demo, all keys are integers. The first key will typically be <code>0</code> or <code>1</code>.</p>
+<p>The function reads one node, waits for the events it represents to finish, and then jumps to the node the <code>next</code> key points to. That is until it encounters a value of <code>-1</code> and breaks out of the loop.</p>
+<p>Let’s start coding it. Here, we initialize the loop.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> run_scene() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># We first initialize our integer key variable to the first key of our </span>
+    <span style="color:#75715e"># _scene_data.</span>
+    <span style="color:#66d9ef">var</span> key <span style="color:#f92672">=</span> _scene_data<span style="color:#f92672">.</span>keys()[<span style="color:#ae81ff">0</span>]
+    <span style="color:#75715e"># We loop over the nodes until we encounter a `next` key of `-1`.</span>
+    <span style="color:#66d9ef">while</span> key <span style="color:#f92672">!=</span> KEY_END_OF_SCENE:
+        <span style="color:#75715e"># Every loop iteration, we start by getting the value corresponding </span>
+        <span style="color:#75715e"># to the key.</span>
+        <span style="color:#66d9ef">var</span> node: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> _scene_data[key]
+</pre>
+<p>The first feature we can add support for is changing the background, as it’s the simplest.</p>
+<p>If the node has a key named <code>background</code>, we fetch the corresponding background from the <code>ResourceDB</code> and assign its texture to the <em>Background</em> node.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">#func run_scene() -&gt; void:</span>
+    <span style="color:#75715e">#...</span>
+    <span style="color:#75715e">#while key != KEY_END_OF_SCENE:</span>
+        <span style="color:#75715e">#...</span>
+
+        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&quot;background&quot;</span> <span style="color:#f92672">in</span> node:
+            <span style="color:#66d9ef">var</span> bg: Background <span style="color:#f92672">=</span> ResourceDB<span style="color:#f92672">.</span>get_background(node<span style="color:#f92672">.</span>background)
+            _background<span style="color:#f92672">.</span>texture <span style="color:#f92672">=</span> bg<span style="color:#f92672">.</span>texture
+</pre>
+<p>Next, we add support for displaying characters.</p>
+<p>We’ll repeatedly use a pattern as we don’t want to fail when indexing keys in our <code>node</code>.</p>
+<p>We’ll either use conditional branches to test for existing keys or call <code>Dictionary.get()</code>, which allows us to pass a default value as a second argument if the key does not exist.</p>
+<p>For example, <code>node.get(&quot;animation&quot;, &quot;&quot;)</code> returns the value <code>&quot;&quot;</code> if the <code>node</code> dictionary does <em>not</em> have the <code>animation</code> key.</p>
+<p>To display a character, we need to tell the <code>CharacterDisplayer</code> the side, animation, and expression to use.</p>
+<p>We do so with the following code.</p>
+<pre style="color:#f8f8f2;background-color:#272822">        <span style="color:#75715e"># We first get a valid Character object.</span>
+        <span style="color:#66d9ef">var</span> character: Character <span style="color:#f92672">=</span> (
+            ResourceDB<span style="color:#f92672">.</span>get_character(node<span style="color:#f92672">.</span>character)
+            <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&quot;character&quot;</span> <span style="color:#f92672">in</span> node
+            <span style="color:#66d9ef">else</span> ResourceDB<span style="color:#f92672">.</span>get_narrator()
+        )
+
+        <span style="color:#75715e"># We only use the CharacterDisplayer if `node` has a `character` key</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&quot;character&quot;</span> <span style="color:#f92672">in</span> node:
+            <span style="color:#75715e"># For the side, we must pass a valid defualt value. Here, I chose the</span>
+            <span style="color:#75715e"># left side.</span>
+            <span style="color:#66d9ef">var</span> side: <span style="color:#a6e22e">String</span> <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>side <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&quot;side&quot;</span> <span style="color:#f92672">in</span> node <span style="color:#66d9ef">else</span> CharacterDisplayer<span style="color:#f92672">.</span>SIDE<span style="color:#f92672">.</span>LEFT
+
+            <span style="color:#75715e"># Notice the use of `Dictionary.get()`.</span>
+            <span style="color:#75715e"># In case the keys don&#39;t exist, we&#39;ll get an empty string.</span>
+            <span style="color:#66d9ef">var</span> animation: <span style="color:#a6e22e">String</span> <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&quot;animation&quot;</span>, <span style="color:#e6db74">&quot;&quot;</span>)
+            <span style="color:#66d9ef">var</span> expression: <span style="color:#a6e22e">String</span> <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&quot;expression&quot;</span>, <span style="color:#e6db74">&quot;&quot;</span>)
+
+            <span style="color:#75715e"># We then pass all the values to the CharacterDisplayer.display() </span>
+            <span style="color:#75715e"># to display the corresponding character.</span>
+            _character_displayer<span style="color:#f92672">.</span>display(character, side, expression, animation)
+
+            <span style="color:#75715e"># If you only want to play a character animation but not display</span>
+            <span style="color:#75715e"># some text in this step of the scene, we wait for the character</span>
+            <span style="color:#75715e"># displayer to finish playing the animation.</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> <span style="color:#e6db74">&quot;line&quot;</span> <span style="color:#f92672">in</span> node:
+                yield(_character_displayer, <span style="color:#e6db74">&quot;display_finished&quot;</span>)
+</pre>
+<p>Let’s add support for text replies next. These should happen if a node contains the <code>line</code> key and delegate work to the <code>TextBox</code>.</p>
+<p>Add this code at the same indent level as the block starting with <code>if &quot;character&quot; in node:</code> so both the character-related and text-related code can run in parallel.</p>
+<pre style="color:#f8f8f2;background-color:#272822">        <span style="color:#75715e">#...</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&quot;line&quot;</span> <span style="color:#f92672">in</span> node:
+            <span style="color:#75715e"># We always get a valid character, even when only displaying some</span>
+            <span style="color:#75715e"># text. It&#39;s either provided in the node or the narrator. That&#39;s why</span>
+            <span style="color:#75715e"># we can directly access the character&#39;s display name.</span>
+            _text_box<span style="color:#f92672">.</span>display(node<span style="color:#f92672">.</span>line, character<span style="color:#f92672">.</span>display_name)
+            <span style="color:#75715e"># We then wait for the text box to emit the `next_requested` signal,</span>
+            <span style="color:#75715e"># marking the end of the text reply.</span>
+            yield(_text_box, <span style="color:#e6db74">&quot;next_requested&quot;</span>)
+            <span style="color:#75715e"># We update the `key` for the the next loop iteration.</span>
+            key <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>next
+        <span style="color:#75715e"># This block ensures we don&#39;t get stuck in an infinite loop if there&#39;s no</span>
+        <span style="color:#75715e"># line or choice to display.</span>
+        <span style="color:#66d9ef">else</span>:
+            key <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>next
+</pre>
+<p>You may wonder why we assign the node’s <code>next</code> key inside a conditional block. This is because we want to add support for player choices, which will work differently from regular nodes.</p>
+<p>So we’ll have to handle the cases of displaying a regular line of text, animating a character, and letting the player pick a choice separately.</p>
+<p>Also, you may notice we have multiple <code>if</code> blocks. As mentioned previously, we may want to both change the background and display some text simultaneously, animate a character without displaying any text, and so on.</p>
+<p>Using separate conditional blocks allows for that. When we add choices, we’ll make two options mutually exclusive, as you’ll see in an upcoming lesson.</p>
+<p>When we break out of the loop, the scene ends, and we emit the corresponding signal.</p>
+<p>At this point, we can optionally hide anything we don’t want to be visible anymore, like the character displayer.</p>
+<p>Add the following two lines after and <em>outside</em> the while loop, at the end of the function.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#75715e">#while key != KEY_END_OF_SCENE:</span>
+        <span style="color:#75715e">#...</span>
+
+    _character_displayer<span style="color:#f92672">.</span>hide()
+    emit_signal(<span style="color:#e6db74">&quot;scene_finished&quot;</span>)
+</pre>
+<p>To test the code, add a temporary <code>_ready()</code> function and call <code>run_scene()</code>. Before that though, we need to make the text box appear by calling <code>TextBox.fade_in_async()</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    yield(_text_box<span style="color:#f92672">.</span>fade_in_async(), <span style="color:#e6db74">&quot;completed&quot;</span>)
+    run_scene()
+</pre>
+<p>The little scene will end abruptly as we lack features to fade the scene from and to black. We’ll add that in the next lesson.</p>
+<h2 id="code-reference">Code reference</h2>
+<p>Here’s the complete <code>ScenePlayer.gd</code> script so far. Note I’ve swapped the order of two code blocks for readability.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name ScenePlayer
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">signal</span> scene_finished
+
+<span style="color:#66d9ef">const</span> KEY_END_OF_SCENE :<span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+
+<span style="color:#66d9ef">var</span> _scene_data :<span style="color:#f92672">=</span> {}
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _text_box :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>TextBox
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _character_displayer :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>CharacterDisplayer
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _background :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>Background
+
+
+<span style="color:#66d9ef">func</span> run_scene() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> key <span style="color:#f92672">=</span> _scene_data<span style="color:#f92672">.</span>keys()[<span style="color:#ae81ff">0</span>]
+    <span style="color:#66d9ef">while</span> key <span style="color:#f92672">!=</span> KEY_END_OF_SCENE:
+        <span style="color:#66d9ef">var</span> node: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> _scene_data[key]
+
+        <span style="color:#66d9ef">var</span> character: Character <span style="color:#f92672">=</span> (
+            ResourceDB<span style="color:#f92672">.</span>get_character(node<span style="color:#f92672">.</span>character)
+            <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&quot;character&quot;</span> <span style="color:#f92672">in</span> node
+            <span style="color:#66d9ef">else</span> ResourceDB<span style="color:#f92672">.</span>get_narrator()
+        )
+
+        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&quot;background&quot;</span> <span style="color:#f92672">in</span> node:
+            <span style="color:#66d9ef">var</span> bg: Background <span style="color:#f92672">=</span> ResourceDB<span style="color:#f92672">.</span>get_background(node<span style="color:#f92672">.</span>background)
+            _background<span style="color:#f92672">.</span>texture <span style="color:#f92672">=</span> bg<span style="color:#f92672">.</span>texture
+
+        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&quot;character&quot;</span> <span style="color:#f92672">in</span> node:
+            <span style="color:#66d9ef">var</span> side: <span style="color:#a6e22e">String</span> <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>side <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&quot;side&quot;</span> <span style="color:#f92672">in</span> node <span style="color:#66d9ef">else</span> CharacterDisplayer<span style="color:#f92672">.</span>SIDE<span style="color:#f92672">.</span>LEFT
+            <span style="color:#66d9ef">var</span> animation: <span style="color:#a6e22e">String</span> <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&quot;animation&quot;</span>, <span style="color:#e6db74">&quot;&quot;</span>)
+            <span style="color:#66d9ef">var</span> expression: <span style="color:#a6e22e">String</span> <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&quot;expression&quot;</span>, <span style="color:#e6db74">&quot;&quot;</span>)
+            _character_displayer<span style="color:#f92672">.</span>display(character, side, expression, animation)
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> <span style="color:#e6db74">&quot;line&quot;</span> <span style="color:#f92672">in</span> node:
+                yield(_character_displayer, <span style="color:#e6db74">&quot;display_finished&quot;</span>)
+
+        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&quot;line&quot;</span> <span style="color:#f92672">in</span> node:
+            _text_box<span style="color:#f92672">.</span>display(node<span style="color:#f92672">.</span>line, character<span style="color:#f92672">.</span>display_name)
+            yield(_text_box, <span style="color:#e6db74">&quot;next_requested&quot;</span>)
+            key <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>next
+        <span style="color:#66d9ef">else</span>:
+            key <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>next
+
+    _character_displayer<span style="color:#f92672">.</span>hide()
+    emit_signal(<span style="color:#e6db74">&quot;scene_finished&quot;</span>)
+</pre>
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpbNHbW4rk2a</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="placing-items-and-fixing-their-look-in-the-inventory">Placing items and fixing their look in the inventory</h1>
+<p>As we’ve seen in the previous lesson, we have a working inventory. We can move stacks of items around, split them, and swap them with one another. <em>But</em>:</p>
+<ul>
+<li>The sprites don’t fit inside the inventory slots.</li>
+<li>We can’t place those entities in the game world.</li>
+<li>The label for the stack count is in the item’s top-left corner, even when we drag it with the mouse. So the mouse cursor can end up hiding it. It looks a little awkward.</li>
+</ul>
+<p>In this lesson, we’ll address these issues.</p>
+<h2 id="fixing-the-blueprints-appearance">Fixing the blueprints’ appearance</h2>
+<p>The <code>BlueprintEntity</code> previews don’t fit in the <code>InventoryPanel</code> because we sized them to fit cells in the game world, not in the inventory.</p>
+<p>We need to add a way to switch preview for the blueprints between the inventory and the world.</p>
+<p>Whenever we move the blueprint in the inventory, it should turn into a small icon, changing its size and position offset. When we place it over the world’s grid, it should look the way it is now.</p>
+<p>To do so, we’ll offset the node’s position and change its size on the fly. Another valid solution would be to have two previews for the blueprint and show and hide them as the mouse cursor hovers or leaves the inventory. Either would work.</p>
+<p>It would also be nice to have a spot in the project where we can set the inventory slots’ size for any script to access it without requiring a reference to <code>InventoryPanel</code>.</p>
+<p>We can use the project settings to store values that are accessible project-wide. Godot’s settings window not only allows you to update predefined options, but you can also add any settings you’d like and access them in code.</p>
+<p>Open the <em>Project Settings…</em> window. At the top of the editor, enter <code>game_gui</code> in <em>Category</em>, <code>inventory_size</code> in <em>Property</em>, set the <em>Type</em> to <code>float</code> and click <em>Add</em>. This will create a setting accessible under the path <code>game_gui/inventory_size</code> in our code. We can access it from any script, anytime.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>The window should jump to your new setting. I set the size to <code>75</code> pixels.</p>
+<p>Now, we can use this new setting to size blueprints, panels, and fix the label. Open <code>BlueprintEntity.gd</code> and add the following functions.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Sets the position and scale of the blueprint to fit inventory panels and hides</span>
+<span style="color:#75715e">## world-specific sprites like the power direction indicators.</span>
+<span style="color:#66d9ef">func</span> display_as_inventory_icon() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># We can retrieve the panel size from the project settings by calling `ProjectSettings.get_setting()`</span>
+    <span style="color:#75715e"># It takes a path to the property as its argument, which works like node property paths.</span>
+    <span style="color:#66d9ef">var</span> panel_size: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> ProjectSettings<span style="color:#f92672">.</span>get_setting(<span style="color:#e6db74">&quot;game_gui/inventory_size&quot;</span>)
+    
+    <span style="color:#75715e"># Set the position. Horizontally, it&#39;s halfway across. Vertically, </span>
+    <span style="color:#75715e"># we move the graphics and collision so that the machine&#39;s origin is on the</span>
+    <span style="color:#75715e"># tile&#39;s floor. With our isometric graphic style, this corresponds to 75% of the height.</span>
+    position <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(panel_size <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.5</span>, panel_size <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.75</span>)
+    
+    <span style="color:#75715e"># The sprites for blueprints are 100x100, so the scale is the desired size divided by 100.</span>
+    scale <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(panel_size <span style="color:#f92672">/</span> <span style="color:#ae81ff">100.0</span>, panel_size <span style="color:#f92672">/</span> <span style="color:#ae81ff">100.0</span>)
+    
+    <span style="color:#75715e"># We modulate the blueprint when it&#39;s in an invalid location, but we don&#39;t want it to stay </span>
+    <span style="color:#75715e"># that color in the inventory. So we reset the modulate color to white.</span>
+    modulate <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>white
+
+    <span style="color:#75715e"># In the inventory, we need to hide the power indicator if this node has one.</span>
+    <span style="color:#66d9ef">if</span> _power_direction:
+        _power_direction<span style="color:#f92672">.</span>hide()
+
+
+<span style="color:#75715e">## This function resets the blueprint&#39;s scale, position offset, and power indicators to display </span>
+<span style="color:#75715e">## in the game world.</span>
+<span style="color:#66d9ef">func</span> display_as_world_entity() <span style="color:#f92672">-&gt;</span> void:
+    scale <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ONE
+    position <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO
+    <span style="color:#66d9ef">if</span> _power_direction:
+        _power_direction<span style="color:#f92672">.</span>show()
+</pre>
+<p>We need a place to call this mode change for the inventory. We do our inventory management inside of <code>InventoryPanel.gd</code>, so open that script. In the <code>held_item</code> setter, <code>_set_held_item()</code>, we call <code>display_as_inventory_icon()</code> on the <code>held_item</code> when we add it as a child.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _set_held_item(value: BlueprintEntity) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+
+    <span style="color:#66d9ef">if</span> held_item:
+        <span style="color:#75715e">#...</span>
+        held_item<span style="color:#f92672">.</span>display_as_inventory_icon()
+</pre>
+<p><img src="data:image/png;base64,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" /></p>
+<p>This looks <em>much</em> better.</p>
+<h2 id="moving-the-stack-count-label">Moving the stack count label</h2>
+<p>The label for the stack size is in the top left in a default position. It looks fine in the inventory, but it ends up under the mouse cursor when we pick up an item. You can still read it, but it’s still a little thing we can fix.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>Go to <code>InventoryPanel.tscn</code> and select the <code>Label</code>. In the <em>Inspector</em>, set its <em>Align</em> property to <em>Right</em>. That way, if we make the label bounding box bigger, the text will grow in from the right. Also, apply the <em>Layout -&gt; Top Right</em> option to it and offset the label from the parent’s bounding box a bit. This will anchor it in the panel’s top-right corner.</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATQAAAEzCAMAAACIWg8VAAAASFBMVEVNTU0zMzWl76wcHCCeRZJrj23/iIglJSq9dlTsj2FCREPr6em1tbbe2dVwcHP/vr6a3qGdnZ9wlXN4tBV7rIDLOVCGvoySWkD7/l3tAAAEU0lEQVR42u3ci26bSBgGUDBLwFxc8LLu+7/pjq9NorgJ2I6HcD5VioWUETlimH8ubpJcz7+JjA40aNCgQYMm0KBBgwZNoEG7Z6o0pPraVWgnnWrouqGqvnIV2lmnW4V0b30+vgrtlHRYHTKkn1+Fdubpjjxd+vlVaNBu755vXl+nV5ru+feBYLXavfJJdx9IQntXXOzhthegKt+DKTk+KW6r/aP159L+wasUt5++2rb7znhSDM/ddhTYUueeVdKthgNUNay6pBrdwDIn7KGL5scX2q6a8OsLXeWo8m7/o8unmC14aWh3+JdAu2f+u57+H/kwf/PMi4WmGorJ3XOhaFneVcXkgWChaMMqKQLaxJJjiWhZmAcMxR5tYnGbL7FrhmlUcUCbOI1aGFqWZYe1oOqENm3Cvii0rDgtDeXZGW3S0tCynrTzIuTBrDhPQ0cvQuaP7g1ZPO1k290w7LpVlxav0CYsdz8SLUubum7SLJp2hrau213XZa/QpmysPBItrX+9vPyq00jayYpjO7tdxGhZE+4x3GXbN8092mmyO91P/hZtiKl7ZvXLIXX50tylnexO93Nu580eVSQDwUzQJhyA+Y7ueSvanbtn8w5t/FGrbxgI+pfb0B42oExen/yGkuNmtEeVLlGiFU0f0jRNe0o5Nb9DypvzvkiOFO3w4m3KdXv40JZPzbp8d3tRo63Xx3GrXT8580A7JnTM44enTtbDozYLtMvz1kawwgEN2qPKxCTZbDahdIU2wmzTN3Xbb05q0L5gVgWzdr5oYfR8jlmYAMwVrViX5VP6ZltDG5PwnIUHrYU2Fq2f8zvtWWibOY+eT0ILFdoG2rjBM6mqNOmhjWMLVBW0CXCbFho0aFdyXJOPB20GewTn3Z9Y0Mo57Ead9xmjQZvBvudlR7uMA+13e2WHPSq0y1mOSNCunOWANns03dNAoORQ3P6k4tY0Cho0aNCgQYMGDdrHaEnfb5IU2tg5yeUTtAmBBg0aNGjQoP10tPW6fH7m8oWy83L3zWj3+L7nHm1GZzmKG79xWJb7Y9qHP/umZHM6yxFrO1FvFmeRthP1sYQs0nag/RQ03dNAsND/P21OZzlibSfqaVSsgQYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNWsg2EWjQoEGDJtCgQYMGTaBBgwYNmkCDBg0aNIEGDRq0H5n/Ab8f6KZQdpg5AAAAAElFTkSuQmCC" /></p>
+<p>Go to the <code>InventoryPanel.gd</code> script. We can use the <code>game_gui/inventory_size</code> setting to force the panel size to follow our global setting. We’ll also use it for the mouse’s preview.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> panel_size: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> ProjectSettings<span style="color:#f92672">.</span>get_setting(<span style="color:#e6db74">&quot;game_gui/inventory_size&quot;</span>)
+
+    <span style="color:#75715e"># Force the panel&#39;s size and min size to match the project setting.</span>
+    rect_min_size <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(panel_size, panel_size)
+    rect_size <span style="color:#f92672">=</span> rect_min_size
+</pre>
+<p>To fix it for the mouse’s inventory, go to <code>DragPreview.tscn</code> and select the <code>Label</code>. Set its <em>Align</em> property to <em>Right</em>, and apply <em>Layout -&gt; Top Right</em> to the node.</p>
+<p>Then, open <code>DragPreview.gd</code> and repeat what we’ve done in the <code>InventoryPanel.gd</code>’s <code>_ready()</code> function.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># func _ready() -&gt; void:</span>
+    <span style="color:#75715e">#...</span>
+    
+    <span style="color:#66d9ef">var</span> panel_size: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> ProjectSettings<span style="color:#f92672">.</span>get_setting(<span style="color:#e6db74">&quot;game_gui/inventory_size&quot;</span>)
+    rect_min_size <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(panel_size, panel_size)
+    rect_size <span style="color:#f92672">=</span> rect_min_size
+</pre>
+<p>You can now make the inventory as big or as small as you like by changing the project settings.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>And the label is no longer obscured by the mouse.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<h2 id="placing-inventory-entities">Placing inventory entities</h2>
+<p>At the moment, we generate blueprints and store them in the <code>EntityPlacer</code> with keyboard shortcuts.</p>
+<p>But we now have a working inventory, so we should get rid of the temporary code that’s in <code>EntityPlacer</code> and replace the placer’s blueprint variable with the mouse’s inventory.</p>
+<p>Head to <code>EntityPlacer.gd</code>, and let’s start with some spring cleaning. Get rid of the <code>elif event.is_action_pressed(&quot;quickbar_...&quot;)</code> blocks in <code>_unhandled_input()</code>. We don’t need them anymore.</p>
+<p>To access the mouse’s inventory, we need the <code>GUI</code> node since it’s the one that has a getter for <code>DragPreview</code>. Add a new <code>_gui: Control</code> variable, and inside of <code>setup()</code>, add a new parameter for the GUI to store it there.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> _gui: <span style="color:#a6e22e">Control</span>
+
+
+<span style="color:#66d9ef">func</span> setup(
+    <span style="color:#75715e"># Don&#39;t forget to add the `gui` argument!</span>
+    gui: <span style="color:#a6e22e">Control</span>,
+    <span style="color:#75715e">#...</span>
+) <span style="color:#f92672">-&gt;</span> void:
+    _gui <span style="color:#f92672">=</span> gui
+    <span style="color:#75715e">#...</span>
+</pre>
+<p>In turn, we need to get the <em>GUI</em> node in <code>Simulation.gd</code> and to pass it along to <code>EntityPlacer</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _gui :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">CanvasLayer</span><span style="color:#f92672">/</span>GUI
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#$Timer.start(simulation_speed)</span>
+    _entity_placer<span style="color:#f92672">.</span>setup(_gui, _tracker, _ground, _flat_entities, _player)
+    <span style="color:#75715e">#...</span>
+</pre>
+<p>Now, in <code>EntityPlacer.gd</code>, wherever we refer to the <code>_blueprint</code> variable, we can replace it with <code>_gui.blueprint</code> and remove the temporary <code>_blueprint</code> variable.</p>
+<p>Remove the line that says <code>var _blueprint: BlueprintEntity</code> at the top of the script and press <kbd>Ctrl+R</kbd> to open the script editor’s search and replace function.</p>
+<p>In the first field, type in <code>_blueprint</code>, in the second <code>_gui.blueprint</code>. Make sure to turn on the <em>Whole Words</em> option on the right so the tool doesn’t replace variable names like <code>has_placeable_blueprint</code>!</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>Click <em>Replace All</em> to fix all the errors.</p>
+<p>Now, if you run the game, you’ll notice something is wrong. The blueprint isn’t the right size, and it’s floating some distance away from the mouse.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>We can fix the size by calling <code>display_as_world_entity()</code> on the blueprint. But what about this strange position offset? The reason this is happening is because of the <code>CanvasLayer</code> node we added for the user interface.</p>
+<p>When the blueprint was a child of <code>EntityPlacer</code>, its global position took the camera into account. But under a separate <code>CanvasLayer</code>, there is no camera to influence it. We need to take the camera-modified position and transform it back into coordinates relative to the viewport.</p>
+<p>Thankfully, we can get the current viewport’s <code>Transform2D</code> to do that using <code>get_viewport_transform()</code>, and use <code>Transform2D</code>’s <code>xform()</code> function. The <code>xform()</code> function transforms coordinates using this transform matrix, converting them from the <code>CanvasLayer</code>’s coordinate system to the root viewport’s.</p>
+<p>At the start of <code>EntityPlacer._move_blueprint_in_world()</code>, replace the line where we set the blueprint’s global position with the following.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _move_blueprint_in_world(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Set the blueprint&#39;s position and scale back to origin</span>
+    _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>display_as_world_entity()
+    
+    <span style="color:#75715e"># Snap the blueprint&#39;s position to the mouse with an offset, transformed into</span>
+    <span style="color:#75715e"># viewport coordinates using `Transform2D.xform()`.</span>
+    _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>global_position <span style="color:#f92672">=</span> get_viewport_transform()<span style="color:#f92672">.</span>xform(
+        map_to_world(cellv) <span style="color:#f92672">+</span> POSITION_OFFSET
+    )
+    <span style="color:#75715e">#...</span>
+</pre>
+<p>You can now grab one of your items and place it in the world, so long as you move the cursor outside the inventory window.</p>
+<p>That brings us to three more problems:</p>
+<ol type="1">
+<li>If you place batteries, their stack count doesn’t go down, so you can keep adding them to infinity. When placing an entity, we should reduce the blueprint’s stack count and destroy it when we run out.</li>
+<li>The inventory window is in the way, as I said. We can provide a keyboard key to toggle its visibility.</li>
+<li>And the blueprint still snaps to the grid when we move around while inside the inventory window.</li>
+</ol>
+<p>It feels like we’re playing whack-a-mole, doesn’t it? This is typical of UI programming, where we have to tackle many details.</p>
+<h2 id="reducing-stack-count">Reducing stack count</h2>
+<p>Like we did in the <code>InventoryPanel</code> script, when we place an entity, we need to reduce the stack count and destroy the blueprint when its number falls to 0. In <code>EntityPlacer</code>’s <code>_place_entity()</code>, let’s do that and detect the case of having none left.</p>
+<p>Add the following lines at the bottom of the function.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _place_entity(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#75715e">#_tracker.place_entity(new_entity, cellv)</span>
+    
+    <span style="color:#66d9ef">if</span> _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>:
+        _gui<span style="color:#f92672">.</span>destroy_blueprint()
+    <span style="color:#66d9ef">else</span>:
+        _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+        _gui<span style="color:#f92672">.</span>update_label()
+</pre>
+<p>With that, when you place all the items you have in a stack, the blueprint should disappear completely.</p>
+<h2 id="toggling-the-inventory-window">Toggling the inventory window</h2>
+<p>Let’s add a keyboard input to toggle the inventory window’s visibility.</p>
+<p>Go into <code>GUI.tscn</code> and hide the <code>InventoryWindow</code> node. Open up <code>GUI.gd</code> and add a new function for <code>_unhandled_input()</code>.</p>
+<p>Instead of <em>only</em> showing and hiding the inventory window, we create helper functions that we’ll extend later as we get into crafting and automation.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## If `true`, it means the GUI window is open.</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _is_open: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">HBoxContainer</span><span style="color:#f92672">/</span>InventoryWindow<span style="color:#f92672">.</span>visible
+
+
+<span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;toggle_inventory&quot;</span>):
+        <span style="color:#66d9ef">if</span> _is_open:
+            _close_inventories()
+        <span style="color:#66d9ef">else</span>:
+            _open_inventories()
+
+
+<span style="color:#75715e">## Shows the inventory window, crafting window</span>
+<span style="color:#66d9ef">func</span> _open_inventories() <span style="color:#f92672">-&gt;</span> void:
+    _is_open <span style="color:#f92672">=</span> true
+    player_inventory<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> true
+
+
+<span style="color:#75715e">## Hides the inventory window, crafting window, and any currently open machine GUI</span>
+<span style="color:#66d9ef">func</span> _close_inventories() <span style="color:#f92672">-&gt;</span> void:
+    _is_open <span style="color:#f92672">=</span> false
+    player_inventory<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> false
+</pre>
+<p>The functions look simple and maybe unnecessary for now. However, we’ll write more complex rules for them later: we’ll need to open crafting menus and close machine GUIs on top of the main inventory. So they’ll get bigger.</p>
+<p>At least, now, you can press <kbd>E</kbd> to toggle the inventory’s visibility.</p>
+<h2 id="preventing-grid-snap-behind-the-inventory-window">Preventing grid snap behind the inventory window</h2>
+<p>We want to address one last issue here: the blueprint snaps to the world grid even when our mouse cursor is over the inventory window.</p>
+<p>This is because of the <code>_process()</code> function in <code>EntityPlacer.gd</code>. Every frame, whether it’s in inventory or not, we force the blueprint to update its position and snap to the grid.</p>
+<p>We do this to keep the blueprint snapped to the grid even when the camera moves.</p>
+<p>To fix this, we need a way of detecting when the mouse is over the inventory window. In <code>GUI.gd</code>, we need to get the parent that holds the inventory window. In <code>_process()</code>, we can do a bit of checking to test for if the mouse is currently in the GUI.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## If `true`, it means the mouse is over the `GUI` at the moment.</span>
+<span style="color:#66d9ef">var</span> mouse_in_gui :<span style="color:#f92672">=</span> false
+
+<span style="color:#75715e">#...</span>
+<span style="color:#75715e">## The parent container that holds the inventory window</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _gui_rect :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">HBoxContainer</span>
+
+
+<span style="color:#66d9ef">func</span> _process(delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> mouse_position :<span style="color:#f92672">=</span> get_global_mouse_position()
+    <span style="color:#75715e"># if the mouse is inside the GUI rect and the GUI is open, set it true.</span>
+    mouse_in_gui <span style="color:#f92672">=</span> _is_open <span style="color:#f92672">and</span> _gui_rect<span style="color:#f92672">.</span>get_rect()<span style="color:#f92672">.</span>has_point(mouse_position)
+</pre>
+<p>And back in <code>EntityPlacer.gd</code>’s <code>_process()</code> function, we can add an extra check for this new boolean that’s part of GUI.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _process(_delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#var has_placeable_blueprint: bool = _gui.blueprint and _gui.blueprint.placeable</span>
+    <span style="color:#66d9ef">if</span> has_placeable_blueprint <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> _gui<span style="color:#f92672">.</span>mouse_in_gui:
+        <span style="color:#75715e">#_move_blueprint_in_world(world_to_map(get_global_mouse_position()))</span>
+</pre>
+<p>And now, the blueprint will move fluidly when hovering the mouse, and snap to the grid when the mouse is over the game’s tilemap.</p>
+<p>The last thing to fix is that the blueprint still looks like a world entity if it goes outside the window even once. We can fix that inside of <code>DragPreview.gd</code>’s <code>_input()</code> function. When it detects mouse movement, we can ensure the blueprint is an inventory icon and not a world entity.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventMouseMotion</span>:
+        <span style="color:#66d9ef">if</span> blueprint:
+            blueprint<span style="color:#f92672">.</span>display_as_inventory_icon()
+        <span style="color:#75715e">#rect_global_position = event.global_position</span>
+</pre>
+<p>Now, it should look correct in all cases.</p>
+<h2 id="code-reference">Code reference</h2>
+<p>Here are the complete scripts we modified in this lesson.</p>
+<p><code>BlueprintEntity.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name BlueprintEntity
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node2D</span>
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> placeable :<span style="color:#f92672">=</span> true
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> stack_size :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+
+<span style="color:#66d9ef">var</span> stack_count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _power_direction :<span style="color:#f92672">=</span> find_node(<span style="color:#e6db74">&quot;PowerDirection&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> rotate_blueprint() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _power_direction:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">var</span> directions: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> _power_direction<span style="color:#f92672">.</span>output_directions
+    <span style="color:#66d9ef">var</span> new_directions :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">if</span> directions <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>LEFT <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+        new_directions <span style="color:#f92672">|=</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>UP
+
+    <span style="color:#66d9ef">if</span> directions <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>UP <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+        new_directions <span style="color:#f92672">|=</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>RIGHT
+
+    <span style="color:#66d9ef">if</span> directions <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>RIGHT <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+        new_directions <span style="color:#f92672">|=</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>DOWN
+
+    <span style="color:#66d9ef">if</span> directions <span style="color:#f92672">&amp;</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>DOWN <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+        new_directions <span style="color:#f92672">|=</span> Types<span style="color:#f92672">.</span>Direction<span style="color:#f92672">.</span>LEFT
+
+    _power_direction<span style="color:#f92672">.</span>output_directions <span style="color:#f92672">=</span> new_directions
+
+
+<span style="color:#66d9ef">func</span> display_as_inventory_icon() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> panel_size: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> ProjectSettings<span style="color:#f92672">.</span>get_setting(<span style="color:#e6db74">&quot;game_gui/inventory_size&quot;</span>)
+    
+    position <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(panel_size <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.5</span>, panel_size <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.75</span>)
+    
+    scale <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(panel_size <span style="color:#f92672">/</span> <span style="color:#ae81ff">100.0</span>, panel_size <span style="color:#f92672">/</span> <span style="color:#ae81ff">100.0</span>)
+    
+    modulate <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>white
+
+    <span style="color:#66d9ef">if</span> _power_direction:
+        _power_direction<span style="color:#f92672">.</span>hide()
+
+
+<span style="color:#66d9ef">func</span> display_as_world_entity() <span style="color:#f92672">-&gt;</span> void:
+    scale <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ONE
+    position <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO
+    <span style="color:#66d9ef">if</span> _power_direction:
+        _power_direction<span style="color:#f92672">.</span>show()
+</pre>
+<p><code>InventoryPanel.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name InventoryPanel
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Panel</span>
+
+<span style="color:#66d9ef">signal</span> held_item_changed(panel, item)
+
+<span style="color:#66d9ef">var</span> held_item: BlueprintEntity <span style="color:#66d9ef">setget</span> _set_held_item
+
+<span style="color:#66d9ef">var</span> gui: <span style="color:#a6e22e">Control</span>
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> count_label :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Label</span>
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> panel_size: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> ProjectSettings<span style="color:#f92672">.</span>get_setting(<span style="color:#e6db74">&quot;game_gui/inventory_size&quot;</span>)
+
+    <span style="color:#75715e"># Force the panel&#39;s size and min size to match the project setting and apply</span>
+    <span style="color:#75715e"># the same size to the label.</span>
+    rect_min_size <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(panel_size, panel_size)
+    rect_size <span style="color:#f92672">=</span> rect_min_size
+
+
+<span style="color:#66d9ef">func</span> _gui_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> left_click :<span style="color:#f92672">=</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;left_click&quot;</span>)
+    <span style="color:#66d9ef">var</span> right_click :<span style="color:#f92672">=</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;right_click&quot;</span>)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> (left_click <span style="color:#f92672">or</span> right_click):
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">if</span> gui<span style="color:#f92672">.</span>blueprint:
+        <span style="color:#66d9ef">var</span> blueprint_name :<span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>get_entity_name_from(gui<span style="color:#f92672">.</span>blueprint)
+
+        <span style="color:#66d9ef">if</span> held_item:
+            <span style="color:#66d9ef">var</span> held_item_name :<span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>get_entity_name_from(held_item)
+            <span style="color:#66d9ef">var</span> item_is_same_type: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> held_item_name <span style="color:#f92672">==</span> blueprint_name
+
+            <span style="color:#66d9ef">var</span> stack_has_space: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">&lt;</span> held_item<span style="color:#f92672">.</span>stack_size
+            <span style="color:#66d9ef">if</span> item_is_same_type <span style="color:#f92672">and</span> stack_has_space:
+                <span style="color:#66d9ef">if</span> left_click:
+                    _stack_items()
+                <span style="color:#66d9ef">elif</span> right_click:
+                    _stack_items(true)
+            <span style="color:#66d9ef">else</span>:
+                <span style="color:#66d9ef">if</span> left_click:
+                    _swap_items()
+        <span style="color:#66d9ef">else</span>:
+            <span style="color:#66d9ef">if</span> left_click:
+                _grab_item()
+
+            <span style="color:#66d9ef">elif</span> right_click:
+                <span style="color:#66d9ef">if</span> gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>:
+                    _grab_split_items()
+                <span style="color:#66d9ef">else</span>:
+                    _grab_item()
+    <span style="color:#66d9ef">elif</span> held_item:
+        <span style="color:#66d9ef">if</span> left_click:
+            _release_item()
+        <span style="color:#66d9ef">elif</span> right_click:
+            <span style="color:#66d9ef">if</span> held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>:
+                _release_item()
+            <span style="color:#66d9ef">else</span>:
+                _split_items()
+
+
+<span style="color:#66d9ef">func</span> setup(_gui: <span style="color:#a6e22e">Control</span>) <span style="color:#f92672">-&gt;</span> void:
+    gui <span style="color:#f92672">=</span> _gui
+
+
+<span style="color:#66d9ef">func</span> _set_held_item(value: BlueprintEntity) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> held_item <span style="color:#f92672">and</span> held_item<span style="color:#f92672">.</span>get_parent() <span style="color:#f92672">==</span> self:
+        remove_child(held_item)
+
+    held_item <span style="color:#f92672">=</span> value
+
+    <span style="color:#66d9ef">if</span> held_item:
+        add_child(held_item)
+        move_child(held_item, <span style="color:#ae81ff">0</span>)
+        held_item<span style="color:#f92672">.</span>display_as_inventory_icon()
+
+    _update_label()
+    emit_signal(<span style="color:#e6db74">&quot;held_item_changed&quot;</span>, self, held_item)
+
+
+<span style="color:#66d9ef">func</span> _update_label() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> can_be_stacked :<span style="color:#f92672">=</span> held_item <span style="color:#f92672">and</span> held_item<span style="color:#f92672">.</span>stack_size <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>
+
+    <span style="color:#66d9ef">if</span> can_be_stacked:
+        count_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> str(held_item<span style="color:#f92672">.</span>stack_count)
+        count_label<span style="color:#f92672">.</span>show()
+    <span style="color:#66d9ef">else</span>:
+        count_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> str(<span style="color:#ae81ff">1</span>)
+        count_label<span style="color:#f92672">.</span>hide()
+
+
+<span style="color:#66d9ef">func</span> _stack_items(split :<span style="color:#f92672">=</span> false) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(
+        min(
+            gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">/</span> (<span style="color:#ae81ff">2</span> <span style="color:#66d9ef">if</span> split <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">1</span>),
+            held_item<span style="color:#f92672">.</span>stack_size <span style="color:#f92672">-</span> held_item<span style="color:#f92672">.</span>stack_count
+        )
+    )
+
+    <span style="color:#66d9ef">if</span> split:
+        gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">-=</span> count
+        gui<span style="color:#f92672">.</span>update_label()
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">if</span> count <span style="color:#f92672">&lt;</span> gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count:
+            gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">-=</span> count
+            gui<span style="color:#f92672">.</span>update_label()
+        <span style="color:#66d9ef">else</span>:
+            gui<span style="color:#f92672">.</span>destroy_blueprint()
+
+    held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">+=</span> count
+    _update_label()
+
+
+<span style="color:#66d9ef">func</span> _swap_items() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> item: BlueprintEntity <span style="color:#f92672">=</span> gui<span style="color:#f92672">.</span>blueprint
+    gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">=</span> null
+
+    <span style="color:#66d9ef">var</span> current_item :<span style="color:#f92672">=</span> held_item
+
+    self<span style="color:#f92672">.</span>held_item <span style="color:#f92672">=</span> item
+    gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">=</span> current_item
+
+
+<span style="color:#66d9ef">func</span> _grab_item() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> item: BlueprintEntity <span style="color:#f92672">=</span> gui<span style="color:#f92672">.</span>blueprint
+
+    gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">=</span> null
+    self<span style="color:#f92672">.</span>held_item <span style="color:#f92672">=</span> item
+
+
+<span style="color:#66d9ef">func</span> _release_item() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> item :<span style="color:#f92672">=</span> held_item
+
+    self<span style="color:#f92672">.</span>held_item <span style="color:#f92672">=</span> null
+    gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">=</span> item
+
+
+<span style="color:#66d9ef">func</span> _split_items() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>)
+
+    <span style="color:#66d9ef">var</span> new_stack :<span style="color:#f92672">=</span> held_item<span style="color:#f92672">.</span>duplicate()
+    new_stack<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">=</span> count
+    held_item<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">-=</span> count
+
+    gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">=</span> new_stack
+    _update_label()
+
+
+<span style="color:#66d9ef">func</span> _grab_split_items() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>)
+
+    <span style="color:#66d9ef">var</span> new_stack: BlueprintEntity <span style="color:#f92672">=</span> gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>duplicate()
+    new_stack<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">=</span> count
+
+    gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">-=</span> count
+    gui<span style="color:#f92672">.</span>update_label()
+
+    self<span style="color:#f92672">.</span>held_item <span style="color:#f92672">=</span> new_stack
+</pre>
+<p><code>DragPreview.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Control</span>
+
+<span style="color:#66d9ef">var</span> blueprint: BlueprintEntity <span style="color:#66d9ef">setget</span> _set_blueprint
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> count_label :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Label</span>
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    set_as_toplevel(true)
+
+    <span style="color:#66d9ef">var</span> panel_size: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> ProjectSettings<span style="color:#f92672">.</span>get_setting(<span style="color:#e6db74">&quot;game_gui/inventory_size&quot;</span>)
+    rect_min_size <span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(panel_size, panel_size)
+    rect_size <span style="color:#f92672">=</span> rect_min_size
+
+
+<span style="color:#66d9ef">func</span> _input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventMouseMotion</span>:
+        <span style="color:#66d9ef">if</span> blueprint:
+            blueprint<span style="color:#f92672">.</span>display_as_inventory_icon()
+        rect_global_position <span style="color:#f92672">=</span> event<span style="color:#f92672">.</span>global_position
+
+
+<span style="color:#66d9ef">func</span> update_label() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> blueprint <span style="color:#f92672">and</span> blueprint<span style="color:#f92672">.</span>stack_size <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>:
+        count_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> str(blueprint<span style="color:#f92672">.</span>stack_count)
+        count_label<span style="color:#f92672">.</span>show()
+    <span style="color:#66d9ef">else</span>:
+        count_label<span style="color:#f92672">.</span>hide()
+
+
+<span style="color:#66d9ef">func</span> destroy_blueprint() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> blueprint:
+        remove_child(blueprint)
+        blueprint<span style="color:#f92672">.</span>queue_free()
+        blueprint <span style="color:#f92672">=</span> null
+        update_label()
+
+
+<span style="color:#66d9ef">func</span> _set_blueprint(value: BlueprintEntity) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> blueprint <span style="color:#f92672">and</span> blueprint<span style="color:#f92672">.</span>get_parent() <span style="color:#f92672">==</span> self:
+        remove_child(blueprint)
+
+    blueprint <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">if</span> blueprint:
+        add_child(blueprint)
+        move_child(blueprint, <span style="color:#ae81ff">0</span>)
+
+    update_label()
+</pre>
+<p><code>EntityPlacer.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">TileMap</span>
+
+<span style="color:#66d9ef">const</span> MAXIMUM_WORK_DISTANCE :<span style="color:#f92672">=</span> <span style="color:#ae81ff">275.0</span>
+<span style="color:#66d9ef">const</span> POSITION_OFFSET :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">25</span>)
+<span style="color:#66d9ef">const</span> DECONSTRUCT_TIME :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.3</span>
+
+<span style="color:#66d9ef">var</span> _gui: <span style="color:#a6e22e">Control</span>
+<span style="color:#66d9ef">var</span> _tracker: EntityTracker
+<span style="color:#66d9ef">var</span> _ground: <span style="color:#a6e22e">TileMap</span>
+<span style="color:#66d9ef">var</span> _flat_entities: <span style="color:#a6e22e">Node2D</span>
+<span style="color:#66d9ef">var</span> _player: <span style="color:#a6e22e">KinematicBody2D</span>
+<span style="color:#66d9ef">var</span> _current_deconstruct_location :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _deconstruct_timer :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Timer</span>
+
+
+<span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> global_mouse_position :<span style="color:#f92672">=</span> get_global_mouse_position()
+
+    <span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">and</span> _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>placeable
+    <span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+        global_mouse_position<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position)
+        <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+    )
+
+    <span style="color:#66d9ef">var</span> cellv :<span style="color:#f92672">=</span> world_to_map(global_mouse_position)
+    <span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>is_cell_occupied(cellv)
+    <span style="color:#66d9ef">var</span> is_on_ground :<span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventMouseButton</span>:
+        _abort_deconstruct()
+
+    <span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;left_click&quot;</span>):
+        <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+                _place_entity(cellv)
+                _update_neighboring_flat_entities(cellv)
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;right_click&quot;</span>) <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> has_placeable_blueprint:
+        <span style="color:#66d9ef">if</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player:
+            _deconstruct(global_mouse_position, cellv)
+
+    <span style="color:#66d9ef">elif</span> event is <span style="color:#a6e22e">InputEventMouseMotion</span>:
+        <span style="color:#66d9ef">if</span> cellv <span style="color:#f92672">!=</span> _current_deconstruct_location:
+            _abort_deconstruct()
+        <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+            _move_blueprint_in_world(cellv)
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;drop&quot;</span>) <span style="color:#f92672">and</span> _gui<span style="color:#f92672">.</span>blueprint:
+        remove_child(_gui<span style="color:#f92672">.</span>blueprint)
+        _gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">=</span> null
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;rotate_blueprint&quot;</span>) <span style="color:#f92672">and</span> _gui<span style="color:#f92672">.</span>blueprint:
+        _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>rotate_blueprint()
+
+
+<span style="color:#66d9ef">func</span> _process(_delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _gui<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">and</span> _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>placeable
+    <span style="color:#66d9ef">if</span> has_placeable_blueprint <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> _gui<span style="color:#f92672">.</span>mouse_in_gui:
+        _move_blueprint_in_world(world_to_map(get_global_mouse_position()))
+
+
+<span style="color:#66d9ef">func</span> setup(gui: <span style="color:#a6e22e">Control</span>, tracker: EntityTracker, ground: <span style="color:#a6e22e">TileMap</span>, flat_entities: <span style="color:#a6e22e">YSort</span>, player: <span style="color:#a6e22e">KinematicBody2D</span>) <span style="color:#f92672">-&gt;</span> void:
+    _gui <span style="color:#f92672">=</span> gui
+    _tracker <span style="color:#f92672">=</span> tracker
+    _ground <span style="color:#f92672">=</span> ground
+    _player <span style="color:#f92672">=</span> player
+    _flat_entities <span style="color:#f92672">=</span> flat_entities
+
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> get_children():
+        <span style="color:#66d9ef">if</span> child is Entity:
+            <span style="color:#66d9ef">var</span> map_position :<span style="color:#f92672">=</span> world_to_map(child<span style="color:#f92672">.</span>global_position)
+            _tracker<span style="color:#f92672">.</span>place_entity(child, map_position)
+
+
+<span style="color:#66d9ef">func</span> _move_blueprint_in_world(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>display_as_world_entity()
+    _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>global_position <span style="color:#f92672">=</span> get_viewport_transform()<span style="color:#f92672">.</span>xform(
+        map_to_world(cellv) <span style="color:#f92672">+</span> POSITION_OFFSET
+    )
+
+    <span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+        get_global_mouse_position()<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position)
+        <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+    )
+    <span style="color:#66d9ef">var</span> is_on_ground: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>is_cell_occupied(cellv)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+        _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>modulate <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>white
+    <span style="color:#66d9ef">else</span>:
+        _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>modulate <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>red
+
+    <span style="color:#66d9ef">if</span> _gui<span style="color:#f92672">.</span>blueprint is WireBlueprint:
+        WireBlueprint<span style="color:#f92672">.</span>set_sprite_for_direction(_gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>sprite, _get_powered_neighbors(cellv))
+
+
+<span style="color:#66d9ef">func</span> _place_entity(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> entity_name :<span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>get_entity_name_from(_gui<span style="color:#f92672">.</span>blueprint)
+    <span style="color:#66d9ef">var</span> new_entity: <span style="color:#a6e22e">Node2D</span> <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>entities[entity_name]<span style="color:#f92672">.</span>instance()
+
+    <span style="color:#66d9ef">if</span> _gui<span style="color:#f92672">.</span>blueprint is WireBlueprint:
+        <span style="color:#66d9ef">var</span> directions :<span style="color:#f92672">=</span> _get_powered_neighbors(cellv)
+        _flat_entities<span style="color:#f92672">.</span>add_child(new_entity)
+        WireBlueprint<span style="color:#f92672">.</span>set_sprite_for_direction(new_entity<span style="color:#f92672">.</span>sprite, directions)
+    <span style="color:#66d9ef">else</span>:
+        add_child(new_entity)
+
+    new_entity<span style="color:#f92672">.</span>global_position <span style="color:#f92672">=</span> map_to_world(cellv) <span style="color:#f92672">+</span> POSITION_OFFSET
+    new_entity<span style="color:#f92672">.</span>_setup(_gui<span style="color:#f92672">.</span>blueprint)
+    _tracker<span style="color:#f92672">.</span>place_entity(new_entity, cellv)
+
+    <span style="color:#66d9ef">if</span> _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>:
+        _gui<span style="color:#f92672">.</span>destroy_blueprint()
+    <span style="color:#66d9ef">else</span>:
+        _gui<span style="color:#f92672">.</span>blueprint<span style="color:#f92672">.</span>stack_count <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+        _gui<span style="color:#f92672">.</span>update_label()
+
+
+<span style="color:#66d9ef">func</span> _deconstruct(event_position: <span style="color:#a6e22e">Vector2</span>, cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    _deconstruct_timer<span style="color:#f92672">.</span>connect(
+        <span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>, [cellv], CONNECT_ONESHOT
+    )
+    _deconstruct_timer<span style="color:#f92672">.</span>start(DECONSTRUCT_TIME)
+    _current_deconstruct_location <span style="color:#f92672">=</span> cellv
+
+
+<span style="color:#66d9ef">func</span> _finish_deconstruct(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> entity :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>get_entity_at(cellv)
+    _tracker<span style="color:#f92672">.</span>remove_entity(cellv)
+    _update_neighboring_flat_entities(cellv)
+
+
+<span style="color:#66d9ef">func</span> _abort_deconstruct() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _deconstruct_timer<span style="color:#f92672">.</span>is_connected(<span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>):
+        _deconstruct_timer<span style="color:#f92672">.</span>disconnect(<span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>)
+    _deconstruct_timer<span style="color:#f92672">.</span>stop()
+
+
+<span style="color:#66d9ef">func</span> _get_powered_neighbors(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> direction :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">for</span> neighbor <span style="color:#f92672">in</span> Types<span style="color:#f92672">.</span>NEIGHBORS<span style="color:#f92672">.</span>keys():
+        <span style="color:#66d9ef">var</span> key: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> cellv <span style="color:#f92672">+</span> Types<span style="color:#f92672">.</span>NEIGHBORS[neighbor]
+
+        <span style="color:#66d9ef">if</span> _tracker<span style="color:#f92672">.</span>is_cell_occupied(key):
+            <span style="color:#66d9ef">var</span> entity: <span style="color:#a6e22e">Node</span> <span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>get_entity_at(key)
+            <span style="color:#66d9ef">if</span> (
+                entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_MOVERS)
+                <span style="color:#f92672">or</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_RECEIVERS)
+                <span style="color:#f92672">or</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_SOURCES)
+            ):
+                direction <span style="color:#f92672">|=</span> neighbor
+
+    <span style="color:#66d9ef">return</span> direction
+
+
+<span style="color:#66d9ef">func</span> _update_neighboring_flat_entities(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> neighbor <span style="color:#f92672">in</span> Types<span style="color:#f92672">.</span>NEIGHBORS<span style="color:#f92672">.</span>keys():
+        <span style="color:#66d9ef">var</span> key: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> cellv <span style="color:#f92672">+</span> Types<span style="color:#f92672">.</span>NEIGHBORS[neighbor]
+        <span style="color:#66d9ef">var</span> object <span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>get_entity_at(key)
+
+        <span style="color:#66d9ef">if</span> object <span style="color:#f92672">and</span> object is WireEntity:
+            <span style="color:#66d9ef">var</span> tile_directions :<span style="color:#f92672">=</span> _get_powered_neighbors(key)
+            WireBlueprint<span style="color:#f92672">.</span>set_sprite_for_direction(object<span style="color:#f92672">.</span>sprite, tile_directions)
+</pre>
+<p><code>Simulation.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">const</span> BARRIER_ID :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+<span style="color:#66d9ef">const</span> INVISIBLE_BARRIER_ID :<span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>
+
+<span style="color:#66d9ef">var</span> _tracker :<span style="color:#f92672">=</span> EntityTracker<span style="color:#f92672">.</span>new()
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> simulation_speed :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">30.0</span>
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _ground :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>GameWorld<span style="color:#f92672">/</span>GroundTiles
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _entity_placer :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>GameWorld<span style="color:#f92672">/</span><span style="color:#a6e22e">YSort</span><span style="color:#f92672">/</span>EntityPlacer
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _player :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>GameWorld<span style="color:#f92672">/</span><span style="color:#a6e22e">YSort</span><span style="color:#f92672">/</span>Player
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _flat_entities :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>GameWorld<span style="color:#f92672">/</span>FlatEntities
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _power_system :<span style="color:#f92672">=</span> PowerSystem<span style="color:#f92672">.</span>new()
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _gui :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">CanvasLayer</span><span style="color:#f92672">/</span>GUI
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#f92672">$</span><span style="color:#a6e22e">Timer</span><span style="color:#f92672">.</span>start(simulation_speed)
+    _entity_placer<span style="color:#f92672">.</span>setup(_gui, _tracker, _ground, _flat_entities, _player)
+    <span style="color:#66d9ef">var</span> barriers: <span style="color:#a6e22e">Array</span> <span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_used_cells_by_id(BARRIER_ID)
+
+    <span style="color:#66d9ef">for</span> cellv <span style="color:#f92672">in</span> barriers:
+        _ground<span style="color:#f92672">.</span>set_cellv(cellv, INVISIBLE_BARRIER_ID)
+
+
+<span style="color:#66d9ef">func</span> _on_Timer_timeout() <span style="color:#f92672">-&gt;</span> void:
+    Events<span style="color:#f92672">.</span>emit_signal(<span style="color:#e6db74">&quot;systems_ticked&quot;</span>, simulation_speed)
+</pre>
+<p><code>GUI.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">CenterContainer</span>
+
+<span style="color:#66d9ef">var</span> blueprint: BlueprintEntity <span style="color:#66d9ef">setget</span> _set_blueprint, _get_blueprint
+
+<span style="color:#66d9ef">var</span> mouse_in_gui :<span style="color:#f92672">=</span> false
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _is_open: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">HBoxContainer</span><span style="color:#f92672">/</span>InventoryWindow<span style="color:#f92672">.</span>visible
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> player_inventory :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">HBoxContainer</span><span style="color:#f92672">/</span>InventoryWindow
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _drag_preview :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>DragPreview
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _gui_rect :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">HBoxContainer</span>
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    player_inventory<span style="color:#f92672">.</span>setup(self)
+
+
+<span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;toggle_inventory&quot;</span>):
+        <span style="color:#66d9ef">if</span> _is_open:
+            _close_inventories()
+        <span style="color:#66d9ef">else</span>:
+            _open_inventories()
+
+
+<span style="color:#66d9ef">func</span> _process(delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> mouse_position :<span style="color:#f92672">=</span> get_global_mouse_position()
+    mouse_in_gui <span style="color:#f92672">=</span> _is_open <span style="color:#f92672">and</span> _gui_rect<span style="color:#f92672">.</span>get_rect()<span style="color:#f92672">.</span>has_point(mouse_position)
+
+
+<span style="color:#66d9ef">func</span> destroy_blueprint() <span style="color:#f92672">-&gt;</span> void:
+    _drag_preview<span style="color:#f92672">.</span>destroy_blueprint()
+
+
+<span style="color:#66d9ef">func</span> update_label() <span style="color:#f92672">-&gt;</span> void:
+    _drag_preview<span style="color:#f92672">.</span>update_label()
+
+
+<span style="color:#66d9ef">func</span> _set_blueprint(value: BlueprintEntity) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+    _drag_preview<span style="color:#f92672">.</span>blueprint <span style="color:#f92672">=</span> value
+
+
+<span style="color:#66d9ef">func</span> _get_blueprint() <span style="color:#f92672">-&gt;</span> BlueprintEntity:
+    <span style="color:#66d9ef">return</span> _drag_preview<span style="color:#f92672">.</span>blueprint
+
+
+<span style="color:#66d9ef">func</span> _open_inventories() <span style="color:#f92672">-&gt;</span> void:
+    _is_open <span style="color:#f92672">=</span> true
+    player_inventory<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> true
+
+
+<span style="color:#66d9ef">func</span> _close_inventories() <span style="color:#f92672">-&gt;</span> void:
+    _is_open <span style="color:#f92672">=</span> false
+    player_inventory<span style="color:#f92672">.</span>visible <span style="color:#f92672">=</span> false
+</pre>
+</body>
+</html>

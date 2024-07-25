@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpmwLiSYWIpJ</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="coding-an-editorscript-to-control-cameras">Coding an editorScript to control cameras</h1>
+<p>We’ve seen how to code tool scripts that create and populate viewport nodes for us. Now we can code a plugin that finds the editor’s camera and controls the light and specular viewport cameras.</p>
+<p>The following code happens inside of <code>plugin.gd</code>.</p>
+<h2 id="data">Data</h2>
+<p>There’s some data we need to work: the two viewports and their cameras and the editor’s viewport. The editor’s viewport is not a type that GDScript exposes, but it <em>does</em> inherit from the GUI nodes, so we can settle for a <code>Control</code> base class.</p>
+<p>As a bonus, we also throw in a <code>CheckBox</code> for the <em>Preview</em> checkbox when selecting a camera.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> light_camera: <span style="color:#a6e22e">Camera</span>
+<span style="color:#66d9ef">var</span> specular_camera: <span style="color:#a6e22e">Camera</span>
+
+<span style="color:#66d9ef">var</span> light_viewport: <span style="color:#a6e22e">Viewport</span>
+<span style="color:#66d9ef">var</span> specular_viewport: <span style="color:#a6e22e">Viewport</span>
+
+<span style="color:#66d9ef">var</span> editor_viewport: <span style="color:#a6e22e">Control</span>
+<span style="color:#66d9ef">var</span> preview_checkbox: <span style="color:#a6e22e">CheckBox</span>
+</pre>
+<h2 id="when-the-plugin-should-run">When the plugin should run</h2>
+<p>Whenever the editor opens a Node or Resource, Godot calls the <code>handles</code> function that takes the opened object in question. We check what that object is and tell Godot whether it should run or not. If so, it runs editor specific functions.</p>
+<p>In our case, the plugin should run if the object that the user opened is the current scene <em>and</em> there’s a <code>ToonSceneBuilder</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> handles(object: <span style="color:#a6e22e">Object</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">if</span> object <span style="color:#f92672">==</span> get_tree()<span style="color:#f92672">.</span>edited_scene_root:
+        <span style="color:#66d9ef">var</span> builder: ToonSceneBuilder <span style="color:#f92672">=</span> _find_by_type_name(object, <span style="color:#e6db74">&quot;ToonSceneBuilder&quot;</span>)
+        <span style="color:#66d9ef">if</span> builder:
+</pre>
+<p>The <code>_find_by_type_name</code> function goes through the scene hierarchy recursively until it finds the right node or runs out of children.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _find_by_type_name(parent: <span style="color:#a6e22e">Node</span>, type_name: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Node</span>:
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> parent<span style="color:#f92672">.</span>get_children():
+        <span style="color:#66d9ef">if</span> child<span style="color:#f92672">.</span>get_class() <span style="color:#f92672">==</span> type_name:
+            <span style="color:#66d9ef">return</span> child
+        <span style="color:#66d9ef">else</span>:
+            <span style="color:#66d9ef">var</span> result: <span style="color:#a6e22e">Node</span> <span style="color:#f92672">=</span> _find_by_type_name(child, type_name)
+            <span style="color:#66d9ef">if</span> result:
+                <span style="color:#66d9ef">return</span> result
+    <span style="color:#66d9ef">return</span> null
+</pre>
+<p>The object <em>must</em> have a <code>get_class</code> function that returns the class name, so add one to <code>ToonSceneBuilder.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> get_class() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">String</span>:
+    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&quot;ToonSceneBuilder&quot;</span>
+</pre>
+<p>If both of the conditions are true, then we fire a function to find the cameras so we can control them later. If either of them is <code>false</code>, then we return <code>false</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> handles(object: <span style="color:#a6e22e">Object</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">if</span> object <span style="color:#f92672">==</span> get_tree()<span style="color:#f92672">.</span>edited_scene_root:
+        <span style="color:#66d9ef">var</span> builder: ToonSceneBuilder <span style="color:#f92672">=</span> _find_toon_scene_builder(object)
+        <span style="color:#66d9ef">if</span> builder:
+            <span style="color:#66d9ef">return</span> _initialize_camera_control(object, builder, get_editor_interface())
+
+    <span style="color:#66d9ef">return</span> false
+</pre>
+<h2 id="finding-cameras">Finding cameras</h2>
+<p>The <code>ToonSceneBuilder</code> has references to the viewports we can use. If they’re missing, we skip doing anything and return <code>false</code>. But if we find either, we tell Godot to warn us when the editor camera moves, update the viewport sizes to the editor size and return <code>true</code>. We use the <code>_find_by_type_name</code> function again to find the editor viewport for later use.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _initialize_camera_control(object: <span style="color:#a6e22e">Object</span>, toon_builder: ToonSceneBuilder) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">var</span> editor_root :<span style="color:#f92672">=</span> interface<span style="color:#f92672">.</span>get_editor_viewport()
+    editor_viewport <span style="color:#f92672">=</span> _find_by_type_name(editor_root, <span style="color:#e6db74">&quot;SpatialEditorViewport&quot;</span>)
+
+    light_viewport <span style="color:#f92672">=</span> toon_builder<span style="color:#f92672">.</span>light_data
+    <span style="color:#66d9ef">if</span> light_viewport:
+        light_viewport<span style="color:#f92672">.</span>size <span style="color:#f92672">=</span> editor_viewport<span style="color:#f92672">.</span>rect_size
+        light_camera <span style="color:#f92672">=</span> light_viewport<span style="color:#f92672">.</span>get_camera()
+
+    specular_viewport <span style="color:#f92672">=</span> toon_builder<span style="color:#f92672">.</span>specular_data
+    <span style="color:#66d9ef">if</span> specular_viewport:
+        specular_viewport<span style="color:#f92672">.</span>size <span style="color:#f92672">=</span> editor_viewport<span style="color:#f92672">.</span>rect_size
+        specular_camera <span style="color:#f92672">=</span> specular_viewport<span style="color:#f92672">.</span>get_camera()
+
+    <span style="color:#66d9ef">if</span> light_camera <span style="color:#f92672">or</span> specular_camera:
+        set_input_event_forwarding_always_enabled()
+
+        <span style="color:#66d9ef">return</span> true
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">return</span> false
+</pre>
+<h2 id="updating-camera-positions">Updating camera positions</h2>
+<p>The <code>set_input_event_forwarding_always_enabled</code> is a function that tells Godot to send updates whenever the editor camera moves. Those updates happen inside of the <code>forward_spatial_gui_input</code> function. If the function returns true, it consumes the event and the rest of the editor doesn’t receive it. In our case, we’re piggybacking on the signal so we return <code>false</code> to prevent consuming the event.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> forward_spatial_gui_input(camera: <span style="color:#a6e22e">Camera</span>, event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    _set_camera_and_viewports(camera<span style="color:#f92672">.</span>global_transform)
+    <span style="color:#66d9ef">return</span> false
+</pre>
+<p>In the <code>_set_camera_and_viewports</code> function, we update the transform of the cameras and set their viewports to the editor viewport’s size.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _set_camera_and_viewports(transform: <span style="color:#a6e22e">Transform</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> light_camera:
+        light_camera<span style="color:#f92672">.</span>global_transform <span style="color:#f92672">=</span> transform
+        light_viewport<span style="color:#f92672">.</span>size <span style="color:#f92672">=</span> editor_viewport<span style="color:#f92672">.</span>rect_size
+    <span style="color:#66d9ef">if</span> specular_camera:
+        specular_camera<span style="color:#f92672">.</span>global_transform <span style="color:#f92672">=</span> transform
+        specular_viewport<span style="color:#f92672">.</span>size <span style="color:#f92672">=</span> editor_viewport<span style="color:#f92672">.</span>rect_size
+</pre>
+<h2 id="tooncamera-and-toonviewportcontainer">ToonCamera and ToonViewportContainer</h2>
+<p>In theory, the transform of the viewport cameras changes whenever the editor gets an input event and the viewport sizes to the editor’s. But the viewport containers <em>stretch</em> viewports to their sizes and the main scene’s camera has remote transforms to control the viewport cameras. That’s fine when in game, but while in the editor, we want to turn that behavior off.</p>
+<p>We create two new scripts: one extends <code>ViewportContainer</code> and the other extends <code>Camera</code>. They’re both tool scripts and have a class name.</p>
+<h3 id="tooncamera">ToonCamera</h3>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">tool</span>
+class_name ToonCamera
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Camera</span>
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    toggle_remotes()
+
+
+<span style="color:#75715e"># Sets the remote transform&#39;s activation on or off depending on if project is in Editor</span>
+<span style="color:#66d9ef">func</span> toggle_remotes() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> is_game :<span style="color:#f92672">=</span> <span style="color:#f92672">not</span> Engine<span style="color:#f92672">.</span>editor_hint
+
+    <span style="color:#66d9ef">var</span> light_remote: RemoteTransform <span style="color:#f92672">=</span> find_node(<span style="color:#e6db74">&quot;LightRemote&quot;</span>)
+    <span style="color:#66d9ef">if</span> light_remote:
+        light_remote<span style="color:#f92672">.</span>update_position <span style="color:#f92672">=</span> is_game
+        light_remote<span style="color:#f92672">.</span>update_rotation <span style="color:#f92672">=</span> is_game
+        light_remote<span style="color:#f92672">.</span>update_scale <span style="color:#f92672">=</span> is_game
+
+    <span style="color:#66d9ef">var</span> specular_remote: RemoteTransform <span style="color:#f92672">=</span> find_node(<span style="color:#e6db74">&quot;SpecularRemote&quot;</span>)
+    <span style="color:#66d9ef">if</span> specular_remote:
+        specular_remote<span style="color:#f92672">.</span>update_position <span style="color:#f92672">=</span> is_game
+        specular_remote<span style="color:#f92672">.</span>update_rotation <span style="color:#f92672">=</span> is_game
+        specular_remote<span style="color:#f92672">.</span>update_scale <span style="color:#f92672">=</span> is_game
+</pre>
+<h3 id="toonviewportcontainer">ToonViewportContainer</h3>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">tool</span>
+class_name ToonViewportContainer
+<span style="color:#66d9ef">extends</span> ViewportContainer
+
+
+<span style="color:#66d9ef">func</span> _enter_tree() <span style="color:#f92672">-&gt;</span> void:
+    stretch <span style="color:#f92672">=</span> <span style="color:#f92672">not</span> Engine<span style="color:#f92672">.</span>editor_hint
+</pre>
+<p>We can go back to <code>ToonSceneBuilder.gd</code> and replace all instances of <code>ViewportContainer</code> with <code>ToonViewportContainer</code>. One is inside of <code>_find_viewport</code> when using <code>find_node</code>:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> container: ToonViewportContainer <span style="color:#f92672">=</span> scene_root<span style="color:#f92672">.</span>find_node(
+        viewport_name, true, false
+    )
+</pre>
+<p>The other is in <code>_build_data</code>:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> view :<span style="color:#f92672">=</span> ToonViewportContainer<span style="color:#f92672">.</span>new()
+</pre>
+<p>Restart Godot so the plugin refreshes. Re-opening the scene sets the size of viewports to the the size of your editor viewport and the toon shader looks correct from any angle. If there’s a delay (like using the mouse wheel) you can trigger an input event by moving the mouse inside of the viewport and it will ‘snap’ back to normal.</p>
+<h2 id="react-on-toggling-camera-preview-mode">React on toggling Camera Preview mode</h2>
+<p>As a bonus, we can connect to the Preview checkbox’s pressed signal and then re-center the cameras accordingly.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _connect_preview_checkbox(interface: EditorInterface) <span style="color:#f92672">-&gt;</span> void:
+    preview_checkbox <span style="color:#f92672">=</span> _find_by_type_name(editor_viewport, <span style="color:#e6db74">&quot;CheckBox&quot;</span>)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> preview_checkbox<span style="color:#f92672">.</span>is_connected(
+        <span style="color:#e6db74">&quot;pressed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Preview_pressed&quot;</span>
+    ):
+        preview_checkbox<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;pressed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Preview_pressed&quot;</span>)
+</pre>
+<p>In the reacting signal, we get the main camera from the main viewport and use its transform to set those in the viewports.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _on_Preview_pressed() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> camera :<span style="color:#f92672">=</span> get_editor_interface()<span style="color:#f92672">.</span>get_edited_scene_root()<span style="color:#f92672">.</span>get_viewport()<span style="color:#f92672">.</span>get_camera()
+    _set_camera_and_viewports(camera<span style="color:#f92672">.</span>global_transform)
+</pre>
+<p>We call it alongside <code>set_input_event_forwarding_always_enabled</code> in <code>_initialize_camera_control</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#66d9ef">if</span> light_camera <span style="color:#f92672">or</span> specular_camera:
+    set_input_event_forwarding_always_enabled()
+
+    _connect_preview_checkbox(interface)
+
+    <span style="color:#66d9ef">return</span> true
+</pre>
+<p>The last thing to do is to clean up when the plugin leaves the editor scene tree:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _exit_tree() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> preview_checkbox:
+        preview_checkbox<span style="color:#f92672">.</span>disconnect(<span style="color:#e6db74">&quot;pressed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Preview_pressed&quot;</span>)
+</pre>
+<p>Restart Godot again to reload the plugin and enable the feature.</p>
+<h2 id="in-conclusion">In conclusion</h2>
+<p>You learned to make a plugin that works more closely with the editor than regular tool scripts can. It receives input events from the editor and matches viewport cameras to the viewport of the editor to update <code>ViewportTexture</code>s.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">tool</span>
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">EditorPlugin</span>
+
+<span style="color:#66d9ef">var</span> light_camera: <span style="color:#a6e22e">Camera</span>
+<span style="color:#66d9ef">var</span> specular_camera: <span style="color:#a6e22e">Camera</span>
+
+<span style="color:#66d9ef">var</span> light_viewport: <span style="color:#a6e22e">Viewport</span>
+<span style="color:#66d9ef">var</span> specular_viewport: <span style="color:#a6e22e">Viewport</span>
+
+<span style="color:#66d9ef">var</span> editor_viewport: <span style="color:#a6e22e">Control</span>
+<span style="color:#66d9ef">var</span> preview_checkbox: <span style="color:#a6e22e">CheckBox</span>
+
+
+<span style="color:#66d9ef">func</span> _exit_tree() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> preview_checkbox:
+        preview_checkbox<span style="color:#f92672">.</span>disconnect(<span style="color:#e6db74">&quot;pressed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Preview_pressed&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> handles(object: <span style="color:#a6e22e">Object</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">if</span> object <span style="color:#f92672">==</span> get_tree()<span style="color:#f92672">.</span>edited_scene_root:
+        <span style="color:#66d9ef">var</span> builder: ToonSceneBuilder <span style="color:#f92672">=</span> _find_by_type_name(object, <span style="color:#e6db74">&quot;ToonSceneBuilder&quot;</span>)
+        <span style="color:#66d9ef">if</span> builder:
+            <span style="color:#66d9ef">return</span> _initialize_camera_control(object, builder, get_editor_interface())
+
+    <span style="color:#66d9ef">return</span> false
+
+
+<span style="color:#66d9ef">func</span> forward_spatial_gui_input(camera: <span style="color:#a6e22e">Camera</span>, event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    _set_camera_and_viewports(camera<span style="color:#f92672">.</span>global_transform)
+    <span style="color:#66d9ef">return</span> false
+
+
+<span style="color:#66d9ef">func</span> _on_Preview_pressed() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> camera :<span style="color:#f92672">=</span> get_editor_interface()<span style="color:#f92672">.</span>get_edited_scene_root()<span style="color:#f92672">.</span>get_viewport()<span style="color:#f92672">.</span>get_camera()
+    _set_camera_and_viewports(camera<span style="color:#f92672">.</span>global_transform)
+
+
+<span style="color:#66d9ef">func</span> _set_camera_and_viewports(transform: <span style="color:#a6e22e">Transform</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> light_camera:
+        light_camera<span style="color:#f92672">.</span>global_transform <span style="color:#f92672">=</span> transform
+        light_viewport<span style="color:#f92672">.</span>size <span style="color:#f92672">=</span> editor_viewport<span style="color:#f92672">.</span>rect_size
+    <span style="color:#66d9ef">if</span> specular_camera:
+        specular_camera<span style="color:#f92672">.</span>global_transform <span style="color:#f92672">=</span> transform
+        specular_viewport<span style="color:#f92672">.</span>size <span style="color:#f92672">=</span> editor_viewport<span style="color:#f92672">.</span>rect_size
+
+
+<span style="color:#66d9ef">func</span> _initialize_camera_control(object: <span style="color:#a6e22e">Object</span>, toon_builder: ToonSceneBuilder, interface: EditorInterface) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">var</span> editor_root :<span style="color:#f92672">=</span> interface<span style="color:#f92672">.</span>get_editor_viewport()
+    editor_viewport <span style="color:#f92672">=</span> _find_by_type_name(editor_root, <span style="color:#e6db74">&quot;SpatialEditorViewport&quot;</span>)
+    
+    light_viewport <span style="color:#f92672">=</span> toon_builder<span style="color:#f92672">.</span>light_data
+    <span style="color:#66d9ef">if</span> light_viewport:
+        light_viewport<span style="color:#f92672">.</span>size <span style="color:#f92672">=</span> editor_viewport<span style="color:#f92672">.</span>rect_size
+        light_camera <span style="color:#f92672">=</span> light_viewport<span style="color:#f92672">.</span>get_camera()
+
+    specular_viewport <span style="color:#f92672">=</span> toon_builder<span style="color:#f92672">.</span>specular_data
+    <span style="color:#66d9ef">if</span> specular_viewport:
+        specular_viewport<span style="color:#f92672">.</span>size <span style="color:#f92672">=</span> editor_viewport<span style="color:#f92672">.</span>rect_size
+        specular_camera <span style="color:#f92672">=</span> specular_viewport<span style="color:#f92672">.</span>get_camera()
+
+    <span style="color:#66d9ef">if</span> light_camera <span style="color:#f92672">or</span> specular_camera:
+        set_input_event_forwarding_always_enabled()
+        
+        _connect_preview_checkbox(interface)
+        
+        <span style="color:#66d9ef">return</span> true
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">return</span> false
+
+
+<span style="color:#66d9ef">func</span> _connect_preview_checkbox(interface: EditorInterface) <span style="color:#f92672">-&gt;</span> void:
+    preview_checkbox <span style="color:#f92672">=</span> _find_by_type_name(editor_viewport, <span style="color:#e6db74">&quot;CheckBox&quot;</span>)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> preview_checkbox<span style="color:#f92672">.</span>is_connected(
+        <span style="color:#e6db74">&quot;pressed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Preview_pressed&quot;</span>
+    ):
+        preview_checkbox<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;pressed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Preview_pressed&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _find_by_type_name(parent: <span style="color:#a6e22e">Node</span>, type_name: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Node</span>:
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> parent<span style="color:#f92672">.</span>get_children():
+        <span style="color:#66d9ef">if</span> child<span style="color:#f92672">.</span>get_class() <span style="color:#f92672">==</span> type_name:
+            <span style="color:#66d9ef">return</span> child
+        <span style="color:#66d9ef">else</span>:
+            <span style="color:#66d9ef">var</span> result: <span style="color:#a6e22e">Node</span> <span style="color:#f92672">=</span> _find_by_type_name(child, type_name)
+            <span style="color:#66d9ef">if</span> result:
+                <span style="color:#66d9ef">return</span> result
+    <span style="color:#66d9ef">return</span> null
+</pre>
+</body>
+</html>

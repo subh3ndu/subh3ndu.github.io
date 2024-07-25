@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpZ6XKoCQ0kr</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="controling-text-display-with-code">Controling text display with code</h1>
+<p>In this part, we will write the code to show text, animate the text display, and jump to the end of the display and request the next reply.</p>
+<p>Right now, we only have the text box scene, so we will write our code in such a way it doesn’t rely on classes we’ll write in upcoming lessons. Working this way will allow us to test the text box and it generally makes it easier to reuse components across game projects.</p>
+<h2 id="displaying-text">Displaying text</h2>
+<p>Add a script to the <em>TextBox</em> node and let’s start with the usual signals and properties.</p>
+<p>Most notably, we provide a signal to indicate other systems that the player requested the next line of text. As it’s the scene player that’ll provide text for the box to display, we’ll need a the signal for the two to communicate.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Displays character replies in a dialogue</span>
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Control</span>
+
+<span style="color:#75715e">## Emitted when the next line was requested. The scene player will catch the</span>
+<span style="color:#75715e">## signal and use it to move to the next step in the scene, whether it&#39;s another</span>
+<span style="color:#75715e">## line of dialogue, an animation, or other.</span>
+<span style="color:#66d9ef">signal</span> next_requested
+
+<span style="color:#75715e">## Speed at which the characters appear in the text body in characters per</span>
+<span style="color:#75715e">## second.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> display_speed :<span style="color:#f92672">=</span> <span style="color:#ae81ff">20.0</span>
+<span style="color:#75715e">## Controls the BBCode text of the rich text label child node.</span>
+<span style="color:#75715e">## Notice we go through a setter to do so. We&#39;ll write its code in a moment.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> bbcode_text :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span> <span style="color:#66d9ef">setget</span> set_bbcode_text
+
+<span style="color:#75715e"># We store references to the nodes we need to display text and to handle the</span>
+<span style="color:#75715e"># player&#39;s input.</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _rich_text_label: <span style="color:#a6e22e">RichTextLabel</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">RichTextLabel</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _name_label: <span style="color:#a6e22e">Label</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>NameBackground<span style="color:#f92672">/</span>NameLabel
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _blinking_arrow: <span style="color:#a6e22e">Control</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">RichTextLabel</span><span style="color:#f92672">/</span>BlinkingArrow
+</pre>
+<p>The next step is to reset the nodes’ state in the <code>_ready()</code> function.</p>
+<p>There, we can make nodes invisible by default and reset the <em>RichTextLabel</em> node’s <code>bbcode_text</code>.</p>
+<p>It allows us to have some placeholder text in the <em>TextBox</em> scene to preview the font and bounding boxes without risking issues at runtime.</p>
+<p>By default, we want the <em>TextBox</em> node to be invisible, as well as the <em>BlinkingArrow</em>, and we want no text in the <em>RichTextLabel</em> and <em>NameLabel</em>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    hide()
+    _blinking_arrow<span style="color:#f92672">.</span>hide()
+
+    _name_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+    _rich_text_label<span style="color:#f92672">.</span>bbcode_text <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+    _rich_text_label<span style="color:#f92672">.</span>visible_characters <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</pre>
+<p>Next are the two main functions that display the text: <code>display()</code> and <code>set_bbcode_text()</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> display(text: <span style="color:#a6e22e">String</span>, character_name :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>, speed :<span style="color:#f92672">=</span> display_speed) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># We use the setter to update the text in the RichTextLabel node.</span>
+    set_bbcode_text(text)
+
+    <span style="color:#66d9ef">if</span> speed <span style="color:#f92672">!=</span> display_speed:
+        display_speed <span style="color:#f92672">=</span> speed
+
+    <span style="color:#66d9ef">if</span> character_name <span style="color:#f92672">!=</span> <span style="color:#e6db74">&quot;&quot;</span>:
+        _name_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> character_name
+
+
+<span style="color:#75715e"># On top of updating the RichTextLabel&#39;s text, we hide the arrow.</span>
+<span style="color:#75715e"># We&#39;ll rely on the arrow&#39;s visibility to code the player input.</span>
+<span style="color:#66d9ef">func</span> set_bbcode_text(text: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    bbcode_text <span style="color:#f92672">=</span> text
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    _blinking_arrow<span style="color:#f92672">.</span>hide()
+    _rich_text_label<span style="color:#f92672">.</span>bbcode_text <span style="color:#f92672">=</span> bbcode_text
+</pre>
+<p><code>display()</code> is the main function the scene player or an external system should call to display a line of text. We provide parameters to control the displayed character name and the animation speed.</p>
+<p>That way, you can have some fast replies and some that display a bit slower.</p>
+<p>Ideally, we may want to have a way to animate the display speed within a reply. But this is beyond the scope of the series, as it would involve parsing extra information within the text string itself.</p>
+<h2 id="animating-the-text-display">Animating the text display</h2>
+<p>Our code looks a bit complicated if it’s just to display text, but here’s where it becomes interesting.</p>
+<p>We want to animate the characters appearing based on our <code>display_speed</code>. To do so, we’ll animate the <code>RichTextLabel.visible_characters</code> using a <code>Tween</code> node.</p>
+<p>In the scene, add a new <code>Tween</code> node as a child of <code>TextBox</code>.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>We first get a reference to the node in our script and connect to its <code>tween_all_completed</code> signal. We’ll use a new signal to indicate the text box finished displaying text.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Emitted when the text animation display finished, even if the player pressed enter to fast-forward it.</span>
+<span style="color:#75715e">## We can use this for other nodes in the game to fast-forward their animation as well.</span>
+<span style="color:#66d9ef">signal</span> display_finished
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _tween: <span style="color:#a6e22e">Tween</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Tween</span>
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    _tween<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;tween_all_completed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Tween_tween_all_completed&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _on_Tween_tween_all_completed() <span style="color:#f92672">-&gt;</span> void:
+    emit_signal(<span style="color:#e6db74">&quot;display_finished&quot;</span>)
+    <span style="color:#75715e"># When all the text is visible, we show the arrow to indicate we can move to the next text reply.</span>
+    _blinking_arrow<span style="color:#f92672">.</span>show()
+</pre>
+<p>Let’s now put the tween node to use. We add a new <code>_begin_dialogue_display()</code> function that starts the animation and update <code>set_bbcode_text()</code> to use it.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> set_bbcode_text(text: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#75715e"># Required for the RichTextLabel&#39;s text to update and the code below to work.</span>
+    call_deferred(<span style="color:#e6db74">&quot;_begin_dialogue_display&quot;</span>)
+
+
+<span style="color:#75715e"># This function calculates the duration of the text&#39;s animation, that shows</span>
+<span style="color:#75715e"># characters one by one based on our desired display speed.</span>
+<span style="color:#66d9ef">func</span> _begin_dialogue_display() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> character_count :<span style="color:#f92672">=</span> _rich_text_label<span style="color:#f92672">.</span>get_total_character_count()
+    _tween<span style="color:#f92672">.</span>interpolate_property(
+        _rich_text_label, <span style="color:#e6db74">&quot;visible_characters&quot;</span>, <span style="color:#ae81ff">0</span>, character_count, character_count <span style="color:#f92672">/</span> display_speed
+    )
+    _tween<span style="color:#f92672">.</span>start()
+</pre>
+<p>It can take up to a frame for <code>RichTextLabel</code> to recalculate its total character count, so we use <code>call_deferred()</code> to delay the function call and ensure our text will display correctly. If we called the function directly, <code>RichTextLabel.get_total_character_count()</code> would return <code>0</code>, causing the text to never appear.</p>
+<p>Game engines can delay some processes until the end of the current frame, or even spread them over time. When you modify the BBCode of a <code>RichTextLabel</code>, because parsing it can be a bit long, the engine doesn’t process it instantly.</p>
+<p>In those cases, in Godot, <code>call_deferred()</code> is your friend. Another technique is to use <code>yield(get_tree(), &quot;idle_frame&quot;)</code> to explicitly wait for the next frame, something you may need when saving a screen capture.</p>
+<p>There are cases where the GDScript compiler will warn you that you should call <code>call_deferred()</code> to use a given method, but sometimes, as with <code>RichTextLabel</code>, there’s no warning.</p>
+<p>At this point, you can already test your code. In <code>_ready()</code>, show the text box and call <code>display()</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    show()
+    <span style="color:#75715e"># Displays the text at a speed of `10` character per second.</span>
+    display(<span style="color:#e6db74">&quot;Hello, world!&quot;</span>, <span style="color:#e6db74">&quot;Narrator&quot;</span>, <span style="color:#ae81ff">10</span>)
+</pre>
+<p>Run the scene with <kbd>F6</kbd> to see the text display, slowly.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<h2 id="adding-player-input">Adding player input</h2>
+<p>We’re still lacking player input. We’ll add and test it now.</p>
+<p>When the player presses enter, two things can happen:</p>
+<ol type="1">
+<li>If the text animation is in progress, we jump to the end and display the blinking arrow.</li>
+<li>When the blinking arrow is visible, it means the player wants to move to the next step in the scene, so we emit the corresponding signal.</li>
+</ol>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;ui_accept&quot;</span>):
+        <span style="color:#66d9ef">if</span> _blinking_arrow<span style="color:#f92672">.</span>visible:
+            emit_signal(<span style="color:#e6db74">&quot;next_requested&quot;</span>)
+        <span style="color:#66d9ef">else</span>:
+            <span style="color:#75715e"># When the player presses enter and the text is currently animating, we want to</span>
+            <span style="color:#75715e"># jump to the end of the animation and display the blinking arrow.</span>
+            <span style="color:#75715e"># To do so, we seek to the tween&#39;s end.</span>
+            <span style="color:#75715e"># The value `INF` stands for infinity and makes it always seek to the end.</span>
+            _tween<span style="color:#f92672">.</span>seek(INF)
+</pre>
+<p>Notice how instead of defining a boolean for when pressing <kbd>Enter</kbd> should advance the text, we use the blinking arrow’s visibility.</p>
+<p>Relying on an existing node property to check for the scene’s current state is something we generally recommend. The more variables you add, the more chances you have to introduce bugs, as most bugs stem from mutating state.</p>
+<p>With that, you can press <kbd>Enter</kbd> to jump to the end of a text animation. We can also test chaining text replies in our <code>_ready()</code> function, like so.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    display(<span style="color:#e6db74">&quot;Hello, world!&quot;</span>, <span style="color:#e6db74">&quot;Narrator&quot;</span>, <span style="color:#ae81ff">10</span>)
+    yield(self, <span style="color:#e6db74">&quot;next_requested&quot;</span>)
+    display(<span style="color:#e6db74">&quot;What should we say next?&quot;</span>, <span style="color:#e6db74">&quot;Narrator&quot;</span>, <span style="color:#ae81ff">25</span>)
+    yield(self, <span style="color:#e6db74">&quot;next_requested&quot;</span>)
+    _rich_text_label<span style="color:#f92672">.</span>bbcode_text <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+    _blinking_arrow<span style="color:#f92672">.</span>hide()
+</pre>
+<p>This is temporary code, so you can remove it all after testing everything works fine.</p>
+<h2 id="two-functions-for-animation">Two functions for animation</h2>
+<p>The text box won’t load conversations and get data by itself. As we’ll need to sequence many things in the game, like character animations or fading parts of scenes, we want to let some scene director control the text box’s animation, too.</p>
+<p>We’ll add two more functions to play the fade animations we designed in the previous lesson.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _anim_player: <span style="color:#a6e22e">AnimationPlayer</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">AnimationPlayer</span>
+
+<span style="color:#75715e"># The following functions allow the scene player to play fade animations on the</span>
+<span style="color:#75715e"># text box.</span>
+<span style="color:#66d9ef">func</span> fade_in_async() <span style="color:#f92672">-&gt;</span> void:
+    _anim_player<span style="color:#f92672">.</span>play(<span style="color:#e6db74">&quot;fade_in&quot;</span>)
+    <span style="color:#75715e"># During development, I found that sometimes animations would not update the</span>
+    <span style="color:#75715e"># scene instantly, causing a small visual glitch. Calling the</span>
+    <span style="color:#75715e"># AnimationPlayer.seek() function with two arguments forces it to update the</span>
+    <span style="color:#75715e"># nodes&#39; properties instantly.</span>
+    _anim_player<span style="color:#f92672">.</span>seek(<span style="color:#ae81ff">0.0</span>, true)
+    yield(_anim_player, <span style="color:#e6db74">&quot;animation_finished&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> fade_out_async() <span style="color:#f92672">-&gt;</span> void:
+    _anim_player<span style="color:#f92672">.</span>play(<span style="color:#e6db74">&quot;fade_out&quot;</span>)
+    yield(_anim_player, <span style="color:#e6db74">&quot;animation_finished&quot;</span>)
+</pre>
+<p>The way these functions are, another node can play an animation but not stop it. We also turn the functions into coroutines using the <code>yield()</code> keyword, allowing other nodes to wait for the function call to complete.</p>
+<p>It’s an information we indicate to teammates by adding the <code>_async()</code> suffix to function names.</p>
+<p>If you’re wondering why only <code>fade_in_async()</code> has that call to <code>AnimationPlayer.seek()</code>, it’s because it’s the only animation that caused that visual artifact. And I think it’s because at the start of the game, the nodes have an opaque white <em>Modulate</em> color, and the animation makes them transparent.</p>
+<p>In some cases, it seems it can take one frame for the animation to trigger after starting it, leaving the text box visible for a split second before making it transparent.</p>
+<p>To test the functions, once again, you can sequence temporary calls in <code>_ready()</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    yield(fade_in_async(), <span style="color:#e6db74">&quot;completed&quot;</span>)
+    display(<span style="color:#e6db74">&quot;Hello!&quot;</span>, <span style="color:#e6db74">&quot;Sophia&quot;</span>)
+</pre>
+<p>You can remove that temporary code after testing everything works fine.</p>
+<p>Our text box has everything we need. Next, we’ll work on the characters.</p>
+<h2 id="code-reference">Code reference</h2>
+<p>Here’s the complete <code>TextBox.gd</code> script.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Control</span>
+
+<span style="color:#66d9ef">signal</span> display_finished
+<span style="color:#66d9ef">signal</span> next_requested
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> display_speed :<span style="color:#f92672">=</span> <span style="color:#ae81ff">20.0</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> bbcode_text :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span> <span style="color:#66d9ef">setget</span> set_bbcode_text
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _rich_text_label: <span style="color:#a6e22e">RichTextLabel</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">RichTextLabel</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _name_label: <span style="color:#a6e22e">Label</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>NameBackground<span style="color:#f92672">/</span>NameLabel
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _blinking_arrow: <span style="color:#a6e22e">Control</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">RichTextLabel</span><span style="color:#f92672">/</span>BlinkingArrow
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _tween: <span style="color:#a6e22e">Tween</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Tween</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _anim_player: <span style="color:#a6e22e">AnimationPlayer</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">AnimationPlayer</span>
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    hide()
+    _blinking_arrow<span style="color:#f92672">.</span>hide()
+
+    _name_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+    _rich_text_label<span style="color:#f92672">.</span>bbcode_text <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+    _rich_text_label<span style="color:#f92672">.</span>visible_characters <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+    _tween<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;tween_all_completed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Tween_tween_all_completed&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;ui_accept&quot;</span>):
+        <span style="color:#66d9ef">if</span> _blinking_arrow<span style="color:#f92672">.</span>visible:
+            emit_signal(<span style="color:#e6db74">&quot;next_requested&quot;</span>)
+        <span style="color:#66d9ef">else</span>:
+            _tween<span style="color:#f92672">.</span>seek(INF)
+
+
+<span style="color:#66d9ef">func</span> display(text: <span style="color:#a6e22e">String</span>, character_name :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>, speed :<span style="color:#f92672">=</span> display_speed) <span style="color:#f92672">-&gt;</span> void:
+    set_bbcode_text(text)
+
+    <span style="color:#66d9ef">if</span> speed <span style="color:#f92672">!=</span> display_speed:
+        display_speed <span style="color:#f92672">=</span> speed
+
+    <span style="color:#66d9ef">if</span> character_name <span style="color:#f92672">!=</span> <span style="color:#e6db74">&quot;&quot;</span>:
+        _name_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> character_name
+
+
+<span style="color:#66d9ef">func</span> set_bbcode_text(text: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    bbcode_text <span style="color:#f92672">=</span> text
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    _blinking_arrow<span style="color:#f92672">.</span>hide()
+    _rich_text_label<span style="color:#f92672">.</span>bbcode_text <span style="color:#f92672">=</span> bbcode_text
+    call_deferred(<span style="color:#e6db74">&quot;_begin_dialogue_display&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> fade_in_async() <span style="color:#f92672">-&gt;</span> void:
+    _anim_player<span style="color:#f92672">.</span>play(<span style="color:#e6db74">&quot;fade_in&quot;</span>)
+    _anim_player<span style="color:#f92672">.</span>seek(<span style="color:#ae81ff">0.0</span>, true)
+    yield(_anim_player, <span style="color:#e6db74">&quot;animation_finished&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> fade_out_async() <span style="color:#f92672">-&gt;</span> void:
+    _anim_player<span style="color:#f92672">.</span>play(<span style="color:#e6db74">&quot;fade_out&quot;</span>)
+    yield(_anim_player, <span style="color:#e6db74">&quot;animation_finished&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _begin_dialogue_display() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> character_count :<span style="color:#f92672">=</span> _rich_text_label<span style="color:#f92672">.</span>get_total_character_count()
+    _tween<span style="color:#f92672">.</span>interpolate_property(
+        _rich_text_label, <span style="color:#e6db74">&quot;visible_characters&quot;</span>, <span style="color:#ae81ff">0</span>, character_count, character_count <span style="color:#f92672">/</span> display_speed
+    )
+    _tween<span style="color:#f92672">.</span>start()
+
+
+<span style="color:#66d9ef">func</span> _on_Tween_tween_all_completed() <span style="color:#f92672">-&gt;</span> void:
+    emit_signal(<span style="color:#e6db74">&quot;display_finished&quot;</span>)
+    _blinking_arrow<span style="color:#f92672">.</span>show()
+</pre>
+</body>
+</html>

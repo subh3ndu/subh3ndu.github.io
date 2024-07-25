@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tmp4TDOuWU9Wb</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="optimization">Optimization</h1>
+<p>There’s a decent chance you don’t need an anisotropic specular <em>and</em> a specular highlight. You might not need a highlight at all, and your object might not be metal. But we’re still using up instructions calculating them even if the end result is 0.</p>
+<p>We’ve advised you throughout these tutorials not to use if statements, but this is where this cardinal rule gets an exception.</p>
+<h2 id="branching-paths-and-guesswork">Branching paths and guesswork</h2>
+<p>Shader invocations happen in parallel, executing the same instructions at the same time on different input values but the same uniform values (hence their name). This invocation is a ‘wavefront’, a wave of data affecting vertices and fragments.</p>
+<p>When a conditional statement comes up and the code path has to diverge, different invocations inside the wavefront have to execute different code. The GPU has to create a new wavefront and copy data over to it, an expensive operation during which the fragments that that wave controls have to wait.</p>
+<h2 id="types-of-branching">Types of branching</h2>
+<p>There’re three types of branches: static, uniform and dynamic. In static branching, the GPU already knows the value of the condition before it’s even drawn a single frame using the shader:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">bool</span> RUN_THIS_BRANCH <span style="color:#f92672">=</span> true;
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fragment</span>() {
+    <span style="color:#66d9ef">if</span>(RUN_THIS_BRANCH) {
+    }
+}
+</pre>
+<p>In uniform branching, the GPU does not know the value, but every invocation of the shader for every fragment is going to be the same because it depends on a <strong>uniform</strong> value:</p>
+<pre style="color:#f8f8f2;background-color:#272822">uniform <span style="color:#66d9ef">float</span> value;
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fragment</span>() {
+    <span style="color:#66d9ef">if</span>(value <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.0</span>) {
+    }
+</pre>
+<p>In those two cases, there is no divergence. The GPU calling <code>if(value &gt; 0.0)</code> on one fragment or another will not change the path it takes through the code.</p>
+<p>In dynamic branching, the GPU does not know the value and it’s different from fragment to fragment:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fragment</span>() {
+    <span style="color:#66d9ef">if</span>(UV.x <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0.5</span>) {
+    }
+}
+</pre>
+<p>The wavefront up to the UV.x being <code>0.5</code> will all be the same, but there is a guaranteed chance that, somewhere in the two halves, there’ll be an overlap and some code will be running with <code>&lt;0.5</code> and some will be running with <code>&gt;0.5</code>, requiring a new wavefront.</p>
+<p>This is <em>hardware specific</em> and different eras of GPUs handle branching differently. Hardware support for uniform branching on hardware that <em>only</em> supports GLES 2.0 will be vendor and manufacturer specific. Hardware that supports GLES 3.0 and the upcoming Vulkan build of Godot is almost guaranteed to support uniform branching.</p>
+<p>Advances in hardware even increases support for dynamic branching and the GPU can start doing more accurate guesses; but as a best practice, stick with static and uniform branching, if you must branch at all.</p>
+<h2 id="optimizing-unused-code-behind-uniform-if-branches">Optimizing unused code behind uniform if branches</h2>
+<p>Our shader is an all-in-one shader, and there is definite performance gain to be had in optimizing away some of its calls.</p>
+<p>We can hide metalness behind the <code>metalness</code> uniform, the specular behind <code>specular_size</code>, the anisotropic highlight behind <code>anisotropy_specular_strength</code>, and the dynamic outline behind <code>outline_size</code>. They all start at 0 and go up from there.</p>
+<h2 id="shader-code-so-far">Shader code so far</h2>
+<pre style="color:#f8f8f2;background-color:#272822">shader_type spatial;
+render_mode unshaded;
+
+<span style="color:#75715e">//Specular constants
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> SPECULAR_SOFT_MIN <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> SPECULAR_SOFT_MAX <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.64</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> SPECULAR_HARD_MIN <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.17</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> SPECULAR_HARD_MAX <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.18</span>;
+<span style="color:#75715e">//Outline constants
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> OUTLINE_MIN <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.45</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> OUTLINE_MAX <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.47</span>;
+<span style="color:#75715e">//Anisotropic constants
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> ANISOTROPY_SHARPNESS_MIN <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.34</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> ANISOTROPY_SHARPNESS_MAX <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.35</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> ANISOTROPY_SOFTNESS_MIN <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.06</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> ANISOTROPY_SOFTNESS_MAX <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.364</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> ANISOTROPY_HOTSPOT_MIN <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.083</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> ANISOTROPY_HOTSPOT_MAX <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.637</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> ANISOTROPY_BAND_MIN <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.42</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> ANISOTROPY_BAND_MIDDLE <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.5</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> ANISOTROPY_BAND_MAX <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.58</span>;
+
+<span style="color:#75715e">//Data textures
+</span><span style="color:#75715e"></span>uniform sampler2D light_data : hint_black;
+uniform sampler2D specular_data : hint_black;
+
+uniform sampler2D key_light_ramp : hint_black;
+uniform sampler2D fill_light_ramp : hint_black;
+uniform sampler2D kick_light_ramp : hint_black;
+uniform sampler2D metalness_texture : hint_black_albedo;
+
+uniform sampler2D high_frequency_anisotropy_noise : hint_black;
+uniform sampler2D low_frequency_anisotropy_noise : hint_black;
+uniform sampler2D spottiness_anisotropy_noise : hint_black;
+
+<span style="color:#75715e">//Outline
+</span><span style="color:#75715e"></span>uniform vec4 outline_color : hint_color <span style="color:#f92672">=</span> vec4(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1.0</span>);
+uniform <span style="color:#66d9ef">float</span> outline_size : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.5</span>;
+
+<span style="color:#75715e">//Metalness
+</span><span style="color:#75715e"></span>uniform vec4 dark_metalness_color : hint_color <span style="color:#f92672">=</span> vec4(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>);
+uniform vec4 light_metalness_color : hint_color <span style="color:#f92672">=</span> vec4(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>);
+uniform <span style="color:#66d9ef">float</span> metalness_contrast_factor : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">5</span>) <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span>;
+uniform <span style="color:#66d9ef">float</span> metalness : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>;
+
+<span style="color:#75715e">//Specular
+</span><span style="color:#75715e"></span>uniform <span style="color:#66d9ef">float</span> specular_softness : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>);
+uniform <span style="color:#66d9ef">float</span> specular_size : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">4</span>);
+uniform vec4 specular_color : hint_color;
+
+<span style="color:#75715e">//Light colors
+</span><span style="color:#75715e"></span>uniform vec4 key_light_color : hint_color;
+uniform vec4 shadow_color : hint_color;
+uniform vec4 fill_light_color : hint_color;
+uniform vec4 kick_light_color : hint_color;
+
+<span style="color:#75715e">//Anisotropic highlight
+</span><span style="color:#75715e"></span>uniform <span style="color:#66d9ef">float</span> anisotropy_specular_width <span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span>;
+uniform <span style="color:#66d9ef">float</span> anisotropy_specular_strength : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>;
+uniform <span style="color:#66d9ef">float</span> anisotropy_specular_contrast : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">12</span>) <span style="color:#f92672">=</span> <span style="color:#ae81ff">5.0</span>;
+uniform <span style="color:#66d9ef">float</span> anisotropy_specular_brightness : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.85</span>;
+uniform <span style="color:#66d9ef">float</span> anisotropy_in_shadow_strength : hint_range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.1</span>;
+
+varying vec3 down_camera_angle;
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">vertex</span>()
+{
+    down_camera_angle <span style="color:#f92672">=</span> (vec4(<span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>) <span style="color:#f92672">*</span> CAMERA_MATRIX).xyz;
+}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fragment</span>() {
+    <span style="color:#75715e">//Data
+</span><span style="color:#75715e"></span>  vec3 diffuse <span style="color:#f92672">=</span> texture(light_data, SCREEN_UV).rgb;
+
+    <span style="color:#75715e">//Key light
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">float</span> key_light_value <span style="color:#f92672">=</span> texture(key_light_ramp, vec2(diffuse.r, <span style="color:#ae81ff">0</span>)).r;
+
+    vec3 out_color <span style="color:#f92672">=</span> key_light_value <span style="color:#f92672">*</span> key_light_color.rgb;
+    out_color <span style="color:#f92672">=</span> max(out_color, shadow_color.rgb);
+
+    <span style="color:#75715e">//Fill light
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">float</span> fill_light_value <span style="color:#f92672">=</span> texture(fill_light_ramp, vec2(diffuse.g, <span style="color:#ae81ff">0</span>)).r;
+    out_color <span style="color:#f92672">+=</span> fill_light_value <span style="color:#f92672">*</span> fill_light_color.rgb;
+
+    <span style="color:#75715e">//Kick light
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">float</span> kick_light_value <span style="color:#f92672">=</span> texture(kick_light_ramp, vec2(diffuse.b, <span style="color:#ae81ff">0</span>)).r;
+    out_color <span style="color:#f92672">+=</span> kick_light_value <span style="color:#f92672">*</span> kick_light_color.rgb;
+
+    <span style="color:#75715e">//Metalness
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span>(metalness <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.0</span>) {
+        vec2 metalness_uv <span style="color:#f92672">=</span> (NORMAL.xy <span style="color:#f92672">*</span> vec2(<span style="color:#ae81ff">0.5</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">0.5</span>) <span style="color:#f92672">+</span> vec2(<span style="color:#ae81ff">0.5</span>, <span style="color:#ae81ff">0.5</span>));
+
+        vec3 metalness_value <span style="color:#f92672">=</span> texture(metalness_texture, metalness_uv).rgb;
+        metalness_value <span style="color:#f92672">=</span> clamp(pow(metalness_value, vec3(metalness_contrast_factor)), <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>);
+        metalness_value <span style="color:#f92672">=</span> clamp(metalness_value, dark_metalness_color.rgb, light_metalness_color.rgb);
+
+        out_color <span style="color:#f92672">=</span> mix(out_color, metalness_value, metalness);
+    }
+
+    <span style="color:#75715e">//Specular
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">float</span> specular <span style="color:#f92672">=</span> texture(specular_data, SCREEN_UV).r;
+    <span style="color:#66d9ef">if</span>(specular_size <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.0</span>) {
+        <span style="color:#66d9ef">float</span> soft_specular <span style="color:#f92672">=</span> smoothstep(SPECULAR_SOFT_MIN, SPECULAR_SOFT_MAX, specular <span style="color:#f92672">*</span> specular_size);
+        <span style="color:#66d9ef">float</span> hard_specular <span style="color:#f92672">=</span> smoothstep(SPECULAR_HARD_MIN, SPECULAR_HARD_MAX, specular <span style="color:#f92672">*</span> specular_size);
+
+        vec3 specular_out <span style="color:#f92672">=</span> mix(hard_specular, soft_specular, specular_softness) <span style="color:#f92672">*</span> specular_color.rgb;
+
+        out_color <span style="color:#f92672">+=</span> specular_out;
+    }
+
+    <span style="color:#75715e">//Anisotropic highlight
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span>(anisotropy_specular_strength <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.0</span>) {
+        <span style="color:#66d9ef">float</span> anisotropy_angle <span style="color:#f92672">=</span> down_camera_angle.z <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.33</span>;
+
+        <span style="color:#66d9ef">float</span> high_anisotropy_noise_value
+            <span style="color:#f92672">=</span> (texture(high_frequency_anisotropy_noise, vec2(UV.x, <span style="color:#ae81ff">0</span>)).r <span style="color:#f92672">-</span> <span style="color:#ae81ff">0.5</span>) <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.2</span>;
+        <span style="color:#66d9ef">float</span> low_anisotropy_noise_value
+            <span style="color:#f92672">=</span> (texture(low_frequency_anisotropy_noise, vec2(UV.x, <span style="color:#ae81ff">0</span>)).r <span style="color:#f92672">-</span> <span style="color:#ae81ff">0.5</span>) <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.2</span>;
+
+        <span style="color:#66d9ef">float</span> anisotropy_specular_hotspot <span style="color:#f92672">=</span> smoothstep(
+            ANISOTROPY_HOTSPOT_MIN, ANISOTROPY_HOTSPOT_MAX, specular <span style="color:#f92672">*</span> anisotropy_specular_width);
+
+        <span style="color:#66d9ef">float</span> spottiness_anisotropy_noise_value
+            <span style="color:#f92672">=</span> (texture(spottiness_anisotropy_noise, vec2(UV.x, <span style="color:#ae81ff">0</span>)).r <span style="color:#f92672">-</span> <span style="color:#ae81ff">0.5</span>)
+                <span style="color:#f92672">*</span> anisotropy_specular_contrast
+            <span style="color:#f92672">+</span> anisotropy_specular_brightness;
+        <span style="color:#66d9ef">float</span> anisotropy_uv
+            <span style="color:#f92672">=</span> UV.y <span style="color:#f92672">+</span> high_anisotropy_noise_value <span style="color:#f92672">+</span> low_anisotropy_noise_value <span style="color:#f92672">-</span> anisotropy_angle;
+
+        <span style="color:#66d9ef">float</span> lower_sample <span style="color:#f92672">=</span> smoothstep(ANISOTROPY_BAND_MIN, ANISOTROPY_BAND_MIDDLE, anisotropy_uv);
+        <span style="color:#66d9ef">float</span> higher_sample
+            <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">-</span> smoothstep(ANISOTROPY_BAND_MIDDLE, ANISOTROPY_BAND_MAX, anisotropy_uv);
+        <span style="color:#66d9ef">float</span> anisotropy_sample <span style="color:#f92672">=</span> lower_sample <span style="color:#f92672">*</span> higher_sample <span style="color:#f92672">*</span> spottiness_anisotropy_noise_value
+            <span style="color:#f92672">*</span> max(anisotropy_specular_hotspot, anisotropy_in_shadow_strength);
+
+        <span style="color:#66d9ef">float</span> sharp_anisotropy_value
+            <span style="color:#f92672">=</span> smoothstep(ANISOTROPY_SHARPNESS_MIN, ANISOTROPY_SHARPNESS_MAX, anisotropy_sample);
+        <span style="color:#66d9ef">float</span> soft_anisotropy_value
+            <span style="color:#f92672">=</span> smoothstep(ANISOTROPY_SOFTNESS_MIN, ANISOTROPY_SOFTNESS_MAX, anisotropy_sample);
+
+        <span style="color:#66d9ef">float</span> anisotropy_value <span style="color:#f92672">=</span> mix(sharp_anisotropy_value, soft_anisotropy_value, specular_softness);
+        vec3 anisotropy_color <span style="color:#f92672">=</span> specular_color.rgb <span style="color:#f92672">*</span> anisotropy_value;
+
+        out_color <span style="color:#f92672">=</span> out_color <span style="color:#f92672">+</span> (anisotropy_color <span style="color:#f92672">*</span> anisotropy_specular_strength);
+    }
+
+    <span style="color:#75715e">//Outline
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span>(outline_size <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.0</span>) {
+        <span style="color:#66d9ef">float</span> outline_factor <span style="color:#f92672">=</span> outline_size <span style="color:#f92672">*</span> (<span style="color:#ae81ff">1.0</span> <span style="color:#f92672">-</span> diffuse.r);
+        <span style="color:#66d9ef">float</span> rim_value <span style="color:#f92672">=</span> pow(dot(NORMAL, VIEW), outline_factor);
+        
+        <span style="color:#66d9ef">float</span> outline_amount <span style="color:#f92672">=</span> smoothstep(OUTLINE_MIN, OUTLINE_MAX, rim_value);
+        
+        out_color <span style="color:#f92672">=</span> mix(outline_color.rgb, out_color, outline_amount);
+    }
+
+    ALBEDO <span style="color:#f92672">=</span> vec3(out_color);
+}
+</pre>
+</body>
+</html>

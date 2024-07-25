@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpMUAhZtgxPf</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="refining-controls-and-animation">Refining controls and animation</h1>
+<p>In this lesson, we will refine our dialogue box’s presentation by adding some animation to the name background and label. We also hide the character’s name when the narrator is speaking to clarify that it is not part of the scene.</p>
+<p>We will also make the name disappear when displaying a choice to emphasize that it’s not a character speaking.</p>
+<p>Finally, we’ll add mouse and touch input to the demo.</p>
+<p>It is a little breather before adding more features: a skip button and keeping track of player choices, which we will add in the next lessons.</p>
+<p>To do this, we have to update the text box and the name background scripts.</p>
+<h2 id="adding-animations-to-the-name-background-and-label">Adding animations to the name background and label</h2>
+<p>Let’s start by opening the <code>TextBox</code> scene and creating fade animations on the <em>NameBackground</em> and <em>NameLabel</em> nodes. To do so, we’ll use <code>Tween</code> nodes.</p>
+<p>But this time, we won’t add the nodes to the tree in the editor. Instead, we’ll create a <code>Tween</code> object and add it to the tree using GDScript.</p>
+<p>Why? That’ll allow us to create a self-contained script to attach to any <code>Control</code> node to give it two animations: <code>appear</code> and <code>disappear</code>.</p>
+<p>In the <em>FileSystem</em> dock, create a new script named <code>FadingControl</code> in the <code>TextBox/</code> directory. It should extend <code>Control</code> so we can attach it to any <code>Control</code> node.</p>
+<p><em>Note: In Godot, if a script extends a given type, like <code>Control</code>, you can attach it to any node type that also extends <code>Control</code>, be it a <code>Button</code>, a <code>TextureRect</code>, or another.</em></p>
+<p>Open the script and fill it with the following code.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Uses a Tween object to animate the control node fading in and out.</span>
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Control</span>
+
+<span style="color:#66d9ef">const</span> COLOR_WHITE_TRANSPARENT :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span>(<span style="color:#ae81ff">1.0</span>, <span style="color:#ae81ff">1.0</span>, <span style="color:#ae81ff">1.0</span>, <span style="color:#ae81ff">0.0</span>)
+
+<span style="color:#75715e">## Duration of the fade-in animation in seconds.</span>
+<span style="color:#75715e">## The disappear animation is twice as short.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> appear_duration :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.3</span>
+
+<span style="color:#75715e"># Here, we create a Tween node.</span>
+<span style="color:#66d9ef">var</span> _tween :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Tween</span><span style="color:#f92672">.</span>new()
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># We must add the tween to the scene tree to use it.</span>
+    add_child(_tween)
+    <span style="color:#75715e"># Here, we make the node transparent by default.</span>
+    modulate <span style="color:#f92672">=</span> COLOR_WHITE_TRANSPARENT
+
+
+<span style="color:#75715e"># Fades in the control.</span>
+<span style="color:#66d9ef">func</span> appear() <span style="color:#f92672">-&gt;</span> void:
+    _tween<span style="color:#f92672">.</span>interpolate_property(
+        self, <span style="color:#e6db74">&quot;modulate&quot;</span>, COLOR_WHITE_TRANSPARENT, <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>white, appear_duration
+    )
+    _tween<span style="color:#f92672">.</span>start()
+    <span style="color:#75715e"># Once more, we force the animation to update instantly to avoid potential</span>
+    <span style="color:#75715e"># visual artifacts.</span>
+    _tween<span style="color:#f92672">.</span>seek(<span style="color:#ae81ff">0</span>)
+
+
+<span style="color:#75715e"># Fades out the control.</span>
+<span style="color:#66d9ef">func</span> disappear() <span style="color:#f92672">-&gt;</span> void:
+    _tween<span style="color:#f92672">.</span>interpolate_property(
+        self, <span style="color:#e6db74">&quot;modulate&quot;</span>, <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>white, COLOR_WHITE_TRANSPARENT, appear_duration <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>
+    )
+    _tween<span style="color:#f92672">.</span>start()
+    _tween<span style="color:#f92672">.</span>seek(<span style="color:#ae81ff">0</span>)
+</pre>
+<p>Attach the script to both the <em>NameBackground</em> and the <em>NameLabel</em> nodes.</p>
+<p>Next, we have to update the <code>TextBox</code>’s functions. We can now directly call the <code>appear()</code> and <code>disappear()</code> functions on the background and the label.</p>
+<p>Open <code>TextBox.gd</code> and in the <code>display()</code> function, <em>delete</em> the following code.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> display(text: <span style="color:#a6e22e">String</span>, character_name :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>, speed :<span style="color:#f92672">=</span> display_speed) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">if</span> character_name <span style="color:#f92672">!=</span> <span style="color:#e6db74">&quot;&quot;</span>:
+        _name_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> character_name
+</pre>
+<p>Instead, we add two conditional branches. Add the following code.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> display(text: <span style="color:#a6e22e">String</span>, character_name :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>, speed :<span style="color:#f92672">=</span> display_speed) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+
+    <span style="color:#75715e"># When the narrator is speaking, we don&#39;t want to display its name, so we</span>
+    <span style="color:#75715e"># hide the background.</span>
+    <span style="color:#75715e"># As we know the speaking character&#39;s name, we can compare it to the</span>
+    <span style="color:#75715e"># narrator&#39;s display name to check if the current character is the narrator.</span>
+    <span style="color:#66d9ef">if</span> character_name <span style="color:#f92672">==</span> ResourceDB<span style="color:#f92672">.</span>get_narrator()<span style="color:#f92672">.</span>display_name:
+        _name_background<span style="color:#f92672">.</span>hide()
+    <span style="color:#75715e"># The following conditions make it so if we are displaying a character&#39;s</span>
+    <span style="color:#75715e"># name for the first time in a scene, we play the name label&#39;s appear</span>
+    <span style="color:#75715e"># animation.</span>
+    <span style="color:#66d9ef">elif</span> character_name <span style="color:#f92672">!=</span> <span style="color:#e6db74">&quot;&quot;</span>:
+        _name_background<span style="color:#f92672">.</span>show()
+        <span style="color:#66d9ef">if</span> _name_label<span style="color:#f92672">.</span>text <span style="color:#f92672">==</span> <span style="color:#e6db74">&quot;&quot;</span>:
+            _name_label<span style="color:#f92672">.</span>appear()
+
+        _name_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> character_name
+</pre>
+<p>When it comes to choices, we play the <em>NameBackground</em> node’s disappear animation when displaying a choice, and we make it appear again when the player made a choice.</p>
+<p>To do so, we add the following calls to the <code>display_choice()</code> and <code>_on_ChoiceSelector_choice_made()</code> functions.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> display_choice(choices: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    _name_background<span style="color:#f92672">.</span>disappear()
+
+
+<span style="color:#66d9ef">func</span> _on_ChoiceSelector_choice_made(target_id: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    _name_background<span style="color:#f92672">.</span>appear()
+</pre>
+<p>If you test the game, you’ll see the difference is subtle. We’re adding a little bit of polish.</p>
+<p>As the text box is so central to the game’s visuals, though, you’ll want to spend that little extra time to make it feel great.</p>
+<p>You’ll certainly notice more opportunities to use those animations. Don’t hesitate to do so.</p>
+<h2 id="adding-support-for-mouse-and-touch-input">Adding support for mouse and touch input</h2>
+<p>Our game plays with the keyboard, but it currently doesn’t accept mouse and touch input.</p>
+<p>We can add support for both with just a few tweaks. That’s one of the little joys of using Godot.</p>
+<p>To do so, we need to update the default input map and our nodes’ <em>Mouse Filter</em> properties.</p>
+<p>Godot’s <code>Control</code> nodes receive mouse clicks within their bounds. These events get passed to their special <code>_gui_input()</code> callback, which gets executed before the engine calls <code>_unhandled_input()</code>.</p>
+<p>This is a powerful system whenever you need to handle clicks in various parts of your interface differently, which is the case in most games.</p>
+<p>But not in a visual novel. When we click on the screen, we want the text to always advance, except when the player has to make a choice, for example.</p>
+<p>We can make <code>Control</code> nodes ignore mouse clicks. To do so, you can select any and set its <em>Mouse -&gt; Filter</em> to <em>Ignore</em>.</p>
+<p>We’ll do that with most nodes. Luckily, if we select multiple nodes at once, we can change any property they share in batch.</p>
+<p>In the <code>ScenePlayer</code> scene, select the <em>ScenePlayer</em>, <em>Background</em>, and <em>ColorRect</em> and in the <em>Inspector</em>, set their <em>Mouse -&gt; Filter</em> to <em>Ignore</em>.</p>
+<p>Open the <code>TextBox</code> and <code>BlinkingArrow</code> scenes and do the same for all nodes that aren’t scene instances.</p>
+<p>With this change, you can already click on buttons in the <code>ChoiceSelector</code>. Until then, we couldn’t because the <em>ScenePlayer</em> node would consume all mouse input.</p>
+<p>To add the ability to advance conversations with clicks, we need to update the project’s input map.</p>
+<p>Open the <em>Project -&gt; Project Settings… -&gt; Input Map</em> and add a new entry to <code>ui_accept</code>. You want to add the left mouse button.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>And voila! Your game now has both mouse and touch support.</p>
+<p>If you add an options menu or any interface that should consume mouse input, you can set its nodes’ mouse filter to <em>Pass</em> and <em>Stop</em>. This will prevent text from advancing.</p>
+<p>In our case, it’s the <em>TextBox</em>’s state that controls our game flow. Because we mapped our left mouse button to <code>ui_accept</code>, we leverage our existing input code.</p>
+<p>And that is it for this short lesson. In the next one, we’ll add a skip button to make the game’s dialogues fast-forward.</p>
+<p>This is a convenient tool for players who want to re-play your game, explore alternate choices, and try to unlock secret events and alternate endings.</p>
+<h2 id="code-reference">Code reference</h2>
+<p>Here is the complete <code>FadingControl.gd</code> script.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Control</span>
+
+<span style="color:#66d9ef">const</span> COLOR_WHITE_TRANSPARENT :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span>(<span style="color:#ae81ff">1.0</span>, <span style="color:#ae81ff">1.0</span>, <span style="color:#ae81ff">1.0</span>, <span style="color:#ae81ff">0.0</span>)
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> appear_duration :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.3</span>
+
+<span style="color:#66d9ef">var</span> _tween :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Tween</span><span style="color:#f92672">.</span>new()
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    add_child(_tween)
+    modulate <span style="color:#f92672">=</span> COLOR_WHITE_TRANSPARENT
+
+
+<span style="color:#66d9ef">func</span> appear() <span style="color:#f92672">-&gt;</span> void:
+    _tween<span style="color:#f92672">.</span>interpolate_property(
+        self, <span style="color:#e6db74">&quot;modulate&quot;</span>, COLOR_WHITE_TRANSPARENT, <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>white, appear_duration
+    )
+    _tween<span style="color:#f92672">.</span>start()
+    _tween<span style="color:#f92672">.</span>seek(<span style="color:#ae81ff">0</span>)
+
+
+<span style="color:#66d9ef">func</span> disappear() <span style="color:#f92672">-&gt;</span> void:
+    _tween<span style="color:#f92672">.</span>interpolate_property(
+        self, <span style="color:#e6db74">&quot;modulate&quot;</span>, <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>white, COLOR_WHITE_TRANSPARENT, appear_duration <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>
+    )
+    _tween<span style="color:#f92672">.</span>start()
+    _tween<span style="color:#f92672">.</span>seek(<span style="color:#ae81ff">0</span>)
+</pre>
+<p>And the complete <code>TextBox.gd</code> script.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Control</span>
+
+<span style="color:#66d9ef">signal</span> display_finished
+<span style="color:#66d9ef">signal</span> next_requested
+<span style="color:#66d9ef">signal</span> choice_made(target_id)
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> display_speed :<span style="color:#f92672">=</span> <span style="color:#ae81ff">20.0</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> bbcode_text :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span> <span style="color:#66d9ef">setget</span> set_bbcode_text
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _rich_text_label: <span style="color:#a6e22e">RichTextLabel</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">RichTextLabel</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _name_label: <span style="color:#a6e22e">Label</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>NameBackground<span style="color:#f92672">/</span>NameLabel
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _blinking_arrow: <span style="color:#a6e22e">Control</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">RichTextLabel</span><span style="color:#f92672">/</span>BlinkingArrow
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _tween: <span style="color:#a6e22e">Tween</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Tween</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _anim_player: <span style="color:#a6e22e">AnimationPlayer</span> <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">AnimationPlayer</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _choice_selector: ChoiceSelector <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>ChoiceSelector
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _name_background: TextureRect <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>NameBackground
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    hide()
+    _blinking_arrow<span style="color:#f92672">.</span>hide()
+
+    _name_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+    _rich_text_label<span style="color:#f92672">.</span>bbcode_text <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+    _rich_text_label<span style="color:#f92672">.</span>visible_characters <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+    _tween<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;tween_all_completed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_Tween_tween_all_completed&quot;</span>)
+    _choice_selector<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;choice_made&quot;</span>, self, <span style="color:#e6db74">&quot;_on_ChoiceSelector_choice_made&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;ui_accept&quot;</span>):
+        <span style="color:#66d9ef">if</span> _blinking_arrow<span style="color:#f92672">.</span>visible:
+            emit_signal(<span style="color:#e6db74">&quot;next_requested&quot;</span>)
+        <span style="color:#66d9ef">else</span>:
+            _tween<span style="color:#f92672">.</span>seek(INF)
+
+
+<span style="color:#66d9ef">func</span> display(text: <span style="color:#a6e22e">String</span>, character_name :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>, speed :<span style="color:#f92672">=</span> display_speed) <span style="color:#f92672">-&gt;</span> void:
+    set_bbcode_text(text)
+
+    <span style="color:#66d9ef">if</span> speed <span style="color:#f92672">!=</span> display_speed:
+        display_speed <span style="color:#f92672">=</span> speed
+
+    <span style="color:#66d9ef">if</span> character_name <span style="color:#f92672">==</span> ResourceDB<span style="color:#f92672">.</span>get_narrator()<span style="color:#f92672">.</span>display_name:
+        _name_background<span style="color:#f92672">.</span>hide()
+    <span style="color:#66d9ef">elif</span> character_name <span style="color:#f92672">!=</span> <span style="color:#e6db74">&quot;&quot;</span>:
+        _name_background<span style="color:#f92672">.</span>show()
+        <span style="color:#66d9ef">if</span> _name_label<span style="color:#f92672">.</span>text <span style="color:#f92672">==</span> <span style="color:#e6db74">&quot;&quot;</span>:
+            _name_label<span style="color:#f92672">.</span>appear()
+
+        _name_label<span style="color:#f92672">.</span>text <span style="color:#f92672">=</span> character_name
+
+
+<span style="color:#66d9ef">func</span> set_bbcode_text(text: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    bbcode_text <span style="color:#f92672">=</span> text
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    _blinking_arrow<span style="color:#f92672">.</span>hide()
+    _rich_text_label<span style="color:#f92672">.</span>bbcode_text <span style="color:#f92672">=</span> bbcode_text
+    call_deferred(<span style="color:#e6db74">&quot;_begin_dialogue_display&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> fade_in_async() <span style="color:#f92672">-&gt;</span> void:
+    _anim_player<span style="color:#f92672">.</span>play(<span style="color:#e6db74">&quot;fade_in&quot;</span>)
+    _anim_player<span style="color:#f92672">.</span>seek(<span style="color:#ae81ff">0.0</span>, true)
+    yield(_anim_player, <span style="color:#e6db74">&quot;animation_finished&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> fade_out_async() <span style="color:#f92672">-&gt;</span> void:
+    _anim_player<span style="color:#f92672">.</span>play(<span style="color:#e6db74">&quot;fade_out&quot;</span>)
+    yield(_anim_player, <span style="color:#e6db74">&quot;animation_finished&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> display_choice(choices: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> void:
+    _name_background<span style="color:#f92672">.</span>hide()
+    _rich_text_label<span style="color:#f92672">.</span>hide()
+    _blinking_arrow<span style="color:#f92672">.</span>hide()
+    _name_background<span style="color:#f92672">.</span>disappear()
+
+    _choice_selector<span style="color:#f92672">.</span>display(choices)
+
+
+<span style="color:#66d9ef">func</span> _begin_dialogue_display() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> character_count :<span style="color:#f92672">=</span> _rich_text_label<span style="color:#f92672">.</span>get_total_character_count()
+    _tween<span style="color:#f92672">.</span>interpolate_property(
+        _rich_text_label, <span style="color:#e6db74">&quot;visible_characters&quot;</span>, <span style="color:#ae81ff">0</span>, character_count, character_count <span style="color:#f92672">/</span> display_speed
+    )
+    _tween<span style="color:#f92672">.</span>start()
+
+
+<span style="color:#66d9ef">func</span> _on_Tween_tween_all_completed() <span style="color:#f92672">-&gt;</span> void:
+    emit_signal(<span style="color:#e6db74">&quot;display_finished&quot;</span>)
+    _blinking_arrow<span style="color:#f92672">.</span>show()
+
+
+<span style="color:#66d9ef">func</span> _on_ChoiceSelector_choice_made(target_id: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    emit_signal(<span style="color:#e6db74">&quot;choice_made&quot;</span>, target_id)
+    _name_background<span style="color:#f92672">.</span>show()
+    _rich_text_label<span style="color:#f92672">.</span>show()
+    _name_background<span style="color:#f92672">.</span>appear()
+</pre>
+</body>
+</html>

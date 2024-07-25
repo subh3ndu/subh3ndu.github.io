@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tmph3qGI0vNay</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="applying-status-effects">Applying status effects</h1>
+<p>Now we have status effects, we need to put them to use. We have to create two new classes: the builder and the container. Then, we will have to wire the effects with actions and battlers.</p>
+<h2 id="creating-statuseffect-objects-with-the-factory-pattern.">Creating StatusEffect objects with the factory pattern.</h2>
+<p>The builder class implements the factory design pattern. It provides a function that creates concrete status effect objects. It’s a common pattern in object-oriented programming languages that allows you to instantiate a class without having to call <code>new()</code> or referencing the individual classes in your code. In a sense, it encapsulates the creation of these individual instances.</p>
+<p>Create a new file named <code>StatusEffectBuilder.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Creates concrete [StatusEffect] instances from [StatusEffectData] resources.</span>
+class_name StatusEffectBuilder
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Reference</span>
+
+<span style="color:#75715e"># We register the valid ID strings for `StatusEffectData.id` in this constant.</span>
+<span style="color:#75715e"># This allows us to not have to reference the class names directly and create new effect resources</span>
+<span style="color:#75715e"># in the inspector.</span>
+<span style="color:#75715e"># Note the convention in the GDScript style guide is to use PascalCase for types. I used that</span>
+<span style="color:#75715e"># because our content is a map of types, but you may want to use constant case instead:</span>
+<span style="color:#75715e"># `STATUS_EFFECTS`.</span>
+<span style="color:#66d9ef">const</span> StatusEffects :<span style="color:#f92672">=</span> {
+    haste <span style="color:#f92672">=</span> StatusEffectHaste,
+    slow <span style="color:#f92672">=</span> StatusEffectSlow,
+    bug <span style="color:#f92672">=</span> StatusEffectBug,
+}
+
+<span style="color:#75715e"># The class only exposes a function that creates and returns a new status effect based on the data</span>
+<span style="color:#75715e"># we provide.</span>
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> create_status_effect(target, data):
+    <span style="color:#75715e"># We can use the function to run through some `assert()` or return early if the input parameters</span>
+    <span style="color:#75715e"># are incorrect.</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> data:
+        <span style="color:#66d9ef">return</span> null
+    <span style="color:#75715e"># You can store a reference to a class in a variable!</span>
+    <span style="color:#66d9ef">var</span> effect_class <span style="color:#f92672">=</span> StatusEffects[data<span style="color:#f92672">.</span>effect]
+    <span style="color:#66d9ef">var</span> effect: StatusEffect <span style="color:#f92672">=</span> effect_class<span style="color:#f92672">.</span>new(target, data)
+    <span style="color:#66d9ef">return</span> effect
+</pre>
+<h2 id="adding-a-container-to-manage-status-effects">Adding a container to manage status effects</h2>
+<p>Create a new file named <code>StatusEffectContainer.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Keeps track of status effects active on a [Battler].</span>
+<span style="color:#75715e"># Adds and removes status effects as necessary.</span>
+<span style="color:#75715e"># Intended to be placed as a child of a Battler.</span>
+class_name StatusEffectContainer
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#75715e"># Maximum number of instances of one type of status effect that can be applied to one battler at a</span>
+<span style="color:#75715e"># time.</span>
+<span style="color:#66d9ef">const</span> MAX_STACKS :<span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>
+<span style="color:#75715e"># List of effects that can be stacked.</span>
+<span style="color:#66d9ef">const</span> STACKING_EFFECTS :<span style="color:#f92672">=</span> [<span style="color:#e6db74">&quot;bug&quot;</span>]
+<span style="color:#75715e"># List of effects that cannot be stacked. When a new effect of this kind is applied, it replaces or</span>
+<span style="color:#75715e"># refreshes the previous one.</span>
+<span style="color:#66d9ef">const</span> NON_STACKING_EFFECTS :<span style="color:#f92672">=</span> [<span style="color:#e6db74">&quot;haste&quot;</span>, <span style="color:#e6db74">&quot;slow&quot;</span>]
+
+<span style="color:#75715e"># The two properties below work the same way as with the `ActiveTurnQueue`.</span>
+<span style="color:#75715e"># The setters assign the value to child nodes.</span>
+<span style="color:#66d9ef">var</span> time_scale :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#66d9ef">setget</span> set_time_scale
+<span style="color:#66d9ef">var</span> is_active :<span style="color:#f92672">=</span> true <span style="color:#66d9ef">setget</span> set_is_active
+
+
+<span style="color:#75715e"># Adds a new instance of a status effect as a child, ensuring the effects don&#39;t stack past</span>
+<span style="color:#75715e"># `MAX_STACKS`.</span>
+<span style="color:#66d9ef">func</span> add(effect: StatusEffect) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># If we already have active effects, we may have to replace one.</span>
+    <span style="color:#75715e"># If it can stack, we replace the one with the smallest time left.</span>
+    <span style="color:#66d9ef">if</span> effect<span style="color:#f92672">.</span>can_stack():
+        <span style="color:#66d9ef">if</span> _has_maximum_stacks_of(effect<span style="color:#f92672">.</span>id):
+            _remove_effect_expiring_the_soonest(effect<span style="color:#f92672">.</span>id)
+    <span style="color:#75715e"># If it&#39;s a unique effect like slow or haste, we replace it.</span>
+    <span style="color:#66d9ef">elif</span> has_node(effect<span style="color:#f92672">.</span>name):
+        <span style="color:#75715e"># We call `StatusEffect.expire()` to let the effect properly clean up itself.</span>
+        get_node(effect<span style="color:#f92672">.</span>name)<span style="color:#f92672">.</span>expire()
+    <span style="color:#75715e"># The status effects are node so all we need to do is add it as a child of the container.</span>
+    add_child(effect)
+
+
+<span style="color:#75715e"># Removes all stacks of an effect of a given type.</span>
+<span style="color:#66d9ef">func</span> remove_type(id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        <span style="color:#66d9ef">if</span> effect<span style="color:#f92672">.</span>id <span style="color:#f92672">==</span> id:
+            effect<span style="color:#f92672">.</span>expire()
+
+
+<span style="color:#75715e"># Removes all status effects.</span>
+<span style="color:#66d9ef">func</span> remove_all() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        effect<span style="color:#f92672">.</span>expire()
+
+
+<span style="color:#75715e"># The two setters below are similar to what we did in `ActiveTurnQueue.gd`</span>
+<span style="color:#66d9ef">func</span> set_time_scale(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    time_scale <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        effect<span style="color:#f92672">.</span>time_scale <span style="color:#f92672">=</span> time_scale
+
+
+<span style="color:#66d9ef">func</span> set_is_active(value) <span style="color:#f92672">-&gt;</span> void:
+    is_active <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        effect<span style="color:#f92672">.</span>is_active <span style="color:#f92672">=</span> is_active
+
+
+<span style="color:#75715e"># Returns `true` if there are `MAX_STACKS` instances of a given status effect.</span>
+<span style="color:#66d9ef">func</span> _has_maximum_stacks_of(id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        <span style="color:#66d9ef">if</span> effect<span style="color:#f92672">.</span>id <span style="color:#f92672">==</span> id:
+            count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">return</span> count <span style="color:#f92672">==</span> MAX_STACKS
+
+
+<span style="color:#75715e"># Finds and expires the effect of a given type expiring the soonest.</span>
+<span style="color:#66d9ef">func</span> _remove_effect_expiring_the_soonest(id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> to_remove: StatusEffect
+    <span style="color:#66d9ef">var</span> smallest_time: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> INF
+    <span style="color:#75715e"># We have to check all effects to find the ones that match the `id`.</span>
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        <span style="color:#66d9ef">if</span> effect<span style="color:#f92672">.</span>id <span style="color:#f92672">!=</span> id:
+            <span style="color:#66d9ef">continue</span>
+        <span style="color:#75715e"># We compare the `time_left` for an effect of type `id` to the current `smallest_time` and</span>
+        <span style="color:#75715e"># if it&#39;s smaller, we update the variables.</span>
+        <span style="color:#66d9ef">var</span> time_left: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> effect<span style="color:#f92672">.</span>get_time_left()
+        <span style="color:#66d9ef">if</span> time_left <span style="color:#f92672">&lt;</span> smallest_time:
+            to_remove <span style="color:#f92672">=</span> effect
+            smallest_time <span style="color:#f92672">=</span> time_left
+    to_remove<span style="color:#f92672">.</span>expire()
+</pre>
+<p>Let’s add the container to each of our battler scenes.</p>
+<p>You’ll want to go through each of your copies of <code>Battler.tscn</code> and add a node as a child named <em>StatusEffectContainer</em>. Thanks to the <code>class_name</code> we set in the script, it should appear in the <em>Add Node</em> dialog.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<h3 id="synchronizing-battlers">Synchronizing battlers</h3>
+<p>Note that in this series, I’ve avoided the use of inherited scenes. Instead, a few lessons ago, we created unique copies of <code>Battler.tscn</code> for individual characters.</p>
+<p>However, you won’t want to create dozens of copies of the battler scene to create dozens of characters and monster types.</p>
+<p>Inherited scenes are supposed to work like class inheritance and help you reuse and extend existing scenes.</p>
+<p>With Godot 3.2, though, using inherited scenes has limitations that can make you lose work unintentionally at the time of writing. There’s <a href="https://github.com/godotengine/godot-proposals/issues/2280">a proposal</a> to improve them, but until they get some changes, I don’t recommend using them.</p>
+<p>An alternative to adding nodes in the editor is to add them in the <code>Battler.gd</code> script. In our case, it’s about the same.</p>
+<p>You can do it like so:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># We create an instance of the StatusEffectContainer class.</span>
+<span style="color:#66d9ef">var</span> _status_effect_container :<span style="color:#f92672">=</span> StatusEffectContainer<span style="color:#f92672">.</span>new()
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># And we add the node as a child when the battler is ready.</span>
+    add_child(_status_effect_container)
+</pre>
+<p>With that, we need a bit of wiring to put the effects to use.</p>
+<h2 id="using-the-status-effect-in-code">Using the status effect in code</h2>
+<p>We need to update four classes to pass our status effect around: The <code>Hit</code>, the <code>AttackAction</code>, its <code>AttackActionData</code>, and the <code>Battler</code>.</p>
+<p>It can seem complicated, but this often happens when we try to decouple and encapsulate code with object-oriented programming. You end up having to pass a reference multiple times to deliver it to the final Target.</p>
+<p>Let’s start with the <code>Hit</code> class, where we add a new <code>effect</code> property. Open <code>Hit.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> effect: StatusEffect
+
+<span style="color:#75715e"># We add the ability to pass an effect through the constructor.</span>
+<span style="color:#66d9ef">func</span> _init(_damage: <span style="color:#a6e22e">int</span>, _hit_chance :<span style="color:#f92672">=</span> <span style="color:#ae81ff">100.0</span>, _effect: StatusEffect <span style="color:#f92672">=</span> null) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># ...</span>
+    <span style="color:#75715e"># hit_chance = _hit_chance</span>
+    effect <span style="color:#f92672">=</span> _effect
+</pre>
+<p>We want the action to feed the effect to the hit when it generates it. To do that, we need to update the <code>AttackActionData</code> and then the <code>AttackAction</code> class. Open <code>AttackActionData.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Status effect applied by the attack, of type `StatusEffectData`.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> status_effect: <span style="color:#a6e22e">Resource</span>
+
+<span style="color:#75715e"># Returns the total damage for the action, factoring in damage dealt by a status effect.</span>
+<span style="color:#66d9ef">func</span> calculate_potential_damage_for(battler) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#75715e"># ...</span>
+    <span style="color:#75715e"># Adding the effect&#39;s damage if applicable.</span>
+    <span style="color:#66d9ef">if</span> status_effect:
+        total_damage <span style="color:#f92672">+=</span> status_effect<span style="color:#f92672">.</span>calculate_total_damage()
+    <span style="color:#66d9ef">return</span> total_damage
+</pre>
+<p>Next, add this code to <code>AttackAction.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _apply_async() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">for</span> target <span style="color:#f92672">in</span> _targets:
+        <span style="color:#75715e"># We use the `StatusEffectBuilder` to instantiate the right effect.</span>
+        <span style="color:#66d9ef">var</span> status: StatusEffect <span style="color:#f92672">=</span> StatusEffectBuilder<span style="color:#f92672">.</span>create_status_effect(
+            target, _data<span style="color:#f92672">.</span>status_effect
+        )
+        <span style="color:#75715e"># ...</span>
+        <span style="color:#75715e"># We add the status effect to the hit.</span>
+        <span style="color:#66d9ef">var</span> hit :<span style="color:#f92672">=</span> Hit<span style="color:#f92672">.</span>new(damage, hit_chance, status)
+        <span style="color:#75715e"># ...</span>
+</pre>
+<p>Finally, when the battler takes a hit, we need to apply the status effect if the hit object contains one. Add the following code to <code>Battler.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Adding a reference to the container.</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _status_effect_container: StatusEffectContainer <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>StatusEffectContainer
+
+
+<span style="color:#66d9ef">func</span> take_hit(hit: Hit) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> hit<span style="color:#f92672">.</span>does_hit():
+        <span style="color:#75715e">#...</span>
+        <span style="color:#75715e"># If the hit comes with an effect, we apply it to the battler.</span>
+        <span style="color:#66d9ef">if</span> hit<span style="color:#f92672">.</span>effect:
+            _apply_status_effect(hit<span style="color:#f92672">.</span>effect)
+
+
+<span style="color:#75715e"># We forward the `time_scale` and `is_active` to the status effects through the container.</span>
+<span style="color:#66d9ef">func</span> set_time_scale(value) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># ...</span>
+    _status_effect_container<span style="color:#f92672">.</span>time_scale <span style="color:#f92672">=</span> time_scale
+
+
+<span style="color:#66d9ef">func</span> set_is_active(value) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># ...</span>
+    _status_effect_container<span style="color:#f92672">.</span>is_active <span style="color:#f92672">=</span> value
+
+
+<span style="color:#75715e"># This function applies the status effect to the battler.</span>
+<span style="color:#75715e"># Effect is of type `StatusEffect`.</span>
+<span style="color:#66d9ef">func</span> _apply_status_effect(effect) <span style="color:#f92672">-&gt;</span> void:
+    _status_effect_container<span style="color:#f92672">.</span>add(effect)
+</pre>
+<h2 id="testing-the-code">Testing the code</h2>
+<p>We are getting to the end of it. To wrap things up, we want to test our new code and the connections using print statements once again.</p>
+<p>We need to create a new <code>StatusEffectData</code> resource and assign it to our <code>AttackActionData</code>.</p>
+<p>In the <em>FileSystem</em> dock, create a new resource of type <code>StatusEffectData</code>.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>Assign the effect “bug” to it, if you named it the same as I did. This should be an id you wrote in the <code>StatusEffectBuilder</code> class. Here are the settings I used for my effect. It inflicts three damage every four seconds.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>Double click on the basic attack action resource we created some lessons ago and drag and drop your new status effect resource onto its effect slot.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>Now, every attack should cause this status effect. Let’s verify that with some <code>print()</code> statements or breakpoints. You can place them wherever you want; I’m going to put one in the <code>Battler._apply_status_effect()</code> function and one in one in <code>Battler.take_damage()</code>, because they should both get called through the status effect. I expect to see the battler take three damage at regular time intervals.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># In Battler.gd</span>
+<span style="color:#66d9ef">func</span> _apply_status_effect(effect) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># _status_effect_container.add(effect)</span>
+    print(<span style="color:#e6db74">&quot;Applying effect </span><span style="color:#e6db74">%s</span><span style="color:#e6db74"> to </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [effect<span style="color:#f92672">.</span>id, name])
+
+
+<span style="color:#66d9ef">func</span> _take_damage(amount: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># stats.health -= amount</span>
+    print(<span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74"> took </span><span style="color:#e6db74">%s</span><span style="color:#e6db74"> damage&quot;</span> <span style="color:#f92672">%</span> [name, amount])
+    <span style="color:#75715e"># ...</span>
+</pre>
+<p class="note">
+Don’t forget that time slowing down on the player’s turn in <code>ActiveTurnQueue</code> can delay the output a lot.
+</p>
+<p>You should see text like the following in the <em>Output</em> dock:</p>
+<pre style="color:#f8f8f2;background-color:#272822">Bear took <span style="color:#ae81ff">7</span> damage
+Applying effect bug to Bear
+BugCat took <span style="color:#ae81ff">13</span> damage
+Applying effect bug to BugCat
+Bear took <span style="color:#ae81ff">3</span> damage
+BugCat took <span style="color:#ae81ff">3</span> damage
+</pre>
+<h2 id="the-code-so-far">The code so far</h2>
+<p>Here are the complete <code>StatusEffectBuilder</code> and <code>StatusEffectContainer</code> classes.</p>
+<p><code>StatusEffectBuilder.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name StatusEffectBuilder
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Reference</span>
+
+<span style="color:#66d9ef">const</span> StatusEffects :<span style="color:#f92672">=</span> {
+    haste <span style="color:#f92672">=</span> StatusEffectHaste,
+    slow <span style="color:#f92672">=</span> StatusEffectSlow,
+    bug <span style="color:#f92672">=</span> StatusEffectBug,
+}
+
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> create_status_effect(target, data):
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> data:
+        <span style="color:#66d9ef">return</span> null
+    <span style="color:#66d9ef">var</span> effect_class <span style="color:#f92672">=</span> StatusEffects[data<span style="color:#f92672">.</span>effect]
+    <span style="color:#66d9ef">var</span> effect: StatusEffect <span style="color:#f92672">=</span> effect_class<span style="color:#f92672">.</span>new(target, data)
+    <span style="color:#66d9ef">return</span> effect
+</pre>
+<p><code>StatusEffectContainer.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name StatusEffectContainer
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">const</span> MAX_STACKS :<span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>
+<span style="color:#66d9ef">const</span> STACKING_EFFECTS :<span style="color:#f92672">=</span> [<span style="color:#e6db74">&quot;bug&quot;</span>]
+<span style="color:#66d9ef">const</span> NON_STACKING_EFFECTS :<span style="color:#f92672">=</span> [<span style="color:#e6db74">&quot;haste&quot;</span>, <span style="color:#e6db74">&quot;slow&quot;</span>]
+
+<span style="color:#66d9ef">var</span> time_scale :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#66d9ef">setget</span> set_time_scale
+<span style="color:#66d9ef">var</span> is_active :<span style="color:#f92672">=</span> true <span style="color:#66d9ef">setget</span> set_is_active
+
+
+<span style="color:#66d9ef">func</span> add(effect: StatusEffect) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> effect<span style="color:#f92672">.</span>can_stack():
+        <span style="color:#66d9ef">if</span> _has_maximum_stacks_of(effect<span style="color:#f92672">.</span>id):
+            _remove_effect_expiring_the_soonest(effect<span style="color:#f92672">.</span>id)
+    <span style="color:#66d9ef">elif</span> has_node(effect<span style="color:#f92672">.</span>name):
+        get_node(effect<span style="color:#f92672">.</span>name)<span style="color:#f92672">.</span>expire()
+    add_child(effect)
+
+
+<span style="color:#66d9ef">func</span> remove_type(id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        <span style="color:#66d9ef">if</span> effect<span style="color:#f92672">.</span>id <span style="color:#f92672">==</span> id:
+            effect<span style="color:#f92672">.</span>expire()
+
+
+<span style="color:#66d9ef">func</span> remove_all() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        effect<span style="color:#f92672">.</span>expire()
+
+
+<span style="color:#66d9ef">func</span> set_time_scale(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    time_scale <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        effect<span style="color:#f92672">.</span>time_scale <span style="color:#f92672">=</span> time_scale
+
+
+<span style="color:#66d9ef">func</span> set_is_active(value) <span style="color:#f92672">-&gt;</span> void:
+    is_active <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        effect<span style="color:#f92672">.</span>is_active <span style="color:#f92672">=</span> is_active
+
+
+<span style="color:#66d9ef">func</span> _has_maximum_stacks_of(id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        <span style="color:#66d9ef">if</span> effect<span style="color:#f92672">.</span>id <span style="color:#f92672">==</span> id:
+            count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">return</span> count <span style="color:#f92672">==</span> MAX_STACKS
+
+
+<span style="color:#66d9ef">func</span> _remove_effect_expiring_the_soonest(id: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> to_remove: StatusEffect
+    <span style="color:#66d9ef">var</span> smallest_time: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> INF
+    <span style="color:#66d9ef">for</span> effect <span style="color:#f92672">in</span> get_children():
+        <span style="color:#66d9ef">if</span> effect<span style="color:#f92672">.</span>id <span style="color:#f92672">!=</span> id:
+            <span style="color:#66d9ef">continue</span>
+        <span style="color:#66d9ef">var</span> time_left: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> effect<span style="color:#f92672">.</span>get_time_left()
+        <span style="color:#66d9ef">if</span> time_left <span style="color:#f92672">&lt;</span> smallest_time:
+            to_remove <span style="color:#f92672">=</span> effect
+            smallest_time <span style="color:#f92672">=</span> time_left
+    to_remove<span style="color:#f92672">.</span>expire()
+</pre>
+</body>
+</html>

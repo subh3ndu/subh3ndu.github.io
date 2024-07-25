@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpRXlB4LrjLO</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="scene-builder">Scene builder</h1>
+<p>The scene builder is a <code>Node</code> that lives in the root of the scene. Its job is to create viewports and hold data about materials the proxies can use. It’s a central node that lets us identify whether a scene uses the toon shader plugin.</p>
+<h2 id="building-the-builder">Building the builder</h2>
+<p>Add a new <code>Node</code> named “ToonSceneBuilder” at the root of your toon shaded scene and assign it a new script. Save it in <code>/addons/gdquest.toon-controller/Tools/ToonSceneBuilder.gd</code></p>
+<p>Add the <code>tool</code> keyword so it can run in the editor. We give it a class so Godot adds it to the <em>Add Node</em> dialog (and since it’s inside the addons folder, Godot will list it when the plugin is active).</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">tool</span>
+class_name ToonSceneBuilder
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+</pre>
+<h2 id="data">Data</h2>
+<p>As the central access point to the scene, it holds data we use everywhere else:</p>
+<ul>
+<li>An enum to separate the two viewport types.</li>
+<li>The names of the viewports in the same order as the enumeration.</li>
+<li>Shadow information and controls. User controllable exports that, when changed, also change the viewports.</li>
+<li>Default materials for the remote proxies.</li>
+<li>The viewports.</li>
+</ul>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">enum</span> DataType { LIGHT, SPECULAR }
+
+<span style="color:#66d9ef">const</span> VIEW_NAMES :<span style="color:#f92672">=</span> [<span style="color:#e6db74">&quot;ToonLightDataView&quot;</span>, <span style="color:#e6db74">&quot;ToonSpecularDataView&quot;</span>]
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> shadow_resolution: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2048</span> <span style="color:#66d9ef">setget</span> _set_shadow_resolution
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> specular_material: SpatialMaterial
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> white_diffuse_material: SpatialMaterial
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> specular_ignores_shadows :<span style="color:#f92672">=</span> false <span style="color:#66d9ef">setget</span> _set_specular_ignores_shadows
+
+<span style="color:#66d9ef">var</span> light_data: <span style="color:#a6e22e">Viewport</span>
+<span style="color:#66d9ef">var</span> specular_data: <span style="color:#a6e22e">Viewport</span>
+
+
+<span style="color:#66d9ef">func</span> _set_shadow_resolution(value: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+
+
+<span style="color:#66d9ef">func</span> _set_specular_ignores_shadows(value: <span style="color:#a6e22e">bool</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+</pre>
+<h2 id="initialize">Initialize</h2>
+<p>In <code>_ready</code>, we need to create defaults if they don’t exist.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> specular_material:
+        specular_material <span style="color:#f92672">=</span> SpatialMaterial<span style="color:#f92672">.</span>new()
+        specular_material<span style="color:#f92672">.</span>albedo_color <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>black
+        specular_material<span style="color:#f92672">.</span>roughness <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.4</span>
+        specular_material<span style="color:#f92672">.</span>flags_disable_ambient_light <span style="color:#f92672">=</span> true
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> white_diffuse_material:
+        white_diffuse_material <span style="color:#f92672">=</span> SpatialMaterial<span style="color:#f92672">.</span>new()
+        white_diffuse_material<span style="color:#f92672">.</span>flags_disable_ambient_light <span style="color:#f92672">=</span> true
+</pre>
+<p>We use the root of the scene several times, so we cache it in an <code>onready</code> variable.</p>
+<p>We create <code>_find_viewport</code> to take the type of data (light or specular). We use <code>find_node</code> on the root of the scene to look for the viewports.</p>
+<p>In the editor, <code>get_tree().root</code> refers to the root of the editor, but in-game, it’s the root of the scene, so a ternary operator differentiates it.</p>
+<pre style="color:#f8f8f2;background-color:#272822">
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> scene_root :<span style="color:#f92672">=</span> get_tree()<span style="color:#f92672">.</span>edited_scene_root <span style="color:#66d9ef">if</span> Engine<span style="color:#f92672">.</span>editor_hint <span style="color:#66d9ef">else</span> get_tree()<span style="color:#f92672">.</span>root
+
+
+<span style="color:#66d9ef">func</span> _find_viewport(type: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Viewport</span>:
+    <span style="color:#66d9ef">var</span> viewport_name: <span style="color:#a6e22e">String</span> <span style="color:#f92672">=</span> VIEW_NAMES[type]
+
+    <span style="color:#66d9ef">var</span> container: ViewportContainer <span style="color:#f92672">=</span> scene_root<span style="color:#f92672">.</span>find_node(viewport_name)
+
+    <span style="color:#66d9ef">if</span> container:
+        <span style="color:#66d9ef">return</span> container<span style="color:#f92672">.</span>get_child(<span style="color:#ae81ff">0</span>) as <span style="color:#a6e22e">Viewport</span>
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">return</span> null
+</pre>
+<p>Back in <strong><code>_ready</code></strong>, we find the two viewports.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    light_data <span style="color:#f92672">=</span> _find_viewport(DataType<span style="color:#f92672">.</span>LIGHT)
+    specular_data <span style="color:#f92672">=</span> _find_viewport(DataType<span style="color:#f92672">.</span>SPECULAR)
+</pre>
+<p>If we’re in-game, that’s it. If we’re in the editor and if they’re missing, we need to create them with <code>_build_data</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">if</span> Engine<span style="color:#f92672">.</span>editor_hint:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> light_data:
+        light_data <span style="color:#f92672">=</span> _build_data(DataType<span style="color:#f92672">.</span>LIGHT)
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> specular_data:
+        specular_data <span style="color:#f92672">=</span> _build_data(DataType<span style="color:#f92672">.</span>SPECULAR)
+</pre>
+<p>The function <code>_build_data</code> creates the viewport, sets its data, and returns it.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _build_data(type: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Viewport</span>:
+    <span style="color:#66d9ef">var</span> view :<span style="color:#f92672">=</span> ViewportContainer<span style="color:#f92672">.</span>new()
+    view<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> VIEW_NAMES[type]
+    view<span style="color:#f92672">.</span>stretch <span style="color:#f92672">=</span> true
+    view<span style="color:#f92672">.</span>anchor_right <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+    view<span style="color:#f92672">.</span>anchor_bottom <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+    view<span style="color:#f92672">.</span>self_modulate<span style="color:#f92672">.</span>a <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">var</span> viewport :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Viewport</span><span style="color:#f92672">.</span>new()
+    viewport<span style="color:#f92672">.</span>transparent_bg <span style="color:#f92672">=</span> true
+    viewport<span style="color:#f92672">.</span>world <span style="color:#f92672">=</span> <span style="color:#a6e22e">World</span><span style="color:#f92672">.</span>new()
+    viewport<span style="color:#f92672">.</span>usage <span style="color:#f92672">=</span> <span style="color:#a6e22e">Viewport</span><span style="color:#f92672">.</span>USAGE_3D_NO_EFFECTS
+    viewport<span style="color:#f92672">.</span>render_target_update_mode <span style="color:#f92672">=</span> <span style="color:#a6e22e">Viewport</span><span style="color:#f92672">.</span>UPDATE_ALWAYS
+    viewport<span style="color:#f92672">.</span>msaa <span style="color:#f92672">=</span> ProjectSettings<span style="color:#f92672">.</span>get_settings(<span style="color:#e6db74">&quot;rendering/quality/filters/msaa&quot;</span>)
+    viewport<span style="color:#f92672">.</span>shadow_atlas_size <span style="color:#f92672">=</span> shadow_resolution
+</pre>
+<p>The view belongs to the container, and the container belongs to the scene root. <code>add_child</code> sets that hierarchy. It’s important to set their <code>owner</code> properties, so Godot saves them to the TSCN file.</p>
+<pre style="color:#f8f8f2;background-color:#272822">view<span style="color:#f92672">.</span>add_child(viewport)
+
+scene_root<span style="color:#f92672">.</span>add_child(view)
+view<span style="color:#f92672">.</span>owner <span style="color:#f92672">=</span> scene_root
+viewport<span style="color:#f92672">.</span>owner <span style="color:#f92672">=</span> scene_root
+
+<span style="color:#66d9ef">return</span> viewport
+</pre>
+<h2 id="shadow-control">Shadow control</h2>
+<p>Let’s populate the setters for the shadow control. The first step for the shadow resolution is to set the variable.</p>
+<p>Godot calls setters when it creates nodes from the TSCN file, and the light and specular data are not in the scene tree yet. We wait until the class is ready with <code>yield</code>, then set the shadow resolution on the viewports.</p>
+<p>Note that the specular data has a ternary if statement for the shadow ignoring boolean.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _set_shadow_resolution(value: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    shadow_resolution <span style="color:#f92672">=</span> value
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    <span style="color:#66d9ef">if</span> light_data:
+        light_data<span style="color:#f92672">.</span>shadow_atlas_size <span style="color:#f92672">=</span> shadow_resolution
+    <span style="color:#66d9ef">if</span> specular_data:
+        specular_data<span style="color:#f92672">.</span>shadow_atlas_size <span style="color:#f92672">=</span> (
+            <span style="color:#ae81ff">0</span>
+            <span style="color:#66d9ef">if</span> specular_ignores_shadows
+            <span style="color:#66d9ef">else</span> shadow_resolution
+        )
+</pre>
+<p>The setter for the boolean is even simpler: we set the value, wait if we need to, then set the <code>shadow_resolution</code> variable. We need to use <code>self</code> because setters of the current class aren’t called without it.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _set_specular_ignores_shadows(value: <span style="color:#a6e22e">bool</span>) <span style="color:#f92672">-&gt;</span> void:
+    specular_ignores_shadows <span style="color:#f92672">=</span> value
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    self<span style="color:#f92672">.</span>shadow_resolution <span style="color:#f92672">=</span> shadow_resolution
+</pre>
+<h2 id="node-order">Node order</h2>
+<p>Render targets must be fully rendered <em>before</em> the objects that use them, and nodes are coarsely rendered from the top of the scene tree to the bottom. We can change the order of nodes with <code>move_child</code>. Godot won’t move nodes when it’s busy creating them, so we have to use <code>call_deferred</code> to delay the moving until the time between frames.</p>
+<p>We queue the ToonSceneBuilder’s move before building the viewports in <code>_ready</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">if</span> Engine<span style="color:#f92672">.</span>editor_hint:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> get_index() <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+        scene_root<span style="color:#f92672">.</span>call_deferred(<span style="color:#e6db74">&quot;move_child&quot;</span>, self, <span style="color:#ae81ff">0</span>)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> light_data:
+        light_data <span style="color:#f92672">=</span> _build_data(DataType<span style="color:#f92672">.</span>LIGHT)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> specular_data:
+        specular_data <span style="color:#f92672">=</span> _build_data(DataType<span style="color:#f92672">.</span>SPECULAR)
+</pre>
+<p>We queue moving the viewports after adding them as children in <code>_build_data</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822">scene_root<span style="color:#f92672">.</span>add_child(view)
+scene_root<span style="color:#f92672">.</span>call_deferred(<span style="color:#e6db74">&quot;move_child&quot;</span>, view, type <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+</pre>
+<h2 id="in-conclusion">In conclusion</h2>
+<p>We have a tool script that, as soon as it’s added to a scene, sets itself to the top of the tree and creates two fully configured viewports. It also holds a reference to those viewports. This will be important for building remote proxies and the plugin.</p>
+<p>Reloading the scene creates the viewports.</p>
+<figure>
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAR8AAACgCAIAAAC63v8OAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFyGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIwLTA3LTI0VDE0OjI2OjQ1LTA0OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDIwLTA3LTI0VDE0OjI2OjQ1LTA0OjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMC0wNy0yNFQxNDoyNjo0NS0wNDowMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowZDQzZTk4ZC1lOTQxLTM4NGEtOTFmYS0yNTEwMTg1YjhlZDMiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDoxMjQ3ODFjOS1kZTQ1LWYzNGMtYjYwMi03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" alt />
+</figure>
+<h2 id="the-toonscenebuilder-code">The ToonSceneBuilder code</h2>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">tool</span>
+class_name ToonSceneBuilder
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">enum</span> DataType { LIGHT, SPECULAR }
+
+<span style="color:#66d9ef">const</span> VIEW_NAMES :<span style="color:#f92672">=</span> [<span style="color:#e6db74">&quot;ToonLightDataView&quot;</span>, <span style="color:#e6db74">&quot;ToonSpecularDataView&quot;</span>]
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> shadow_resolution: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2048</span> <span style="color:#66d9ef">setget</span> _set_shadow_resolution
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> specular_material: SpatialMaterial
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> white_diffuse_material: SpatialMaterial
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> specular_ignores_shadows :<span style="color:#f92672">=</span> false <span style="color:#66d9ef">setget</span> _set_specular_ignores_shadows
+
+<span style="color:#66d9ef">var</span> light_data: <span style="color:#a6e22e">Viewport</span>
+<span style="color:#66d9ef">var</span> specular_data: <span style="color:#a6e22e">Viewport</span>
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> scene_root :<span style="color:#f92672">=</span> (
+    get_tree()<span style="color:#f92672">.</span>edited_scene_root
+    <span style="color:#66d9ef">if</span> Engine<span style="color:#f92672">.</span>editor_hint
+    <span style="color:#66d9ef">else</span> get_tree()<span style="color:#f92672">.</span>root
+)
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> specular_material:
+        specular_material <span style="color:#f92672">=</span> SpatialMaterial<span style="color:#f92672">.</span>new()
+        specular_material<span style="color:#f92672">.</span>albedo_color <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>black
+        specular_material<span style="color:#f92672">.</span>roughness <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.4</span>
+        specular_material<span style="color:#f92672">.</span>flags_disable_ambient_light <span style="color:#f92672">=</span> true
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> white_diffuse_material:
+        white_diffuse_material <span style="color:#f92672">=</span> SpatialMaterial<span style="color:#f92672">.</span>new()
+        white_diffuse_material<span style="color:#f92672">.</span>flags_disable_ambient_light <span style="color:#f92672">=</span> true
+
+    light_data <span style="color:#f92672">=</span> _find_viewport(DataType<span style="color:#f92672">.</span>LIGHT)
+    specular_data <span style="color:#f92672">=</span> _find_viewport(DataType<span style="color:#f92672">.</span>SPECULAR)
+
+    <span style="color:#66d9ef">if</span> Engine<span style="color:#f92672">.</span>editor_hint:
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> get_index() <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+            scene_root<span style="color:#f92672">.</span>call_deferred(<span style="color:#e6db74">&quot;move_child&quot;</span>, self, <span style="color:#ae81ff">0</span>)
+
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> light_data:
+            light_data <span style="color:#f92672">=</span> _build_data(DataType<span style="color:#f92672">.</span>LIGHT)
+
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> specular_data:
+            specular_data <span style="color:#f92672">=</span> _build_data(DataType<span style="color:#f92672">.</span>SPECULAR)
+
+
+<span style="color:#66d9ef">func</span> _find_viewport(type: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Viewport</span>:
+    <span style="color:#66d9ef">var</span> viewport_name: <span style="color:#a6e22e">String</span> <span style="color:#f92672">=</span> VIEW_NAMES[type]
+
+    <span style="color:#66d9ef">var</span> container: ToonViewportContainer <span style="color:#f92672">=</span> scene_root<span style="color:#f92672">.</span>find_node(
+        viewport_name, true, false
+    )
+
+    <span style="color:#66d9ef">if</span> container:
+        <span style="color:#66d9ef">return</span> container<span style="color:#f92672">.</span>get_child(<span style="color:#ae81ff">0</span>) as <span style="color:#a6e22e">Viewport</span>
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">return</span> null
+
+
+<span style="color:#66d9ef">func</span> _build_data(type: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Viewport</span>:
+    <span style="color:#66d9ef">var</span> view :<span style="color:#f92672">=</span> ToonViewportContainer<span style="color:#f92672">.</span>new()
+    view<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> VIEW_NAMES[type]
+    view<span style="color:#f92672">.</span>stretch <span style="color:#f92672">=</span> true
+    view<span style="color:#f92672">.</span>anchor_right <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+    view<span style="color:#f92672">.</span>anchor_bottom <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+    view<span style="color:#f92672">.</span>self_modulate<span style="color:#f92672">.</span>a <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">var</span> viewport :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Viewport</span><span style="color:#f92672">.</span>new()
+    viewport<span style="color:#f92672">.</span>transparent_bg <span style="color:#f92672">=</span> true
+    viewport<span style="color:#f92672">.</span>world <span style="color:#f92672">=</span> <span style="color:#a6e22e">World</span><span style="color:#f92672">.</span>new()
+    viewport<span style="color:#f92672">.</span>usage <span style="color:#f92672">=</span> <span style="color:#a6e22e">Viewport</span><span style="color:#f92672">.</span>USAGE_3D_NO_EFFECTS
+    viewport<span style="color:#f92672">.</span>render_target_update_mode <span style="color:#f92672">=</span> <span style="color:#a6e22e">Viewport</span><span style="color:#f92672">.</span>UPDATE_ALWAYS
+    viewport<span style="color:#f92672">.</span>msaa <span style="color:#f92672">=</span> ProjectSettings<span style="color:#f92672">.</span>get_setting(<span style="color:#e6db74">&quot;rendering/quality/filters/msaa&quot;</span>)
+    viewport<span style="color:#f92672">.</span>shadow_atlas_size <span style="color:#f92672">=</span> shadow_resolution
+    view<span style="color:#f92672">.</span>add_child(viewport)
+
+    scene_root<span style="color:#f92672">.</span>add_child(view)
+    scene_root<span style="color:#f92672">.</span>call_deferred(<span style="color:#e6db74">&quot;move_child&quot;</span>, view, type <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+    view<span style="color:#f92672">.</span>owner <span style="color:#f92672">=</span> scene_root
+    viewport<span style="color:#f92672">.</span>owner <span style="color:#f92672">=</span> scene_root
+
+    <span style="color:#66d9ef">return</span> viewport
+
+
+<span style="color:#66d9ef">func</span> _set_shadow_resolution(value: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    shadow_resolution <span style="color:#f92672">=</span> value
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    <span style="color:#66d9ef">if</span> light_data:
+        light_data<span style="color:#f92672">.</span>shadow_atlas_size <span style="color:#f92672">=</span> shadow_resolution
+    <span style="color:#66d9ef">if</span> specular_data:
+        specular_data<span style="color:#f92672">.</span>shadow_atlas_size <span style="color:#f92672">=</span> (
+            <span style="color:#ae81ff">0</span>
+            <span style="color:#66d9ef">if</span> specular_ignores_shadows
+            <span style="color:#66d9ef">else</span> shadow_resolution
+        )
+
+
+<span style="color:#66d9ef">func</span> _set_specular_ignores_shadows(value: <span style="color:#a6e22e">bool</span>) <span style="color:#f92672">-&gt;</span> void:
+    specular_ignores_shadows <span style="color:#f92672">=</span> value
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    self<span style="color:#f92672">.</span>shadow_resolution <span style="color:#f92672">=</span> shadow_resolution
+
+</pre>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpYs87C1utM7</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="deconstructing-entities">Deconstructing entities</h1>
+<p>Whether it’s to gather resources, or because they placed an object by mistake, the player needs more controls than only placing entities.</p>
+<p>They should be able to pick them back up and put them somewhere else, disassemble machinery to re-do their power setup, or to make space for new machines.</p>
+<p>In this lesson, we’ll add this feature by adding deconstruction methods to <code>EntityPlacer.gd</code>.</p>
+<h2 id="the-deconstruction-timer">The deconstruction timer</h2>
+<p>If the player tries to deconstruct a machine but they click on the one next to it by accident, it’d be frustrating if the machine instantly went away. It could also interrupt important work in the player’s assembly line!</p>
+<p>That’s why we’ll make the deconstruction process take a short while. You hold the right mouse button down, a bar fills up, and if you’re still holding the button on the target by the end of it, the entity breaks down and gets dropped to the ground. You can release the button anytime to cancel the operation.</p>
+<p>For now, we’ll only implement the feature without displaying an animated progress bar, which we’ll cover in the next chapter, when we get to the user interface.</p>
+<p>We need a dedicated <em>Timer</em> node as a child of <em>EntityPlacer</em> we’ll use to time the deconstruction input.</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWUAAAEVCAMAAAAPeQRIAAAACXBIWXMAAAsSAAALEgHS3X78AAAAYFBMVEUmLDtydoDGyMywsrdXXGg8QU+jtfHMztP/6gDg4OCLjpcZHSi+wMVESVZgZXIxN0ZOVGG3ub7e3t6Ul6ClqK8rMUBqbnmfoqp4fIY3PEuFiJJ/g42CkcFjb5WUpdvV1dWEjHbhAAAQ+ElEQVR42uydDXOjLBCAETRMePGD+K1t7///y1dAEZQYkzZ3Tdydm15qNZ15slkgfVjRfwji+QGUgTJQhgDK/zLiXPw5yxAZUH5a5MUfcdaYgfLTgpzPRFM+A2Wg/PKUZTw++mW4unlOSINHL30XynYiX6NcFZQWNpK2I5iTLkYoof39lLNQft1z6XEot+NZpDVTE04Jy4mCF5f3U66ZfpoSKFsn4aRtE3w2hSXX2KJ0329ZUk4pO1pdvkm5OmNFM8XnqWgUNHUIhjQOhhKSt2knMAlkilY0Ue8Dmk+UMzacUg9FpsJ0iHqCnxQYk0o/V1wRjIvsrRAPcYVymAykykSVz2KCW52L8SRGswVlIoKEUUKKKqlVuV1TzkkX9BhHKAtokSTZeLijouuJPE0+DW+SgOP4radxhnLSVGVZNQoUPo/1uD3jqS5TnpQOZZ6qFJc1peTcS7nUI14gL2fm0owWpapBiTwwvAbyv+4YlAfC1fBPgaHndEkZZYLyLrYoK2y9LgE1LX2UVUSSoE0512+LaKggw4Fcl+36rZfXc11Oq2aEPFSMRB9LTMWQiHJKWWkoN/JYQ0M9NqbeupwLWZCZS5lQ/Vs4Nk+DaPHWHxVZo1+ZTDXBM/rptKxlXo6UA005u065oqLK4nBJWYzvD0LnnH8ryt7YNZMbQ+ffJuXIUOa4RSPg67l8YMrrVcmEfyB0nfI4ORspl2pkHEY/JtHPlJlTlw9Meb3CjsfpRXE9lzM9ktUmlzEfkjYlEnCpMYZ6vmHPMQ5NeRmU14wVFGfXKQ+J3oVVIQzljhZNx3PMNPsmGK9qKOmbab4MlK1oCk6xYBHaoJwygTlrxUS57AUWTVlIylHOB9rjVaG19gPKEEAZKEMAZaAMlCGAMlCGAMp/lXIELIAyUIYAykAZKEMA5V8dFaGUVED5mRGJiwoeA+XnQcYX7QBcaASUnxX8MvksF/5bKdtWbvyKRm51uSQoEyJDyeVS7aWcfHx9fSTOoTQohFTzszt++aSNCm19oZzG70mZXy4tGiqzQO3FJPMNyu3HScWHZcAknPKc1eQuVTPRTlxMR3Kco7elnN5L+eP0FbZt+HX6sDhwndp71Xyd/1oHCCjhGmAOFcNk4OlLV/Kv01Q0yoXUbZR7n6Evp44Y17JYaEGu4IEqHYEWvhwvP64xmdxnKXP0L0kZ4Xn0w9dHP9vL/ziF40GTzMmiUBjl3mfoo47WTc+lrtXLgpzSPFY/yNUsx/HyKyzybqRcU9IwXrwk5ZiamVx8nbLt5X+dJi//9LUYxhZV12/oZwppKh+rh8nAW0h7Ggu08vI7UzFC5Y1rye4FMfPrqxIUqXC9/K9TuqRc67l2z4YwO8sirTavDH1G43YIOaEoh3KgZK9u+CZWbwjXyydzXR5/UL3q3qrrK2xroJq9fE/FKDRlIfc9yZdgVu49hj6hY2QSe4p4ITM4GMpyiJYucz9THn8Qv80ONt/f/WYv3zP65aZi1NpbNsq9x1EcZsc6UjnghZnSFAfU6lKvl28L+9FbU96cyQVmn69CZSn3HsqEttao0DdqPMhxiQuE/F7+cXJ5c1XSqvnERNlW7j2UGbVWjbyuxThU6trSebx8uy4nR6HsWWE3VGRzLlvKvdfQF62ZwOScd3qBQvQpPi9f/Z/QWs4mi+NQXkc3DKB5xwosOVrKvc8d7ylmPSOFTs3xM4ya4ukFW3n5Zr7cd6I+MuVhuTdMKzDJ5UTEUu59lFFYY8rrcZcaLsfSPi2v116+WftR0Zf8yJQhgDJQBsoQQBkoQwBloAyUIZ5MGQwYoAyUIYAyUAbKEED598UeUwAofy+2XHyg/FOQt1x8oPxDseni36J8Ojn/fiiWyoXqnX+lr/6L1ORNs/ZByo94+fZvGigbzYty3Tv/pSlvu/iPVYyHvPxFLgeMsZoWw9de985/dcrp45S9ufyYl++pGIkNFiqGQ3nh5U8+ve3Yux2DrT74rm6f2DrGSNlo/KV8RLoXGZM3XfxHKsbCy598etuxdylbffBd3d5Dedb4mXyU4xehvOniP5LLCy9/8ultx96lPPfBX+j2a8qWxq/eHuhlbnay6eLblNfhpbzw8ief3nbsXcpzH/yFbr+mbGn8gr/YTSB+doW98PInn972kl3Kcx/8haK8pmxp/AmmeYZeOb5VMRZe/jQ3sB17370fJOWFbr+mbGv8EcOUZEelvPDyJ4qeXI6WlHfkst0wPg04zQ5A2Reul28odk5ddvvlT5QXur2vLieLoTs/aC4vvPyJou3Yr/rlj5QXur1vjmE0/tb3iceBKLtevlmzWY79ql/+SHmh23vmy7PGj4su6F76blPf/eTT9vLnlfHs2K/65U+UXd3et/YzGn9A+LDaeeVbesHny0AZKEMAZaAMlIEyUAbKEEAZKANlCKAMlCGAMlAGyhA7Alz85we4+H8DMrj4fyG+5eIj9PkJCHfU5G+ZtejzdJKYda9EdaQeRZRSDK9e2xHp5F/7G2gWHiaVv+Pif0q4nw7leLwpe0UbFHNKWE6u+t01Ow7l9Ds7HtZ7dphqdlhyUaJc873m5KeUQcV4kHKkzOJAOkQFtfiu2t1XskWzMpbfP+538e0e+b79Z/0AOOUEucL4ut19FtAiSbJDUL7fxbd75I+UTVVWr9dAWPf1jCmfWmP72t3Hh6kY+118b498H+Vh4AuwLgSZoFzPMHzt7o9Eee8K2xq15h753h2rpaDmfRHmlMqND75298eivO/TIhuj6ZHv3xec2FpxVMuNOb5290B5b3gpZ+5mNJm/vnb3QHlfzKuSLcqSMPO0u4+A8m7Mn+gqZV2cQ7ka9LW7L8dlIlC+iflzo2JQXjNWUCzT2NPuXm55aAKg/GBMlJuCUyyYnmmv292jKOeYAWUIoAyUIYAyUAbKEEAZKEMA5d9JGQwYoAyUIYAyUAbKECbiXPw5yxAZUH5a5MUfcdaY3R/cawoA5Y0g5zPRlM8OsZ0uPlD+BuXdLj5Q3k1Zhnt0t4t/i/L9PfJVv/vNeMHW1r5ycYdZ+wjl1PS2X/BVwqjqd78S8tU1mLDojSjvd/EfqRgp5bJBMOsXx0cJX/a7Xwn5KRV9lwvlF7wR5fRnKPtzufbDZ97H9jWBVGKgYtxJ2ep/P0n4kuH4eGpGK3A6XcNpOVLOGMG81lMgZfT3ev45dsifO+//e8RD+Cjvd/G9lB0v35e0FmXT/36S8CXD8XGlk1a2WZ2uEYZyTrqg151wOyoYKxiyO+Sbzvu/drJ8h4vvpWx5+f5cFp2M0O1/P8qeiqF+nOpc7Gg4UY6omCpGqYfKwBj9yOmQP6n9v5nyfhffpuzx8rfmGJ3b/35NWXa8l1WCj2ekIaHubY0i+STzRhWrQ/6k9v/m5fU3V9i2l3+jYsz97z2UVW6qL+MrgwMzk8tyIas3my1op0N+SPvX+6joztHPePk3R79gizIifExoWWX6JknNGRUVVRaH8jxhhg6rQ/6r3pXnOXOMbcoBDUu1fc2e/akzOG7ReJ6dy+0LLxB/elXipRxZlCchf5g361OWlEtddlWz/Nyqy8khKd+Ry6OErw4ZIT/nncrPVS5jXk435An1HKN0OuQD5XmFveh/LyV8fWgS8ocJWY18lDtaNB3PlU+eD0Wb1fIp5g75UDHmT4scylrC14eMkC90EVhRVjdKa0q1FlErvtHonzrkH57yfVN6XKIjxT+hfLjdf/+Eck1joPxcylVT0A4B5edSzrE43MY/+OsqUAbKEED5hSkDcaAMlIEyUAbKQPng8SQX/8CUozBGAXcltSe5+EekHLUoLBpUnQsUX1wb5Eku/gEpZ2cy0KVlWeQlWnxe+yQX/4CUUypSFPrr7pNcfB/l7ONk4uPqKOC4+Pre7Tft/BtJ9vD13/3NNuVnmLU+yjbZ7GN8YDXJt118m3KyJWNdE/ut2Lr+kX0B1+LsxG3K33fxvdaAcQWkNjBOcawm+baLb1N2jqwx+cV+Zx5V3n351r6AH6Sc/h3KVpN8X0P823/vT7/X3f2RfQFblNUbv9pH+TkV4+T5Zm6Sb7v4xqQfvwkcax+hslEyhmDXxH7nlPX1s7L/yL6ALcp/htIX/3GBPsnFv4Py7B7bLr4x6W3KxtqX7wDSM15Tdk3sd05ZXz8r+4/sC9isGLws+QLok1z8OyhbTfJt53My6W3Ks7UfKjT/t3emu63CQBRmCeGCgMQFspHQ93/LCzaLCR4CNLg0nPlRVamtVl+t8dicOQiRHCHsl4f05kuS/Tl9AcN5OY69sZTnafHl7/uhpCyZ5Hcp28Yz5Va1X4k8T4KyUtgvD+nNlyT7c/oCqGDE7reUFn/8WjZak/wu5axHuVXtV4LlsJcx1EMU8xvJ/py+ALK6ZmrKi2nxp1CuTfK7lM0e5Va3WInvnR5l9ZD+/FayP6cvYN03n6pKri4drSmUybVsDq1l+YdXRSU3ui/gz1IuoTijKVdJdzdAWR7Smy9J9uf0BaybsuqELZnky1r8YcrinRxpMkBZHtKbL0n25/QFrJuy6rZINsmXtPjDlIuRyeXGKsqUsL8Z0p/fSvbn9AWsm7IqZJN8SYv/gnKaMZdloVzJBfSQ/vxWsj+nL+DvUf5JhK9lt+Fblbk6+gJWRzl6vRdF79yutPQFrIdyyvfM4vgc/mTI5NDSF7AeygfXjjM/GLi4GTNkWujqC1jRWi72TMuyzZ8NmRa6+gLwdBWUt07535IByqAMyqAMyrMoL/IHgTIogzIogzIogzIogzIofxRlu1XeKHQNk4XvoKykHLSUK7lZo6Vyg2HJPSiPpux7AX88mQZe9QTN9H3/7CbiUX2YgvIbKF9djy/XzJPVI7OfgIKyevfbfX3t6q89yrVk3rStIL4ebsyyTbG6CbN7UCZqjIv37Tjf3sWgKdvMjHzXtpNTdBaZmjK7B2Wqkjt7jHldHdQT5aBstUi4SjzlmmzS7B6UJTF+CUP45XPKRQxS5vtiJj47l/pY0uwelAkYpqjjzAHKPJtcRPtGXHZQkWb3oGwQu5+gPLT7mYLysaFMmt2DskFUclWoKjmKMml2D8qG+lTShD+eMml2D8rGuBP2GMqk2T0oK2Ew5W3RK8qk2T0oT4DxkjJldg/KOmCAMiiDMiiDMiiDMiiDMih/CGXol0EZlEEZlNdDGQHKoPw5sZAv/oZDoy/+JvFq98XfYPyCL/4G4xd88Tv/ZO5tpv71f/W11RNjIZdrOR6c8kP6pxdh2b7zYZT1++J3KD8eT5RZdosZt+rbOOXDkpR5mWO6yedR1uuL3ybl/Picl2tvzcBNK8pH37aCc9hq4rj7PCHBXzVlvb74TUT7e5mZH53NWFBmDeXYvpmZZTmG7D5PSfDXnTG0+uK3SItcIVxU82OXsuOyOmPw9pFSYyS5z5MS/JXn5aV98RVm+MWHrVFtLlM+7Gz31MnLTumK17rPkxL81YYeX3yqWr7f+eaX73dSJVfUcmZTyR1jVr4VxJfd50kJ/noPf1p88ckLqbygHBb7YNhUcrfsEh2aU8nJZadjKFpKGvd5UoL/2TGTclqUcXm+j/q7X0M5sK5GbQnbuM+TEnxQVi/kRxrt8+heb3/PlFORdiPx9pXafZ6U4INyH3KxkMtEUSaNfUisZatszxbvyWnd50kJPigrDiUPXqbt9vfoQGWMW+lhH8RW9V6Fyn2ekuCD8sgrwifKacbfX5b41WGlShWEBB+U33JLqMF9fvOUtbjPb56yFvf5bVPW5T6/bcq63Oex+4EyApRBGQHKoAzKCFAGZQQo/1r8B52KgNac7luyAAAAAElFTkSuQmCC" /></p>
+<p>We can store a reference to it in an <code>onready</code> variable. Then, in <code>_unhandled_input()</code>, we trigger the deconstruction process when the player right-clicks on a valid entity.</p>
+<p>Open the <code>EntityPlacer.gd</code> script to add the following code.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">#...</span>
+<span style="color:#75715e">## Base time in seconds it takes to deconstruct an item.</span>
+<span style="color:#66d9ef">const</span> DECONSTRUCT_TIME :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.3</span>
+
+<span style="color:#75715e">#...</span>
+<span style="color:#75715e">## The variable below keeps track of the current deconstruction target cell. If the mouse moves</span>
+<span style="color:#75715e">## to another cell, we can abort the operation by checking against this value.</span>
+<span style="color:#66d9ef">var</span> _current_deconstruct_location :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO
+
+<span style="color:#75715e">#...</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _deconstruct_timer :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Timer</span>
+
+
+<span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#75715e">#if event.is_action_pressed(&quot;left_click&quot;):</span>
+        <span style="color:#75715e">#...</span>
+    <span style="color:#75715e"># When right clicking...</span>
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;right_click&quot;</span>) <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> has_placeable_blueprint:
+        <span style="color:#75715e"># ...onto a tile within range that has an entity in it,</span>
+        <span style="color:#66d9ef">if</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player:
+            <span style="color:#75715e"># we remove that entity.</span>
+            _deconstruct(global_mouse_position, cellv)
+</pre>
+<h2 id="deconstructing-items">Deconstructing items</h2>
+<p>Above, we call a <code>_deconstruct()</code> function we have yet to define. Let’s add it at the bottom of the script.</p>
+<p>The <code>_deconstruct()</code> method does not instantly take out the item. Instead, it starts the process of deconstructing it. It connects to the timer with the appropriate time and targeted cell coordinates, which we can store to check if we should later abort the operation.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Begin the deconstruction process at the current cell</span>
+<span style="color:#66d9ef">func</span> _deconstruct(event_position: <span style="color:#a6e22e">Vector2</span>, cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># We connect to the timer&#39;s `timeout` signal. We pass in the targeted tile as a</span>
+    <span style="color:#75715e"># bind argument and make sure that the signal disconnects after emitting once </span>
+    <span style="color:#75715e"># using the CONNECT_ONESHOT flag. This is because once the signal has triggered,</span>
+    <span style="color:#75715e"># we do not want to have to disconnect manually. Once the timer ends, the deconstruct </span>
+    <span style="color:#75715e"># operation ends.</span>
+    _deconstruct_timer<span style="color:#f92672">.</span>connect(
+        <span style="color:#75715e"># We call the `_finish_deconstruct()` function when the timer times out. We&#39;ll code it next.</span>
+        <span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>, [cellv], CONNECT_ONESHOT
+    )
+
+    <span style="color:#75715e"># We then start the timer and store the cell we&#39;re targeting, which allows us to cancel</span>
+    <span style="color:#75715e"># the operation if the player&#39;s mouse moves to another cell.</span>
+    _deconstruct_timer<span style="color:#f92672">.</span>start(DECONSTRUCT_TIME)
+    _current_deconstruct_location <span style="color:#f92672">=</span> cellv
+</pre>
+<p>Once the timer times out, that means it’s time to deconstruct the entity. If the player deconstructs an inventory item, we want it to drop on the floor and become an item to pick up. We’ll code that part later. Until we get there, we will just ask the <code>EntityTracker</code> to remove the entity.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Finish the deconstruction and delete the entity from the game world.</span>
+<span style="color:#66d9ef">func</span> _finish_deconstruct(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># This function will drop the deconstructed entity as a pickup item,</span>
+    <span style="color:#75715e"># but we haven&#39;t implemented an inventory yet, so we only remove the entity.</span>
+    <span style="color:#66d9ef">var</span> entity :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>get_entity_at(cellv)
+    _tracker<span style="color:#f92672">.</span>remove_entity(cellv)
+</pre>
+<h2 id="aborting-the-deconstruction">Aborting the deconstruction</h2>
+<p>The player should be able to abort the deconstruction process.</p>
+<p>To do so, we follow a couple of rules:</p>
+<ul>
+<li>If they let go of the right mouse button or press another one, we abort.</li>
+<li>If the player moves the mouse enough that it moves off the machine, then we abort.</li>
+</ul>
+<p>First, let’s write a function to abort the deconstruction process. We’ll code the function in such a way we can safely call it anytime. If the player is deconstructing an entity, the timer is connected to the node and running. In that case, we disconnect the signal and stop the timer.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Disconnect from the timer if connected, and stop it from continuing, to prevent</span>
+<span style="color:#75715e">## deconstruction from completing.</span>
+<span style="color:#66d9ef">func</span> _abort_deconstruct() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _deconstruct_timer<span style="color:#f92672">.</span>is_connected(<span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>):
+        _deconstruct_timer<span style="color:#f92672">.</span>disconnect(<span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>)
+    _deconstruct_timer<span style="color:#f92672">.</span>stop()
+</pre>
+<p>We can then call the function in <code>_unhandled_input()</code> and implement the rules we listed above. You’ll have to insert some code at the start of the function, and some more below the line <code>elif event is InputEventMouseMotion</code>, where we update the placement preview.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># If the user releases right-click or clicks another mouse button, we can abort.</span>
+    <span style="color:#75715e"># We catch all mouse button inputs here because the `_abort_deconstruct()` function</span>
+    <span style="color:#75715e"># below will safely disconnect the timer and stop it.</span>
+    <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventMouseButton</span>:
+        _abort_deconstruct()
+    
+    <span style="color:#75715e">#...</span>
+    <span style="color:#75715e">#elif event.is_action_pressed(&quot;right_click&quot;) and not has_placeable_blueprint:</span>
+        <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">elif</span> event is <span style="color:#a6e22e">InputEventMouseMotion</span>:
+        <span style="color:#75715e"># If the mouse moves and slips off the target tile, then we can abort</span>
+        <span style="color:#75715e"># the deconstruction process.</span>
+        <span style="color:#66d9ef">if</span> cellv <span style="color:#f92672">!=</span> _current_deconstruct_location:
+            _abort_deconstruct()
+        
+        <span style="color:#75715e">#if has_placeable_blueprint:</span>
+            <span style="color:#75715e">#...</span>
+</pre>
+<p>With that code, you should be able to remove entities from the game board by doing a <kbd>Right-click</kbd> on them and holding the button. We don’t have a visual indicator yet for the player; we’ll add that in a future lesson, when working on the game’s user interface.</p>
+<p>In the next few lessons, we’ll tackle powering machines and transferring energy between them using wires.</p>
+<h2 id="code-reference">Code reference</h2>
+<p>Here are is the complete <code>EntityPlacer.gd</code> script with the additions from this lesson.</p>
+<p><code>EntityPlacer.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">TileMap</span>
+
+<span style="color:#66d9ef">const</span> MAXIMUM_WORK_DISTANCE :<span style="color:#f92672">=</span> <span style="color:#ae81ff">275.0</span>
+<span style="color:#66d9ef">const</span> POSITION_OFFSET :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">25</span>)
+<span style="color:#66d9ef">const</span> DECONSTRUCT_TIME :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.3</span>
+
+<span style="color:#66d9ef">var</span> _blueprint: BlueprintEntity
+<span style="color:#66d9ef">var</span> _tracker: EntityTracker
+<span style="color:#66d9ef">var</span> _ground: <span style="color:#a6e22e">TileMap</span>
+<span style="color:#66d9ef">var</span> _player: <span style="color:#a6e22e">KinematicBody2D</span>
+<span style="color:#66d9ef">var</span> _current_deconstruct_location :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO
+
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> Library :<span style="color:#f92672">=</span> {
+    <span style="color:#e6db74">&quot;StirlingEngine&quot;</span>: preload(<span style="color:#e6db74">&quot;res://Entities/Blueprints/StirlingEngineBlueprint.tscn&quot;</span>)<span style="color:#f92672">.</span>instance(),
+}
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _deconstruct_timer :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Timer</span>
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    Library[Library<span style="color:#f92672">.</span>StirlingEngine] <span style="color:#f92672">=</span> preload(<span style="color:#e6db74">&quot;res://Entities/Entities/StirlingEngineEntity.tscn&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _exit_tree() <span style="color:#f92672">-&gt;</span> void:
+    Library<span style="color:#f92672">.</span>StirlingEngine<span style="color:#f92672">.</span>queue_free()
+
+
+<span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> global_mouse_position :<span style="color:#f92672">=</span> get_global_mouse_position()
+
+    <span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _blueprint <span style="color:#f92672">and</span> _blueprint<span style="color:#f92672">.</span>placeable
+    <span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+        global_mouse_position<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position)
+        <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+    )
+
+    <span style="color:#66d9ef">var</span> cellv :<span style="color:#f92672">=</span> world_to_map(global_mouse_position)
+    <span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>is_cell_occupied(cellv)
+    <span style="color:#66d9ef">var</span> is_on_ground :<span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventMouseButton</span>:
+        _abort_deconstruct()
+
+    <span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;left_click&quot;</span>):
+        <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+                _place_entity(cellv)
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;right_click&quot;</span>) <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> has_placeable_blueprint:
+        <span style="color:#66d9ef">if</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player:
+            _deconstruct(global_mouse_position, cellv)
+
+    <span style="color:#66d9ef">elif</span> event is <span style="color:#a6e22e">InputEventMouseMotion</span>:
+        <span style="color:#66d9ef">if</span> cellv <span style="color:#f92672">!=</span> _current_deconstruct_location:
+            _abort_deconstruct()
+        <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+            _move_blueprint_in_world(cellv)
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;drop&quot;</span>) <span style="color:#f92672">and</span> _blueprint:
+        remove_child(_blueprint)
+        _blueprint <span style="color:#f92672">=</span> null
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;quickbar_1&quot;</span>):
+        <span style="color:#66d9ef">if</span> _blueprint:
+            remove_child(_blueprint)
+        _blueprint <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>StirlingEngine
+        add_child(_blueprint)
+        _move_blueprint_in_world(cellv)
+
+
+<span style="color:#66d9ef">func</span> _process(_delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _blueprint <span style="color:#f92672">and</span> _blueprint<span style="color:#f92672">.</span>placeable
+    <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+        _move_blueprint_in_world(world_to_map(get_global_mouse_position()))
+
+
+<span style="color:#66d9ef">func</span> setup(tracker: EntityTracker, ground: <span style="color:#a6e22e">TileMap</span>, player: <span style="color:#a6e22e">KinematicBody2D</span>) <span style="color:#f92672">-&gt;</span> void:
+    _tracker <span style="color:#f92672">=</span> tracker
+    _ground <span style="color:#f92672">=</span> ground
+    _player <span style="color:#f92672">=</span> player
+
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> get_children():
+        <span style="color:#66d9ef">if</span> child is Entity:
+            <span style="color:#66d9ef">var</span> map_position :<span style="color:#f92672">=</span> world_to_map(child<span style="color:#f92672">.</span>global_position)
+            _tracker<span style="color:#f92672">.</span>place_entity(child, map_position)
+
+
+<span style="color:#66d9ef">func</span> _move_blueprint_in_world(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    _blueprint<span style="color:#f92672">.</span>global_position <span style="color:#f92672">=</span> map_to_world(cellv) <span style="color:#f92672">+</span> POSITION_OFFSET
+
+    <span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+        get_global_mouse_position()<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position)
+        <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+    )
+    <span style="color:#66d9ef">var</span> is_on_ground: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>is_cell_occupied(cellv)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+        _blueprint<span style="color:#f92672">.</span>modulate <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>white
+    <span style="color:#66d9ef">else</span>:
+        _blueprint<span style="color:#f92672">.</span>modulate <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>red
+
+
+<span style="color:#66d9ef">func</span> _place_entity(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> new_entity: <span style="color:#a6e22e">Node2D</span> <span style="color:#f92672">=</span> Library[_blueprint]<span style="color:#f92672">.</span>instance()
+    add_child(new_entity)
+    new_entity<span style="color:#f92672">.</span>global_position <span style="color:#f92672">=</span> map_to_world(cellv) <span style="color:#f92672">+</span> POSITION_OFFSET
+    new_entity<span style="color:#f92672">.</span>_setup(_blueprint)
+    _tracker<span style="color:#f92672">.</span>place_entity(new_entity, cellv)
+
+
+<span style="color:#66d9ef">func</span> _deconstruct(event_position: <span style="color:#a6e22e">Vector2</span>, cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    _deconstruct_timer<span style="color:#f92672">.</span>connect(
+        <span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>, [cellv], CONNECT_ONESHOT
+    )
+    _deconstruct_timer<span style="color:#f92672">.</span>start(DECONSTRUCT_TIME)
+    _current_deconstruct_location <span style="color:#f92672">=</span> cellv
+
+
+<span style="color:#66d9ef">func</span> _finish_deconstruct(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> entity :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>get_entity_at(cellv)
+    _tracker<span style="color:#f92672">.</span>remove_entity(cellv)
+
+<span style="color:#66d9ef">func</span> _abort_deconstruct() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _deconstruct_timer<span style="color:#f92672">.</span>is_connected(<span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>):
+        _deconstruct_timer<span style="color:#f92672">.</span>disconnect(<span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>)
+    _deconstruct_timer<span style="color:#f92672">.</span>stop()
+</pre>
+</body>
+</html>

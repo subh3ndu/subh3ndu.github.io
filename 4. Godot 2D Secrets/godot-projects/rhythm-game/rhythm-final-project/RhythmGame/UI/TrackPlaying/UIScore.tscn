@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://RhythmGame/UI/TrackPlaying/UIScore.gd" type="Script" id=1]
+[ext_resource path="res://RhythmGame/UI/LabelCustom.tscn" type="PackedScene" id=2]
+
+[node name="UIScore" instance=ExtResource( 2 )]
+text = "0"
+script = ExtResource( 1 )

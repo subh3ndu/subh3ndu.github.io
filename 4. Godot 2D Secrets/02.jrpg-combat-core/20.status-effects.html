@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tmp5TCcCAvVnB</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="status-effects">Status effects</h1>
+<p>To wrap up the combat system’s core, let’s add status effects. This is another system that requires quite a bit of code, so we’re going to tackle it over two lessons.</p>
+<p>We’re going to code three systems:</p>
+<ol type="1">
+<li>The status effects themselves, a node that represents and applies the effect.</li>
+<li>The container, a node that adds, removes, and updates status effects on the battler.</li>
+<li>The builder, an object that creates status nodes using the factory programming pattern.</li>
+</ol>
+<p>In this part, we’re focusing on the effects themselves.</p>
+<h2 id="the-effects-data">The effect’s data</h2>
+<p>Like with actions before, we want to use resources to design the game’s available status effects. So we are once again going to split the logic between a concrete object and a data container. Create a new file named <code>StatusEffectData</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Data container to define new status effects.</span>
+class_name StatusEffectData
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Resource</span>
+
+<span style="color:#75715e"># Text id for the effect type. See StatusEffectBuilder for more information.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> effect :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+<span style="color:#75715e"># Duration of the effect in seconds.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> duration_seconds :<span style="color:#f92672">=</span> <span style="color:#ae81ff">20.0</span>
+<span style="color:#75715e"># Modifier amount that the effect applies or removes to a character&#39;s stat.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> effect_power :<span style="color:#f92672">=</span> <span style="color:#ae81ff">20</span>
+<span style="color:#75715e"># Rate of the effect, if, for instance, it is percentage-based.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> effect_rate :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.5</span>
+
+<span style="color:#75715e"># If `true`, the effect applies once every `ticking_interval`</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> is_ticking :<span style="color:#f92672">=</span> false
+<span style="color:#75715e"># Duration between ticks in seconds.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> ticking_interval :<span style="color:#f92672">=</span> <span style="color:#ae81ff">4.0</span>
+<span style="color:#75715e"># Damage inflicted by the effect every tick.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> ticking_damage :<span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+
+
+<span style="color:#75715e"># Returns the total theoretical damage the effect will inflict over time. For ticking effects.</span>
+<span style="color:#66d9ef">func</span> calculate_total_damage() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> damage :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">if</span> is_ticking:
+        damage <span style="color:#f92672">+=</span> <span style="color:#a6e22e">int</span>(duration_seconds <span style="color:#f92672">/</span> ticking_interval <span style="color:#f92672">*</span> ticking_damage)
+    <span style="color:#66d9ef">return</span> damage
+</pre>
+<h2 id="the-concrete-status-effects">The concrete status effects</h2>
+<p>Next is the <code>StatusEffect</code> abstract base class. We will extend it to create concrete status effects like slow or poison. Create a new file named <code>StatusEffect.gd</code>.</p>
+<p>Let’s start with its properties. Unlike with <code>Action</code>, I gave the class properties that duplicate the ones we defined in the associated resource. Doing that instead of storing a reference to a <code>StatusEffectData</code> instance as a member variable is an implementation detail.</p>
+<p>In one case, you can directly access public properties, while in the other, you end up writing getter functions to access the resource’s values.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Represents and applies the effect of a given status to a battler.</span>
+<span style="color:#75715e"># The status takes effect as soon as the node is added to the scene tree.</span>
+class_name StatusEffect
+<span style="color:#75715e"># Our effects extend `Node` so we can use the `_process()` callback to update the effect on every</span>
+<span style="color:#75715e"># frame.</span>
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#75715e"># Provided by the ActiveTurnQueue.</span>
+<span style="color:#66d9ef">var</span> time_scale :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span>
+<span style="color:#75715e"># Duration of the effect in seconds, if necessary. Changing this variable</span>
+<span style="color:#75715e"># updates the `_time_left` variable below via the `set_duration_seconds()`</span>
+<span style="color:#75715e"># setter function.</span>
+<span style="color:#66d9ef">var</span> duration_seconds :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span> <span style="color:#66d9ef">setget</span> set_duration_seconds
+<span style="color:#75715e"># If `true`, the effect applies once every `ticking_interval`</span>
+<span style="color:#66d9ef">var</span> is_ticking :<span style="color:#f92672">=</span> false
+<span style="color:#75715e"># Duration between ticks in seconds.</span>
+<span style="color:#66d9ef">var</span> ticking_interval :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span>
+<span style="color:#75715e"># If `true`, the effect is active and is applying. We toggle processing in the</span>
+<span style="color:#75715e"># `set_is_active()` setter function, as you&#39;ll see below.</span>
+<span style="color:#66d9ef">var</span> is_active :<span style="color:#f92672">=</span> true <span style="color:#66d9ef">setget</span> set_is_active
+<span style="color:#75715e"># Text string to reference the effect and instantiate it. See `StatusEffectBuilder`.</span>
+<span style="color:#66d9ef">var</span> id :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;base_effect&quot;</span>
+
+<span style="color:#75715e"># Time left in seconds until the effect expires.</span>
+<span style="color:#66d9ef">var</span> _time_left: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>INF
+<span style="color:#75715e"># Time left in the current tick, if the effect is ticking.</span>
+<span style="color:#66d9ef">var</span> _ticking_clock :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+<span style="color:#75715e"># If `true`, this effect can stack.</span>
+<span style="color:#66d9ef">var</span> _can_stack :<span style="color:#f92672">=</span> false
+<span style="color:#75715e"># Reference to the Battler to whom the effect is applied.</span>
+<span style="color:#66d9ef">var</span> _target
+
+
+<span style="color:#75715e"># We can&#39;t write type hints here due to cyclic loading errors in Godot 3.2.</span>
+<span style="color:#75715e"># target: Battler</span>
+<span style="color:#75715e"># data: StatusEffectData</span>
+<span style="color:#66d9ef">func</span> _init(target, data) <span style="color:#f92672">-&gt;</span> void:
+    _target <span style="color:#f92672">=</span> target
+    set_duration_seconds(data<span style="color:#f92672">.</span>duration_seconds)
+
+    <span style="color:#75715e"># If the effect is ticking, we initialize the corresponding variables.</span>
+    is_ticking <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>is_ticking
+    ticking_interval <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>ticking_interval
+    _ticking_clock <span style="color:#f92672">=</span> ticking_interval
+
+
+<span style="color:#66d9ef">func</span> set_is_active(value) <span style="color:#f92672">-&gt;</span> void:
+    is_active <span style="color:#f92672">=</span> value
+    set_process(is_active)
+
+
+<span style="color:#66d9ef">func</span> set_duration_seconds(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    duration_seconds <span style="color:#f92672">=</span> value
+    _time_left <span style="color:#f92672">=</span> duration_seconds
+</pre>
+<p>Next are the <code>_ready()</code> and <code>_process()</code> callbacks.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Our status effects are nodes and they get into effect when added inside the battler&#39;s</span>
+<span style="color:#75715e"># `StatusEffectContainer` node.</span>
+<span style="color:#75715e"># `_start()` is a virtual method we&#39;ll override in derived classes.</span>
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    _start()
+
+
+<span style="color:#66d9ef">func</span> _process(delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    _time_left <span style="color:#f92672">-=</span> delta <span style="color:#f92672">*</span> time_scale
+
+    <span style="color:#75715e"># If the effect is ticking, we want to know when we have to apply it. For example, for poison,</span>
+    <span style="color:#75715e"># you want to inflict damage every `ticking_interval` seconds.</span>
+    <span style="color:#66d9ef">if</span> is_ticking:
+        <span style="color:#66d9ef">var</span> old_clock <span style="color:#f92672">=</span> _ticking_clock
+        <span style="color:#75715e"># The `wrapf()` function cycles values between the second and the third argument. If</span>
+        <span style="color:#75715e"># `ticking_interval` is `3.0` seconds and the expression evaluate to `-0.2`, the resulting</span>
+        <span style="color:#75715e"># value will be `3.0 - 0.2 == 2.8`.</span>
+        _ticking_clock <span style="color:#f92672">=</span> wrapf(_ticking_clock <span style="color:#f92672">-</span> delta <span style="color:#f92672">*</span> time_scale, <span style="color:#ae81ff">0.0</span>, ticking_interval)
+        <span style="color:#75715e"># When the value wraps, the ticking clock is greater than the `old_clock` and we apply the</span>
+        <span style="color:#75715e"># effect.</span>
+        <span style="color:#66d9ef">if</span> _ticking_clock <span style="color:#f92672">&gt;</span> old_clock:
+            _apply()
+
+    <span style="color:#75715e"># The effect expires when there&#39;s no time left.</span>
+    <span style="color:#66d9ef">if</span> _time_left <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0.0</span>:
+        set_process(false)
+        <span style="color:#75715e"># This is another virtual method defined below.</span>
+        _expire()
+</pre>
+<p class="note">
+The logic for ticking effects above does not work if you want a status effect to apply at extremely short time intervals, like ten times per second or more. But this is not our case here.
+</p>
+<p>We have two getter functions to get the value of some private member variables from the outside. These methods allow you to probe the object from the outside. For example, to display the time left for a given status in the interface.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> can_stack() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">return</span> _can_stack
+
+
+<span style="color:#66d9ef">func</span> get_time_left() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">float</span>:
+    <span style="color:#66d9ef">return</span> _time_left
+</pre>
+<p>We wrap up with three virtual methods that respectively start, apply, and clean up the status effect. We create new effects by overriding these methods.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># By convention in this project, all methods starting with a leading underscore,</span>
+<span style="color:#75715e"># like `_expire()` below, are considered pseudo-private. So we add an extra</span>
+<span style="color:#75715e"># &quot;public&quot; method for other objects to cause the status effect to expire. You</span>
+<span style="color:#75715e"># might want that, for example, if you have poison status and the player uses an</span>
+<span style="color:#75715e"># antidote.</span>
+<span style="color:#66d9ef">func</span> expire() <span style="color:#f92672">-&gt;</span> void:
+    _expire()
+
+
+<span style="color:#75715e"># Initializes the status effect on the battler.</span>
+<span style="color:#66d9ef">func</span> _start() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+
+
+<span style="color:#75715e"># Applies the status effect to the battler. Used with ticking effects,</span>
+<span style="color:#75715e"># for example, a poison status dealing damage every two seconds.</span>
+<span style="color:#66d9ef">func</span> _apply() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+
+
+<span style="color:#75715e"># Cleans up and removes the status effect from the battler.</span>
+<span style="color:#75715e"># The default behavior is to free the node.</span>
+<span style="color:#66d9ef">func</span> _expire() <span style="color:#f92672">-&gt;</span> void:
+    queue_free()
+</pre>
+<h2 id="creating-haste-and-slow-effects">Creating haste and slow effects</h2>
+<p>Let’s see how we can implement specific effects, starting with haste and slow: effects that modify a battler’s <code>speed</code> stat momentarily.</p>
+<p>Create a new file, <code>StatusEffectHaste.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name StatusEffectHaste
+<span style="color:#66d9ef">extends</span> StatusEffect
+
+<span style="color:#75715e"># We give an explicit name to the value `StatusEffectData.effect_power` for this effect.</span>
+<span style="color:#66d9ef">var</span> speed_bonus :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+<span style="color:#75715e"># We&#39;re going to use our stats&#39; class to add and remove a modifier.</span>
+<span style="color:#66d9ef">var</span> _stat_modifier_id :<span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+
+
+<span style="color:#75715e"># Below, target is of type `Battler`.</span>
+<span style="color:#66d9ef">func</span> _init(target, data: StatusEffectData)<span style="color:#f92672">.</span>(target, data) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># All haste effects should have the same `id` so we can later find and remove them.</span>
+    id <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;haste&quot;</span>
+    speed_bonus <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>effect_power
+
+
+<span style="color:#66d9ef">func</span> _start() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># We initialize the effect by adding a stat modifier to the target battler.</span>
+    _stat_modifier_id <span style="color:#f92672">=</span> _target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>add_modifier(<span style="color:#e6db74">&quot;speed&quot;</span>, speed_bonus)
+
+
+<span style="color:#66d9ef">func</span> _expire() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># And we remove the stat modifier when the effect expires.</span>
+    _target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>remove_modifier(<span style="color:#e6db74">&quot;speed&quot;</span>, _stat_modifier_id)
+    queue_free()
+</pre>
+<p>Here’s the <code>StatusEffectSlow</code>, using a percentage-based stat reduction:</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name StatusEffectSlow
+<span style="color:#66d9ef">extends</span> StatusEffect
+
+<span style="color:#66d9ef">var</span> speed_reduction :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span> <span style="color:#66d9ef">setget</span> set_speed_rate
+
+<span style="color:#66d9ef">var</span> _stat_modifier_id :<span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+
+
+<span style="color:#75715e"># Similar to `StatusEffectHaste` above.</span>
+<span style="color:#66d9ef">func</span> _init(target, data: StatusEffectData)<span style="color:#f92672">.</span>(target, data) <span style="color:#f92672">-&gt;</span> void:
+    id <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;slow&quot;</span>
+    speed_reduction <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>effect_rate
+
+
+<span style="color:#66d9ef">func</span> _start() <span style="color:#f92672">-&gt;</span> void:
+    _stat_modifier_id <span style="color:#f92672">=</span> _target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>add_modifier(
+        <span style="color:#75715e"># We can calculate the modifier&#39;s value from the `speed_reduction` ratio.</span>
+        <span style="color:#e6db74">&quot;speed&quot;</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1.0</span> <span style="color:#f92672">*</span> speed_reduction <span style="color:#f92672">*</span> _target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>speed
+    )
+
+
+<span style="color:#75715e"># Same as `StatusEffectHaste`.</span>
+<span style="color:#66d9ef">func</span> _expire() <span style="color:#f92672">-&gt;</span> void:
+    _target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>remove_modifier(<span style="color:#e6db74">&quot;speed&quot;</span>, _stat_modifier_id)
+    queue_free()
+
+
+<span style="color:#75715e"># We ensure the speed reduction is neither 0% nor greater than 99%.</span>
+<span style="color:#66d9ef">func</span> set_speed_rate(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    speed_reduction <span style="color:#f92672">=</span> clamp(value, <span style="color:#ae81ff">0.01</span>, <span style="color:#ae81ff">0.99</span>)
+</pre>
+<h2 id="damaging-and-ticking-effects">Damaging and ticking effects</h2>
+<p>Here’s how to implement a poison-like effect. I called it “bug” in the final demo, but it’s a stacking effect that deals damage to its target at regular time intervals.</p>
+<p>Create a new file, <code>StatusEffectBug.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name StatusEffectBug
+<span style="color:#66d9ef">extends</span> StatusEffect
+
+<span style="color:#66d9ef">var</span> damage :<span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+
+
+<span style="color:#75715e"># The parent class&#39;s constructor takes care of initializing ticking-related properties.</span>
+<span style="color:#66d9ef">func</span> _init(target, data)<span style="color:#f92672">.</span>(target, data) <span style="color:#f92672">-&gt;</span> void:
+    id <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;bug&quot;</span>
+    damage <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>ticking_damage
+    <span style="color:#75715e"># We set `_can_stack` to `true` so this effect can stack up to five times.</span>
+    <span style="color:#75715e"># We&#39;ll see how in the next lesson.</span>
+    _can_stack <span style="color:#f92672">=</span> true
+
+
+<span style="color:#75715e"># On every tick, we deal damage to the target battler.</span>
+<span style="color:#66d9ef">func</span> _apply() <span style="color:#f92672">-&gt;</span> void:
+    _target<span style="color:#f92672">.</span>take_hit(Hit<span style="color:#f92672">.</span>new(damage))
+</pre>
+<h2 id="the-code-so-far">The code so far</h2>
+<p>Here are the five files we coded in this lesson.</p>
+<p><code>StatusEffectData.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name StatusEffectData
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Resource</span>
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> effect :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> duration_seconds :<span style="color:#f92672">=</span> <span style="color:#ae81ff">20.0</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> effect_power :<span style="color:#f92672">=</span> <span style="color:#ae81ff">20</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> effect_rate :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.5</span>
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> is_ticking :<span style="color:#f92672">=</span> false
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> ticking_interval :<span style="color:#f92672">=</span> <span style="color:#ae81ff">4.0</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> ticking_damage :<span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+
+
+<span style="color:#66d9ef">func</span> calculate_total_damage() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> damage :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">if</span> is_ticking:
+        damage <span style="color:#f92672">+=</span> <span style="color:#a6e22e">int</span>(duration_seconds <span style="color:#f92672">/</span> ticking_interval <span style="color:#f92672">*</span> ticking_damage)
+    <span style="color:#66d9ef">return</span> damage
+</pre>
+<p><code>StatusEffect.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name StatusEffect
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">var</span> time_scale :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span>
+<span style="color:#66d9ef">var</span> duration_seconds :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span> <span style="color:#66d9ef">setget</span> set_duration_seconds
+<span style="color:#66d9ef">var</span> is_ticking :<span style="color:#f92672">=</span> false
+<span style="color:#66d9ef">var</span> ticking_interval :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span>
+<span style="color:#66d9ef">var</span> is_active :<span style="color:#f92672">=</span> true <span style="color:#66d9ef">setget</span> set_is_active
+<span style="color:#66d9ef">var</span> id :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;base_effect&quot;</span>
+
+<span style="color:#66d9ef">var</span> _time_left: <span style="color:#a6e22e">float</span> <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>INF
+<span style="color:#66d9ef">var</span> _ticking_clock :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+<span style="color:#66d9ef">var</span> _can_stack :<span style="color:#f92672">=</span> false
+<span style="color:#66d9ef">var</span> _target
+
+
+<span style="color:#66d9ef">func</span> _init(target, data) <span style="color:#f92672">-&gt;</span> void:
+    _target <span style="color:#f92672">=</span> target
+    set_duration_seconds(data<span style="color:#f92672">.</span>duration_seconds)
+
+    is_ticking <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>is_ticking
+    ticking_interval <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>ticking_interval
+    _ticking_clock <span style="color:#f92672">=</span> ticking_interval
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    _start()
+
+
+<span style="color:#66d9ef">func</span> _process(delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    _time_left <span style="color:#f92672">-=</span> delta <span style="color:#f92672">*</span> time_scale
+
+    <span style="color:#66d9ef">if</span> is_ticking:
+        <span style="color:#66d9ef">var</span> old_clock <span style="color:#f92672">=</span> _ticking_clock
+        _ticking_clock <span style="color:#f92672">=</span> wrapf(_ticking_clock <span style="color:#f92672">-</span> delta <span style="color:#f92672">*</span> time_scale, <span style="color:#ae81ff">0.0</span>, ticking_interval)
+        <span style="color:#66d9ef">if</span> _ticking_clock <span style="color:#f92672">&gt;</span> old_clock:
+            _apply()
+
+    <span style="color:#66d9ef">if</span> _time_left <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0.0</span>:
+        set_process(false)
+        _expire()
+
+
+<span style="color:#66d9ef">func</span> can_stack() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">return</span> _can_stack
+
+
+<span style="color:#66d9ef">func</span> get_time_left() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">float</span>:
+    <span style="color:#66d9ef">return</span> _time_left
+
+
+<span style="color:#66d9ef">func</span> expire() <span style="color:#f92672">-&gt;</span> void:
+    _expire()
+
+
+<span style="color:#66d9ef">func</span> set_is_active(value) <span style="color:#f92672">-&gt;</span> void:
+    is_active <span style="color:#f92672">=</span> value
+    set_process(is_active)
+
+
+<span style="color:#66d9ef">func</span> set_duration_seconds(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    duration_seconds <span style="color:#f92672">=</span> value
+    _time_left <span style="color:#f92672">=</span> duration_seconds
+
+
+<span style="color:#66d9ef">func</span> _start() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+
+
+<span style="color:#66d9ef">func</span> _apply() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+
+
+<span style="color:#66d9ef">func</span> _expire() <span style="color:#f92672">-&gt;</span> void:
+    queue_free()
+</pre>
+<p><code>StatusEffectHaste.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name StatusEffectHaste
+<span style="color:#66d9ef">extends</span> StatusEffect
+
+<span style="color:#66d9ef">var</span> speed_bonus :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+<span style="color:#66d9ef">var</span> _stat_modifier_id :<span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+
+
+<span style="color:#66d9ef">func</span> _init(target, data: StatusEffectData)<span style="color:#f92672">.</span>(target, data) <span style="color:#f92672">-&gt;</span> void:
+    id <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;haste&quot;</span>
+    speed_bonus <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>effect_power
+
+
+<span style="color:#66d9ef">func</span> _start() <span style="color:#f92672">-&gt;</span> void:
+    _stat_modifier_id <span style="color:#f92672">=</span> _target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>add_modifier(<span style="color:#e6db74">&quot;speed&quot;</span>, speed_bonus)
+
+
+<span style="color:#66d9ef">func</span> _expire() <span style="color:#f92672">-&gt;</span> void:
+    _target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>remove_modifier(<span style="color:#e6db74">&quot;speed&quot;</span>, _stat_modifier_id)
+    queue_free()
+</pre>
+<p><code>StatusEffectSlow.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name StatusEffectSlow
+<span style="color:#66d9ef">extends</span> StatusEffect
+
+<span style="color:#66d9ef">var</span> speed_reduction :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span> <span style="color:#66d9ef">setget</span> set_speed_rate
+
+<span style="color:#66d9ef">var</span> _stat_modifier_id :<span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+
+
+<span style="color:#66d9ef">func</span> _init(target, data: StatusEffectData)<span style="color:#f92672">.</span>(target, data) <span style="color:#f92672">-&gt;</span> void:
+    id <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;slow&quot;</span>
+    speed_reduction <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>effect_rate
+
+
+<span style="color:#66d9ef">func</span> _start() <span style="color:#f92672">-&gt;</span> void:
+    _stat_modifier_id <span style="color:#f92672">=</span> _target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>add_modifier(
+        <span style="color:#e6db74">&quot;speed&quot;</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1.0</span> <span style="color:#f92672">*</span> speed_reduction <span style="color:#f92672">*</span> _target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>speed
+    )
+
+
+<span style="color:#66d9ef">func</span> _expire() <span style="color:#f92672">-&gt;</span> void:
+    _target<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>remove_modifier(<span style="color:#e6db74">&quot;speed&quot;</span>, _stat_modifier_id)
+    queue_free()
+
+
+<span style="color:#66d9ef">func</span> set_speed_rate(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    speed_reduction <span style="color:#f92672">=</span> clamp(value, <span style="color:#ae81ff">0.01</span>, <span style="color:#ae81ff">0.99</span>)
+</pre>
+<p><code>StatusEffectBug.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name StatusEffectBug
+<span style="color:#66d9ef">extends</span> StatusEffect
+
+<span style="color:#66d9ef">var</span> damage :<span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+
+
+<span style="color:#66d9ef">func</span> _init(target, data)<span style="color:#f92672">.</span>(target, data) <span style="color:#f92672">-&gt;</span> void:
+    id <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;bug&quot;</span>
+    damage <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>ticking_damage
+    _can_stack <span style="color:#f92672">=</span> true
+
+
+<span style="color:#66d9ef">func</span> _apply() <span style="color:#f92672">-&gt;</span> void:
+    _target<span style="color:#f92672">.</span>take_hit(Hit<span style="color:#f92672">.</span>new(damage))
+</pre>
+</body>
+</html>

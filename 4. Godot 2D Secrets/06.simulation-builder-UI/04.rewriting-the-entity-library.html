@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpcJcz4OttyU</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="rewriting-the-entity-library">Rewriting the entity library</h1>
+<p>In <code>EntityPlacer.gd</code>, we have code that maps blueprint to entity scenes. For testing purposes, we hard-coded the paths to our entities.</p>
+<p>In this lesson, we will rewrite our hardcoded “library” of entities and blueprints.</p>
+<p>This is perfect when prototyping, while we only have two or three kinds of machines, but now we have some base gameplay and systems in place, we’ll want to keep adding or changing machines. And we don’t want to keep writing file paths by hand moving forward.</p>
+<p>We’ll automate the process by loading all the scenes automatically from a given folder.</p>
+<p>Each <code>InventoryPanel</code> will be responsible for keeping track of the item they’re holding onto. The item itself is a <code>BlueprintEntity</code> and the <code>InventoryPanel</code> stores it as a child node, making it appear inside of the panel. Here, we’ll leverage the fact that <code>BlueprintEntity</code> is both the item and offers a visual preview of it.</p>
+<p>To notify the greater <code>GUI</code> entity that something’s happened with the inventory, we’ll use a signal and bubble it up so everyone that needs to know about the player’s inventory can use it.</p>
+<p>There’s a lot to cover, so let’s get started.</p>
+<h2 id="a-better-library">A better library</h2>
+<p>In the previous chapter, we hardcoded the link between a blueprint and an entity we can place in the world. That was in <code>EntityPlacer.gd</code>.</p>
+<p>The first thing we need is to have a way of associating a blueprint to its entity. We have a library dictionary in the entity placer we’ve been using temporarily, but needing to provide the <code>EntityPlacer</code> to everything that may use the blueprint goes counter to defensive coding. The library should be accessible without stepping onto another node’s job.</p>
+<p>We’ll move the code that preloads entities and blueprints to a dedicated, globally accessible node.</p>
+<p>We’ll make it global because we’ll end up using it in every module: the inventory, the entity placer, simulation, recipes, crafting, and machines. All those may need to spawn new items, like when machines smelt ore and output an ingot.</p>
+<p>To do so, we’ll use an Autoload, which implements the singleton pattern. While we generally recommend avoiding the pattern, it’s fine to use in this case because our library won’t have mutable state. All it’ll do is provide “read-only” access to <code>PackedScene</code> resources and some useful functions. Without mutable properties, we don’t risk introducing hard-to-solve bugs with it.</p>
+<p>We’ll also update the code to automatically detect all entities and blueprints in the project, instead of loading them by hand. We can use the <code>Directory</code> class to do so.</p>
+<p>To avoid needing to keep editing the result every time we create a new entity, we will have the class analyze the <code>/Entities</code> folder, look at the filenames, and create the association library. It will also provide some useful functions we can use to get blueprint names and entities from blueprints, which you might want to display in labels in the interface, for example.</p>
+<p>Create a new script, <code>Library.gd</code>, inside the <code>/Autoload</code> folder.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Autoloaded class that associates blueprints to entities based on their</span>
+<span style="color:#75715e">## filenames.</span>
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#75715e">## Path to the directory in which we store all the entities and blueprints. The</span>
+<span style="color:#75715e">## node will loop over all the files in that directory and associate a given</span>
+<span style="color:#75715e">## entity with a corresponding blueprint.</span>
+<span style="color:#66d9ef">const</span> BASE_PATH :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;res://Entities&quot;</span>
+
+<span style="color:#75715e">## The following two constants store the suffixes we use on every blueprint and</span>
+<span style="color:#75715e">## entities&#39; filename. We will use them to check the end of a filename to</span>
+<span style="color:#75715e">## distinguish entities from their blueprint.</span>
+<span style="color:#66d9ef">const</span> BLUEPRINT :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;Blueprint.tscn&quot;</span>
+<span style="color:#66d9ef">const</span> ENTITY :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;Entity.tscn&quot;</span>
+
+<span style="color:#75715e">## This dictionary holds the entities keyed to their names.</span>
+<span style="color:#66d9ef">var</span> entities :<span style="color:#f92672">=</span> {}
+<span style="color:#75715e">## The dictionary holds blueprints keyed to their names.</span>
+<span style="color:#66d9ef">var</span> blueprints :<span style="color:#f92672">=</span> {}
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Begin the search through the filesystem to find all blueprints and</span>
+    <span style="color:#75715e"># entities.</span>
+    _find_entities_in(BASE_PATH)
+
+
+<span style="color:#75715e">## Find out what the name of a given node is to look it up in the blueprints or</span>
+<span style="color:#75715e">## entities dictionary. Returns a blank string for nodes that are null or do not</span>
+<span style="color:#75715e">## have an associated scene.</span>
+<span style="color:#66d9ef">func</span> get_entity_name_from(node: <span style="color:#a6e22e">Node</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">String</span>:
+    <span style="color:#75715e"># If the provided node is not null</span>
+    <span style="color:#66d9ef">if</span> node:
+        <span style="color:#75715e"># First, check if it already has a provided name with an overriden function</span>
+        <span style="color:#75715e"># `get_entity_name()`. This will allow something like a TreeEntity to drop</span>
+        <span style="color:#75715e"># lumber even if it&#39;s called TreeEntity.</span>
+        <span style="color:#66d9ef">if</span> node<span style="color:#f92672">.</span>has_method(<span style="color:#e6db74">&quot;get_entity_name&quot;</span>):
+            <span style="color:#66d9ef">return</span> node<span style="color:#f92672">.</span>get_entity_name()
+
+        <span style="color:#75715e"># If it does not have an overridden name, then take its actual scene</span>
+        <span style="color:#75715e"># filename, which comes in the format `res://...scene.tscn`, and get</span>
+        <span style="color:#75715e"># only the name.</span>
+        <span style="color:#75715e"># We find the last `/` and get everything after that. Then, we remove</span>
+        <span style="color:#75715e"># `Blueprint.tscn` and `Entity.tscn` from the string to get a name like</span>
+        <span style="color:#75715e"># our dictionaries expect.</span>
+        <span style="color:#66d9ef">var</span> filename :<span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>filename<span style="color:#f92672">.</span>substr(node<span style="color:#f92672">.</span>filename<span style="color:#f92672">.</span>rfind(<span style="color:#e6db74">&quot;/&quot;</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+        filename <span style="color:#f92672">=</span> filename<span style="color:#f92672">.</span>replace(BLUEPRINT, <span style="color:#e6db74">&quot;&quot;</span>)<span style="color:#f92672">.</span>replace(ENTITY, <span style="color:#e6db74">&quot;&quot;</span>)
+
+        <span style="color:#66d9ef">return</span> filename
+    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&quot;&quot;</span>
+
+
+<span style="color:#75715e">## Recursively searches the provided directory and finds all files that end</span>
+<span style="color:#75715e">## with `BLUEPRINT` or `ENTITY`. Populates the `blueprints` and `entities`</span>
+<span style="color:#75715e">## dictionaries with them.</span>
+<span style="color:#66d9ef">func</span> _find_entities_in(path: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Open a `Directory` object to the provided path. The `Directory` object lets us</span>
+    <span style="color:#75715e"># analyze filenames.</span>
+    <span style="color:#66d9ef">var</span> directory :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Directory</span><span style="color:#f92672">.</span>new()
+    <span style="color:#66d9ef">var</span> error :<span style="color:#f92672">=</span> directory<span style="color:#f92672">.</span>open(path)
+
+    <span style="color:#75715e"># If we encounter an error, it&#39;s likely because the directory does not exist.</span>
+    <span style="color:#66d9ef">if</span> error <span style="color:#f92672">!=</span> OK:
+        print(<span style="color:#e6db74">&quot;Library Error: </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> error)
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># `list_dir_begin()` prepares the directory for scanning files one at a time.</span>
+    error <span style="color:#f92672">=</span> directory<span style="color:#f92672">.</span>list_dir_begin(true, true)
+
+    <span style="color:#75715e"># If we encounter an error, there might be something wrong with the directory.</span>
+    <span style="color:#66d9ef">if</span> error <span style="color:#f92672">!=</span> OK:
+        print(<span style="color:#e6db74">&quot;Library Error: </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> error)
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># We get the first filename in the list.</span>
+    <span style="color:#66d9ef">var</span> filename :<span style="color:#f92672">=</span> directory<span style="color:#f92672">.</span>get_next()
+
+    <span style="color:#75715e"># `Directory.get_next()` returns an empty string when we reached the end of</span>
+    <span style="color:#75715e"># the directory. We can use that to keep our loop going until we have no</span>
+    <span style="color:#75715e"># more files to scan.</span>
+    <span style="color:#66d9ef">while</span> <span style="color:#f92672">not</span> filename<span style="color:#f92672">.</span>empty():
+        <span style="color:#75715e"># If the current object in directory is a directory, then we recursively</span>
+        <span style="color:#75715e"># call this function to find all the files in _that_ sub-directory.</span>
+        <span style="color:#66d9ef">if</span> directory<span style="color:#f92672">.</span>current_is_dir():
+            _find_entities_in(<span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">/</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [directory<span style="color:#f92672">.</span>get_current_dir(), filename])
+        <span style="color:#66d9ef">else</span>:
+            <span style="color:#75715e"># If the file ends with `Blueprint.tscn`</span>
+            <span style="color:#66d9ef">if</span> filename<span style="color:#f92672">.</span>ends_with(BLUEPRINT):
+                <span style="color:#75715e"># We take the entire filename (e.g. StirlingEngineBlueprint.tscn)</span>
+                <span style="color:#75715e"># and create a string that only contains the name</span>
+                <span style="color:#75715e"># (StirlingEngine). We use that name as the key for an entry in</span>
+                <span style="color:#75715e"># the dictionary. The value is a PackedScene resource we load so</span>
+                <span style="color:#75715e"># we can instance it later.</span>
+                blueprints[filename<span style="color:#f92672">.</span>replace(BLUEPRINT, <span style="color:#e6db74">&quot;&quot;</span>)] <span style="color:#f92672">=</span> load(
+                    <span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">/</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [directory<span style="color:#f92672">.</span>get_current_dir(), filename]
+                )
+            <span style="color:#75715e"># We do the same if the file ends with `Entity.tscn`</span>
+            <span style="color:#66d9ef">if</span> filename<span style="color:#f92672">.</span>ends_with(ENTITY):
+                entities[filename<span style="color:#f92672">.</span>replace(ENTITY, <span style="color:#e6db74">&quot;&quot;</span>)] <span style="color:#f92672">=</span> load(
+                    <span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">/</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [directory<span style="color:#f92672">.</span>get_current_dir(), filename]
+                )
+        <span style="color:#75715e"># To keep the loop going, we get the next filename in the directory and</span>
+        <span style="color:#75715e"># repeat, until we reached the last entry.</span>
+        filename <span style="color:#f92672">=</span> directory<span style="color:#f92672">.</span>get_next()
+</pre>
+<p>Then, in the project settings, add this new node as an autoload to have it accessible everywhere.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>Now we can refer to any blueprint or entity by their proper pascal case names as if they were classes using this new class. So long, at least, as you’ve named them consistently.</p>
+<p>To test the library, we need to make changes to <code>EntityPlacer.gd</code> to accommodate the new Autoload.</p>
+<p>Open <code>EntityPlacer.gd</code> and remove the old <code>Library</code> dictionary, the <code>_ready()</code> function and the <code>_exit_tree()</code> function.</p>
+<p>We have to make some more changes to address errors that pop up, starting with <code>_place_entity()</code>. The <code>Library</code> object is now a collection of named PackedScenes, so we need to index the dictionary using the entity’s name.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _place_entity(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># Replace the function&#39;s first line.</span>
+    <span style="color:#75715e"># We get the blueprint&#39;s name using the blueprint and use it to get an instance</span>
+    <span style="color:#75715e"># of the corresponding entity.</span>
+    <span style="color:#66d9ef">var</span> entity_name :<span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>get_entity_name_from(_blueprint)
+    <span style="color:#66d9ef">var</span> new_entity: <span style="color:#a6e22e">Node2D</span> <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>entities[entity_name]<span style="color:#f92672">.</span>instance()
+</pre>
+<p>The second change is in <code>_unhandled_input()</code>, where we need to temporarily free the old blueprint instead of removing it from the scene tree, and replace how we get the new one. We also need to access <code>Library.blueprints</code> to get blueprints to instantiate,</p>
+<p>This is still temporary code: once inventory management is working, we’ll get rid of this, but until then, we need the code for testing purposes.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;quickbar_1&quot;</span>):
+        <span style="color:#66d9ef">if</span> _blueprint:
+            <span style="color:#75715e"># We replace the lines that say `remove_child(_blueprint)`.</span>
+            _blueprint<span style="color:#f92672">.</span>queue_free()
+        <span style="color:#75715e"># And we replace the lines where we access blueprints.</span>
+        <span style="color:#75715e"># As they&#39;re now `PackedScene` resources, we need to instantiate them.</span>
+        _blueprint <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>blueprints<span style="color:#f92672">.</span>StirlingEngine<span style="color:#f92672">.</span>instance()
+        <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;quickbar_2&quot;</span>):
+        <span style="color:#66d9ef">if</span> _blueprint:
+            _blueprint<span style="color:#f92672">.</span>queue_free()
+        <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;quickbar_3&quot;</span>):
+        <span style="color:#66d9ef">if</span> _blueprint:
+            _blueprint<span style="color:#f92672">.</span>queue_free()
+        <span style="color:#75715e">#...</span>
+</pre>
+<p>If you run the game now, so long as you named the blueprints and entities, everything should work as it used to, and you can place the engine, battery, and wires.</p>
+<p>You are going to have to hide the <code>GUI</code> node for now to test it, as we haven’t prepared it to let mouse inputs through yet and the inventory window will get in the way.</p>
+<h2 id="making-the-gui-allow-mouse-events">Making the GUI allow mouse events</h2>
+<p>While we have the problem highlighted, let’s address mouse input in our user interface before we add more nodes to it.</p>
+<p>If you make the <code>GUI</code> node visible again, you cannot place anything in the game anymore because the <code>GUI</code> node spans the whole screen. Even though it’s transparent, it intercepts and consumes all mouse events by default, like all <code>Control</code> nodes.</p>
+<p>We can configure <code>Control</code> nodes to ignore or handle mouse events in the <em>Inspector</em>, by changing their <em>Mouse -&gt; Filter</em> property.</p>
+<p>The default value of <em>Stop</em> prevents the propagation of mouse events. While <em>Pass</em> lets mouse clicks through other UI nodes, it still automatically handles mouse events. This is undesirable, as it means mouse events never make it to <code>_unhandled_input()</code> in the <code>EntityPlacer</code>.</p>
+<p>That means we need to set anything that does not care about the mouse to <em>Ignore</em> mouse events and let them through. At the moment, the only thing that should intercept mouse clicks is the <code>InventoryPanel</code>.</p>
+<p>Go to <code>GUI.tscn</code> and set <code>GUI</code> and <code>HBoxContainer</code>’s <em>Mouse Filter</em> to <em>Ignore</em>.</p>
+<p>In <code>InventoryWindow.tscn</code>, set <code>InventoryWindow</code>’s <em>Mouse Filter</em> to <em>Ignore</em>, with the rest on <em>Pass</em>. We use <em>Pass</em> in this case because we want the entire window to act as one whole.</p>
+<p><em>Note that you can select multiple nodes in the Scene tab and change the property on all of them at once.</em></p>
+<p>In <code>InventoryBar.tscn</code>, set the <code>InventoryBar</code>’s <em>Mouse Filter</em> to <em>Pass</em>.</p>
+<p>Make sure that in <code>InventoryPanel.tscn</code>, <code>InventoryPanel</code>’s <em>Mouse Filter</em> is still set to <em>Stop</em> so it intercepts mouse events within its bounding box.</p>
+<p>Now if you run the game again with the <code>GUI</code> shown, you should still be able to put down machines around or through the inventory window.</p>
+<p>In future lessons, I will be noting what nodes should be ignoring or passing mouse events and which should be stopping them. An unfortunate reality of mouse-based games!</p>
+<h2 id="code-reference">Code reference</h2>
+<p>Here are the complete scripts after modifying them in this lesson.</p>
+<p>First, <code>Library.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">const</span> BASE_PATH :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;res://Entities&quot;</span>
+
+<span style="color:#66d9ef">const</span> BLUEPRINT :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;Blueprint.tscn&quot;</span>
+<span style="color:#66d9ef">const</span> ENTITY :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;Entity.tscn&quot;</span>
+
+<span style="color:#66d9ef">var</span> entities :<span style="color:#f92672">=</span> {}
+<span style="color:#66d9ef">var</span> blueprints :<span style="color:#f92672">=</span> {}
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    _find_entities_in(BASE_PATH)
+
+
+<span style="color:#66d9ef">func</span> get_entity_name_from(node: <span style="color:#a6e22e">Node</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">String</span>:
+    <span style="color:#66d9ef">if</span> node:
+        <span style="color:#66d9ef">if</span> node<span style="color:#f92672">.</span>has_method(<span style="color:#e6db74">&quot;get_entity_name&quot;</span>):
+            <span style="color:#66d9ef">return</span> node<span style="color:#f92672">.</span>get_entity_name()
+
+        <span style="color:#66d9ef">var</span> filename :<span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>filename<span style="color:#f92672">.</span>substr(node<span style="color:#f92672">.</span>filename<span style="color:#f92672">.</span>rfind(<span style="color:#e6db74">&quot;/&quot;</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+        filename <span style="color:#f92672">=</span> filename<span style="color:#f92672">.</span>replace(BLUEPRINT, <span style="color:#e6db74">&quot;&quot;</span>)<span style="color:#f92672">.</span>replace(ENTITY, <span style="color:#e6db74">&quot;&quot;</span>)
+
+        <span style="color:#66d9ef">return</span> filename
+    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&quot;&quot;</span>
+
+
+<span style="color:#66d9ef">func</span> _find_entities_in(path: <span style="color:#a6e22e">String</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> directory :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Directory</span><span style="color:#f92672">.</span>new()
+    <span style="color:#66d9ef">var</span> error :<span style="color:#f92672">=</span> directory<span style="color:#f92672">.</span>open(path)
+
+    <span style="color:#66d9ef">if</span> error <span style="color:#f92672">!=</span> OK:
+        print(<span style="color:#e6db74">&quot;Library Error: </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> error)
+        <span style="color:#66d9ef">return</span>
+
+    error <span style="color:#f92672">=</span> directory<span style="color:#f92672">.</span>list_dir_begin(true, true)
+
+    <span style="color:#66d9ef">if</span> error <span style="color:#f92672">!=</span> OK:
+        print(<span style="color:#e6db74">&quot;Library Error: </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> error)
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">var</span> filename :<span style="color:#f92672">=</span> directory<span style="color:#f92672">.</span>get_next()
+
+    <span style="color:#66d9ef">while</span> <span style="color:#f92672">not</span> filename<span style="color:#f92672">.</span>empty():
+        <span style="color:#66d9ef">if</span> directory<span style="color:#f92672">.</span>current_is_dir():
+            _find_entities_in(<span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">/</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [directory<span style="color:#f92672">.</span>get_current_dir(), filename])
+        <span style="color:#66d9ef">else</span>:
+            <span style="color:#66d9ef">if</span> filename<span style="color:#f92672">.</span>ends_with(BLUEPRINT):
+                blueprints[filename<span style="color:#f92672">.</span>replace(BLUEPRINT, <span style="color:#e6db74">&quot;&quot;</span>)] <span style="color:#f92672">=</span> load(
+                    <span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">/</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [directory<span style="color:#f92672">.</span>get_current_dir(), filename]
+                )
+            <span style="color:#66d9ef">if</span> filename<span style="color:#f92672">.</span>ends_with(ENTITY):
+                entities[filename<span style="color:#f92672">.</span>replace(ENTITY, <span style="color:#e6db74">&quot;&quot;</span>)] <span style="color:#f92672">=</span> load(
+                    <span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">/</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [directory<span style="color:#f92672">.</span>get_current_dir(), filename]
+                )
+        filename <span style="color:#f92672">=</span> directory<span style="color:#f92672">.</span>get_next()
+</pre>
+<p>And <code>EntityPlacer.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">TileMap</span>
+
+<span style="color:#66d9ef">const</span> MAXIMUM_WORK_DISTANCE :<span style="color:#f92672">=</span> <span style="color:#ae81ff">275.0</span>
+<span style="color:#66d9ef">const</span> POSITION_OFFSET :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span>(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">25</span>)
+<span style="color:#66d9ef">const</span> DECONSTRUCT_TIME :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.3</span>
+
+<span style="color:#66d9ef">var</span> _blueprint: BlueprintEntity
+<span style="color:#66d9ef">var</span> _tracker: EntityTracker
+<span style="color:#66d9ef">var</span> _ground: <span style="color:#a6e22e">TileMap</span>
+<span style="color:#66d9ef">var</span> _flat_entities: <span style="color:#a6e22e">Node2D</span>
+<span style="color:#66d9ef">var</span> _player: <span style="color:#a6e22e">KinematicBody2D</span>
+<span style="color:#66d9ef">var</span> _current_deconstruct_location :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _deconstruct_timer :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Timer</span>
+
+
+<span style="color:#66d9ef">func</span> _unhandled_input(event: <span style="color:#a6e22e">InputEvent</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> global_mouse_position :<span style="color:#f92672">=</span> get_global_mouse_position()
+
+    <span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _blueprint <span style="color:#f92672">and</span> _blueprint<span style="color:#f92672">.</span>placeable
+    <span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+        global_mouse_position<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position)
+        <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+    )
+
+    <span style="color:#66d9ef">var</span> cellv :<span style="color:#f92672">=</span> world_to_map(global_mouse_position)
+    <span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>is_cell_occupied(cellv)
+    <span style="color:#66d9ef">var</span> is_on_ground :<span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">if</span> event is <span style="color:#a6e22e">InputEventMouseButton</span>:
+        _abort_deconstruct()
+
+    <span style="color:#66d9ef">if</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;left_click&quot;</span>):
+        <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+                _place_entity(cellv)
+                _update_neighboring_flat_entities(cellv)
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;right_click&quot;</span>) <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> has_placeable_blueprint:
+        <span style="color:#66d9ef">if</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player:
+            _deconstruct(global_mouse_position, cellv)
+
+    <span style="color:#66d9ef">elif</span> event is <span style="color:#a6e22e">InputEventMouseMotion</span>:
+        <span style="color:#66d9ef">if</span> cellv <span style="color:#f92672">!=</span> _current_deconstruct_location:
+            _abort_deconstruct()
+        <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+            _move_blueprint_in_world(cellv)
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;drop&quot;</span>) <span style="color:#f92672">and</span> _blueprint:
+        remove_child(_blueprint)
+        _blueprint <span style="color:#f92672">=</span> null
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;rotate_blueprint&quot;</span>) <span style="color:#f92672">and</span> _blueprint:
+        _blueprint<span style="color:#f92672">.</span>rotate_blueprint()
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;quickbar_1&quot;</span>):
+        <span style="color:#66d9ef">if</span> _blueprint:
+            _blueprint<span style="color:#f92672">.</span>queue_free()
+        _blueprint <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>blueprints<span style="color:#f92672">.</span>StirlingEngine<span style="color:#f92672">.</span>instance()
+        add_child(_blueprint)
+        _move_blueprint_in_world(cellv)
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;quickbar_2&quot;</span>):
+        <span style="color:#66d9ef">if</span> _blueprint:
+            _blueprint<span style="color:#f92672">.</span>queue_free()
+        _blueprint <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>blueprints<span style="color:#f92672">.</span>Wire<span style="color:#f92672">.</span>instance()
+        add_child(_blueprint)
+        _move_blueprint_in_world(cellv)
+
+    <span style="color:#66d9ef">elif</span> event<span style="color:#f92672">.</span>is_action_pressed(<span style="color:#e6db74">&quot;quickbar_3&quot;</span>):
+        <span style="color:#66d9ef">if</span> _blueprint:
+            _blueprint<span style="color:#f92672">.</span>queue_free()
+        _blueprint <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>blueprints<span style="color:#f92672">.</span>Battery<span style="color:#f92672">.</span>instance()
+        add_child(_blueprint)
+        _move_blueprint_in_world(cellv)
+
+
+<span style="color:#66d9ef">func</span> _process(_delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> has_placeable_blueprint: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _blueprint <span style="color:#f92672">and</span> _blueprint<span style="color:#f92672">.</span>placeable
+    <span style="color:#66d9ef">if</span> has_placeable_blueprint:
+        _move_blueprint_in_world(world_to_map(get_global_mouse_position()))
+
+
+<span style="color:#66d9ef">func</span> setup(tracker: EntityTracker, ground: <span style="color:#a6e22e">TileMap</span>, flat_entities: <span style="color:#a6e22e">YSort</span>, player: <span style="color:#a6e22e">KinematicBody2D</span>) <span style="color:#f92672">-&gt;</span> void:
+    _tracker <span style="color:#f92672">=</span> tracker
+    _ground <span style="color:#f92672">=</span> ground
+    _player <span style="color:#f92672">=</span> player
+    _flat_entities <span style="color:#f92672">=</span> flat_entities
+
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> get_children():
+        <span style="color:#66d9ef">if</span> child is Entity:
+            <span style="color:#66d9ef">var</span> map_position :<span style="color:#f92672">=</span> world_to_map(child<span style="color:#f92672">.</span>global_position)
+            _tracker<span style="color:#f92672">.</span>place_entity(child, map_position)
+
+
+<span style="color:#66d9ef">func</span> _move_blueprint_in_world(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    _blueprint<span style="color:#f92672">.</span>global_position <span style="color:#f92672">=</span> map_to_world(cellv) <span style="color:#f92672">+</span> POSITION_OFFSET
+
+    <span style="color:#66d9ef">var</span> is_close_to_player :<span style="color:#f92672">=</span> (
+        get_global_mouse_position()<span style="color:#f92672">.</span>distance_to(_player<span style="color:#f92672">.</span>global_position)
+        <span style="color:#f92672">&lt;</span> MAXIMUM_WORK_DISTANCE
+    )
+    <span style="color:#66d9ef">var</span> is_on_ground: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> _ground<span style="color:#f92672">.</span>get_cellv(cellv) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">var</span> cell_is_occupied :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>is_cell_occupied(cellv)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cell_is_occupied <span style="color:#f92672">and</span> is_close_to_player <span style="color:#f92672">and</span> is_on_ground:
+        _blueprint<span style="color:#f92672">.</span>modulate <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>white
+    <span style="color:#66d9ef">else</span>:
+        _blueprint<span style="color:#f92672">.</span>modulate <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>red
+
+    <span style="color:#66d9ef">if</span> _blueprint is WireBlueprint:
+        WireBlueprint<span style="color:#f92672">.</span>set_sprite_for_direction(_blueprint<span style="color:#f92672">.</span>sprite, _get_powered_neighbors(cellv))
+
+
+<span style="color:#66d9ef">func</span> _place_entity(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> entity_name :<span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>get_entity_name_from(_blueprint)
+    <span style="color:#66d9ef">var</span> new_entity: <span style="color:#a6e22e">Node2D</span> <span style="color:#f92672">=</span> Library<span style="color:#f92672">.</span>entities[entity_name]<span style="color:#f92672">.</span>instance()
+
+    <span style="color:#66d9ef">if</span> _blueprint is WireBlueprint:
+        <span style="color:#66d9ef">var</span> directions :<span style="color:#f92672">=</span> _get_powered_neighbors(cellv)
+        _flat_entities<span style="color:#f92672">.</span>add_child(new_entity)
+        WireBlueprint<span style="color:#f92672">.</span>set_sprite_for_direction(new_entity<span style="color:#f92672">.</span>sprite, directions)
+    <span style="color:#66d9ef">else</span>:
+        add_child(new_entity)
+
+    new_entity<span style="color:#f92672">.</span>global_position <span style="color:#f92672">=</span> map_to_world(cellv) <span style="color:#f92672">+</span> POSITION_OFFSET
+    new_entity<span style="color:#f92672">.</span>_setup(_blueprint)
+    _tracker<span style="color:#f92672">.</span>place_entity(new_entity, cellv)
+
+
+<span style="color:#66d9ef">func</span> _deconstruct(event_position: <span style="color:#a6e22e">Vector2</span>, cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    _deconstruct_timer<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>, [cellv], CONNECT_ONESHOT)
+    _deconstruct_timer<span style="color:#f92672">.</span>start(DECONSTRUCT_TIME)
+    _current_deconstruct_location <span style="color:#f92672">=</span> cellv
+
+
+<span style="color:#66d9ef">func</span> _finish_deconstruct(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> entity :<span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>get_entity_at(cellv)
+    _tracker<span style="color:#f92672">.</span>remove_entity(cellv)
+    _update_neighboring_flat_entities(cellv)
+
+
+<span style="color:#66d9ef">func</span> _abort_deconstruct() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _deconstruct_timer<span style="color:#f92672">.</span>is_connected(<span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>):
+        _deconstruct_timer<span style="color:#f92672">.</span>disconnect(<span style="color:#e6db74">&quot;timeout&quot;</span>, self, <span style="color:#e6db74">&quot;_finish_deconstruct&quot;</span>)
+    _deconstruct_timer<span style="color:#f92672">.</span>stop()
+
+
+<span style="color:#66d9ef">func</span> _get_powered_neighbors(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> direction :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">for</span> neighbor <span style="color:#f92672">in</span> Types<span style="color:#f92672">.</span>NEIGHBORS<span style="color:#f92672">.</span>keys():
+        <span style="color:#66d9ef">var</span> key: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> cellv <span style="color:#f92672">+</span> Types<span style="color:#f92672">.</span>NEIGHBORS[neighbor]
+
+        <span style="color:#66d9ef">if</span> _tracker<span style="color:#f92672">.</span>is_cell_occupied(key):
+            <span style="color:#66d9ef">var</span> entity: <span style="color:#a6e22e">Node</span> <span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>get_entity_at(key)
+            <span style="color:#66d9ef">if</span> (
+                entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_MOVERS)
+                <span style="color:#f92672">or</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_RECEIVERS)
+                <span style="color:#f92672">or</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_SOURCES)
+            ):
+                direction <span style="color:#f92672">|=</span> neighbor
+
+    <span style="color:#66d9ef">return</span> direction
+
+
+<span style="color:#66d9ef">func</span> _update_neighboring_flat_entities(cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> neighbor <span style="color:#f92672">in</span> Types<span style="color:#f92672">.</span>NEIGHBORS<span style="color:#f92672">.</span>keys():
+        <span style="color:#66d9ef">var</span> key: <span style="color:#a6e22e">Vector2</span> <span style="color:#f92672">=</span> cellv <span style="color:#f92672">+</span> Types<span style="color:#f92672">.</span>NEIGHBORS[neighbor]
+        <span style="color:#66d9ef">var</span> object <span style="color:#f92672">=</span> _tracker<span style="color:#f92672">.</span>get_entity_at(key)
+
+        <span style="color:#66d9ef">if</span> object <span style="color:#f92672">and</span> object is WireEntity:
+            <span style="color:#66d9ef">var</span> tile_directions :<span style="color:#f92672">=</span> _get_powered_neighbors(key)
+            WireBlueprint<span style="color:#f92672">.</span>set_sprite_for_direction(object<span style="color:#f92672">.</span>sprite, tile_directions)
+</pre>
+</body>
+</html>

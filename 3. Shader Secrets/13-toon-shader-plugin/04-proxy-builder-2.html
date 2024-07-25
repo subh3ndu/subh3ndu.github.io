@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tmp13nw1OSqVN</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="toon-proxy-builder-part-two">Toon proxy builder, part two</h1>
+<p>In this chapter, we’ll make the proxy builder apply materials and react to originals being renamed or deleted.</p>
+<h2 id="setting-materials-and-settings">Setting materials and settings</h2>
+<p>The proxy has two more jobs: making sure the proxies’ settings match the export variables and applying materials on the proxies.</p>
+<p>We start with the <code>_set_materials</code> function that takes a parent and a data type. This will be a <em>recursive</em> function that calls itself, replacing the parent by each child (which in turn is parent to another) until we can’t find any more <code>MeshInstance</code> to apply materials to. This is because it could be a <code>Spatial</code> that holds several meshes instead of a single <code>MeshInstance</code>. The user shouldn’t have to worry about that.</p>
+<p>For safety, we stop the function if the parent is <code>null</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _set_materials(parent: <span style="color:#a6e22e">Node</span>, type: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> parent:
+        <span style="color:#66d9ef">return</span>
+</pre>
+<p>If the parent is a <code>MeshInstance</code>, we apply materials. We get the number of surfaces and iterate over them in a <code>for</code> loop.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#66d9ef">if</span> parent is <span style="color:#a6e22e">MeshInstance</span>:
+        <span style="color:#66d9ef">var</span> mat_count: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> parent<span style="color:#f92672">.</span>get_surface_material_count()
+
+        <span style="color:#66d9ef">for</span> mat <span style="color:#f92672">in</span> range(mat_count):
+</pre>
+<p>We check the datatype and apply the correct material. Note the ternary operator in the specular material; if we have an override, we apply it, otherwise we use the default one in <code>ToonSceneBuilder</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822">        match type:
+            ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>LIGHT:
+                parent<span style="color:#f92672">.</span>set_surface_material(mat, builder<span style="color:#f92672">.</span>white_diffuse_material)
+            ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>SPECULAR:
+                parent<span style="color:#f92672">.</span>set_surface_material(mat, specular_material <span style="color:#66d9ef">if</span> specular_material <span style="color:#66d9ef">else</span> builder<span style="color:#f92672">.</span>specular_material)
+</pre>
+<p>Then, <em>outside</em> of the <code>if</code> block, we apply the recursion. We call the function again for each children.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> parent<span style="color:#f92672">.</span>get_children():
+        _set_materials(child, type)
+</pre>
+<p>We can call <code>_set_materials</code> in the <code>_ready</code> function at the end to make sure any proxies have the right materials. This should happen in both the editor and in game, so it should be outside of the <code>Engine.editor_hint</code> <code>if</code> block.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">if</span> Engine<span style="color:#f92672">.</span>editor_hint:
+        <span style="color:#75715e">#...</span>
+
+    _set_materials(light_proxy, ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>LIGHT)
+    _set_materials(specular_proxy, ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>SPECULAR)
+</pre>
+<p>We have some setter functions to populate. We start with <code>_set_light_role</code>. It sets the light color to red, green or blue in the light data and disables all but the key light in the specular data.</p>
+<p>Like previous setters, we apply the value, check if we’re in the editor and yield until ready.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _set_light_role(value: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    light_role <span style="color:#f92672">=</span> value
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> Engine<span style="color:#f92672">.</span>editor_hint:
+        <span style="color:#66d9ef">return</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+</pre>
+<p>If the proxy is a light, we apply the appropriate settings: color for light data, energy and visibility in the specular data.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#66d9ef">if</span> light_proxy is <span style="color:#a6e22e">Light</span>:
+        match light_role:
+            LightRole<span style="color:#f92672">.</span>KEY:
+                light_proxy<span style="color:#f92672">.</span>light_color <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>red
+            LightRole<span style="color:#f92672">.</span>FILL:
+                light_proxy<span style="color:#f92672">.</span>light_color <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>green
+            LightRole<span style="color:#f92672">.</span>KICK:
+                light_proxy<span style="color:#f92672">.</span>light_color <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>blue
+
+    <span style="color:#66d9ef">if</span> specular_proxy is <span style="color:#a6e22e">Light</span>:
+        match light_role:
+            LightRole<span style="color:#f92672">.</span>KEY:
+                specular_proxy<span style="color:#f92672">.</span>light_energy <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+                specular_proxy<span style="color:#f92672">.</span>show()
+            LightRole<span style="color:#f92672">.</span>FILL:
+                specular_proxy<span style="color:#f92672">.</span>light_energy <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+                specular_proxy<span style="color:#f92672">.</span>hide()
+            LightRole<span style="color:#f92672">.</span>KICK:
+                specular_proxy<span style="color:#f92672">.</span>light_energy <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+                specular_proxy<span style="color:#f92672">.</span>hide()
+</pre>
+<p><em>Why not delete the fill and kick light from the specular? It’d make for a cleaner scene tree, but it’s far easier to call <code>show()</code> or <code>hide()</code> than to detect the need to add a brand new light or delete an existing one.</em></p>
+<p>For <code>_sets_emits_shadows</code>, we toggle the <code>shadow_enabled</code> property on any lights we find.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _set_emits_shadows(value: <span style="color:#a6e22e">bool</span>) <span style="color:#f92672">-&gt;</span> void:
+    emits_shadows <span style="color:#f92672">=</span> value
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> Engine<span style="color:#f92672">.</span>editor_hint:
+        <span style="color:#66d9ef">return</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    <span style="color:#66d9ef">if</span> light_proxy is <span style="color:#a6e22e">Light</span>:
+        light_proxy<span style="color:#f92672">.</span>shadow_enabled <span style="color:#f92672">=</span> emits_shadows
+        specular_proxy<span style="color:#f92672">.</span>shadow_enabled <span style="color:#f92672">=</span> emits_shadows
+</pre>
+<p>We use the <code>_set_materials</code> functions we created to apply the specular material when it changes. If the user clears it, it becomes <code>null</code> and the <code>ToonSceneBuilder</code>’s will be used. Otherwise, it applies the new one.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _set_specular_material(value: <span style="color:#a6e22e">ShaderMaterial</span>) <span style="color:#f92672">-&gt;</span> void:
+    specular_material <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    _set_materials(specular_proxy, ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>SPECULAR)
+</pre>
+<h2 id="renaming-and-clean-up">Renaming and clean-up</h2>
+<p>When the designer renames a node, the proxy should rename the original too. Names are how we find them at the start of the game or in the editor and if they don’t match, the proxy will create a brand new node instead.</p>
+<p>In the <code>Engine.editor_hint</code> if block inside of <code>_ready</code>, we connect to the parent node’s <code>renamed</code> signal. We also connect to the <code>tree_exiting</code> signal to keep track of the user deleting an original.</p>
+<p>But when the scene exits or changes, <code>tree_exiting</code> <em>also</em> happens, so we need a mechanism to detect that case. We connect to the scene root’s <code>tree_exiting</code>, too. If <code>tree_exiting</code> happens on both, then the scene is transitioning and we don’t delete the proxy.</p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#66d9ef">if</span> Engine<span style="color:#f92672">.</span>editor_hint:
+        _build_missing_proxies(parent)
+
+        parent<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;renamed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_parent_renamed&quot;</span>)
+        parent<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;tree_exiting&quot;</span>, self, <span style="color:#e6db74">&quot;_on_parent_tree_exiting&quot;</span>)
+        scene_root<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;tree_exiting&quot;</span>, self, <span style="color:#e6db74">&quot;_on_root_tree_exiting&quot;</span>)
+</pre>
+<p>When the user renames the node, we have to apply the new name to the proxy and update the <code>RemoteTransform</code>’s path to the new name.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _on_parent_renamed() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> light_proxy:
+        light_proxy<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> get_parent()<span style="color:#f92672">.</span>name
+        light_remote<span style="color:#f92672">.</span>remote_path <span style="color:#f92672">=</span> (
+            <span style="color:#e6db74">&quot;../</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span>
+            <span style="color:#f92672">%</span> get_parent()<span style="color:#f92672">.</span>get_path_to(light_proxy)
+        )
+
+    <span style="color:#66d9ef">if</span> specular_proxy:
+        specular_proxy<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> get_parent()<span style="color:#f92672">.</span>name
+        specular_remote<span style="color:#f92672">.</span>remote_path <span style="color:#f92672">=</span> (
+            <span style="color:#e6db74">&quot;../</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span>
+            <span style="color:#f92672">%</span> get_parent()<span style="color:#f92672">.</span>get_path_to(specular_proxy)
+        )
+</pre>
+<p>When the user deletes the parent, we set an <code>abort_deletion</code> class variable to false, and connect to the scene tree’s <code>idle_frame</code> signal with a function. Waiting for a frame lets us see if the scene root also exits. If it does, then we abort. Otherwise, then we can clean up the proxies from the scene tree.</p>
+<p><em>Why not use a yield? A yield state of a deleted object cannot resume. Godot throws an error and fails to delete the proxies. The signal, meanwhile, lives in the scene tree object and persists.</em></p>
+<p>Note the use of the <code>CONNECT_ONESHOT</code> flag. If the scene root does <em>not</em> get deleted, we don’t want it to keep triggering every frame on an invalid object.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _on_parent_tree_exiting() <span style="color:#f92672">-&gt;</span> void:
+    abort_deletion <span style="color:#f92672">=</span> false
+    Engine<span style="color:#f92672">.</span>get_main_loop()<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;idle_frame&quot;</span>, self, <span style="color:#e6db74">&quot;_on_SceneTree_idle_frame&quot;</span>, [], CONNECT_ONESHOT)
+
+
+<span style="color:#66d9ef">func</span> _on_SceneTree_idle_frame() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> abort_deletion:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">if</span> light_proxy:
+        light_proxy<span style="color:#f92672">.</span>queue_free()
+
+    <span style="color:#66d9ef">if</span> specular_proxy:
+        specular_proxy<span style="color:#f92672">.</span>queue_free()
+
+
+<span style="color:#66d9ef">func</span> _on_root_tree_exiting() <span style="color:#f92672">-&gt;</span> void:
+    abort_deletion <span style="color:#f92672">=</span> true
+
+</pre>
+<h2 id="in-conclusion">In conclusion</h2>
+<p>Save your work and reload the scene. The proxy builder automatically populates the viewports with a proxy and ensures they have the correct materials. It keeps their name in sync and cleans up when the parent cleans up.</p>
+<figure>
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAR0AAAMWCAIAAABDUMXGAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFyGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIwLTA3LTI3VDExOjQzOjMwLTA0OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDIwLTA3LTI3VDExOjQzOjMwLTA0OjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMC0wNy0yN1QxMTo0MzozMC0wNDowMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpkYWUzOWEyZC1jYThlLTczNGUtOGQ4ZC0xOTRkZjRiNmIyOGQiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDo2ZTcwY2VjZi05OTRlLWFjNDEtODI0OS0w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" alt />
+</figure>
+<h2 id="the-toonproxybuilder-code">The ToonProxyBuilder code</h2>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">tool</span>
+class_name ToonProxyBuilder
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">enum</span> LightRole { KEY, FILL, KICK }
+
+<span style="color:#66d9ef">export</span> (LightRole) <span style="color:#66d9ef">var</span> light_role :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">setget</span> _set_light_role
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> emits_shadows :<span style="color:#f92672">=</span> false <span style="color:#66d9ef">setget</span> _set_emits_shadows
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> specular_material: <span style="color:#a6e22e">ShaderMaterial</span> <span style="color:#66d9ef">setget</span> _set_specular_material
+
+<span style="color:#66d9ef">var</span> light_proxy: <span style="color:#a6e22e">Node</span>
+<span style="color:#66d9ef">var</span> specular_proxy: <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">var</span> light_remote: RemoteTransform
+<span style="color:#66d9ef">var</span> specular_remote: RemoteTransform
+
+<span style="color:#66d9ef">var</span> abort_deletion :<span style="color:#f92672">=</span> false
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> scene_root: <span style="color:#a6e22e">Node</span> <span style="color:#f92672">=</span> (
+    get_tree()<span style="color:#f92672">.</span>edited_scene_root
+    <span style="color:#66d9ef">if</span> Engine<span style="color:#f92672">.</span>editor_hint
+    <span style="color:#66d9ef">else</span> get_tree()<span style="color:#f92672">.</span>root
+)
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> builder: ToonSceneBuilder <span style="color:#f92672">=</span> scene_root<span style="color:#f92672">.</span>find_node(
+    <span style="color:#e6db74">&quot;ToonSceneBuilder&quot;</span>, true, false
+)
+
+
+<span style="color:#66d9ef">func</span> _ready():
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> builder:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">var</span> parent :<span style="color:#f92672">=</span> get_parent()
+
+    light_proxy <span style="color:#f92672">=</span> builder<span style="color:#f92672">.</span>light_data<span style="color:#f92672">.</span>find_node(parent<span style="color:#f92672">.</span>name, true, false)
+    specular_proxy <span style="color:#f92672">=</span> builder<span style="color:#f92672">.</span>specular_data<span style="color:#f92672">.</span>find_node(parent<span style="color:#f92672">.</span>name, true, false)
+
+    <span style="color:#66d9ef">if</span> Engine<span style="color:#f92672">.</span>editor_hint:
+        _build_missing_proxies(parent)
+
+        parent<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;renamed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_parent_renamed&quot;</span>)
+        parent<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;tree_exiting&quot;</span>, self, <span style="color:#e6db74">&quot;_on_parent_tree_exiting&quot;</span>)
+        scene_root<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;tree_exiting&quot;</span>, self, <span style="color:#e6db74">&quot;_on_root_tree_exiting&quot;</span>)
+
+    _set_materials(light_proxy, ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>LIGHT)
+    _set_materials(specular_proxy, ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>SPECULAR)
+
+
+<span style="color:#66d9ef">func</span> _build_missing_proxies(parent: <span style="color:#a6e22e">Node</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> light_missing: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> light_proxy <span style="color:#f92672">==</span> null
+    <span style="color:#66d9ef">var</span> specular_missing: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> specular_proxy <span style="color:#f92672">==</span> null
+
+    yield(get_tree(), <span style="color:#e6db74">&quot;idle_frame&quot;</span>)
+
+    <span style="color:#66d9ef">if</span> light_missing <span style="color:#f92672">or</span> specular_missing:
+        parent<span style="color:#f92672">.</span>remove_child(self)
+
+    <span style="color:#66d9ef">if</span> light_missing:
+        <span style="color:#66d9ef">var</span> result :<span style="color:#f92672">=</span> _build_remote_duplicates(
+            parent, ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>LIGHT
+        )
+
+        light_proxy <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>proxy
+        light_remote <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>proxy_remote
+    <span style="color:#66d9ef">else</span>:
+        light_remote <span style="color:#f92672">=</span> parent<span style="color:#f92672">.</span>find_node(<span style="color:#e6db74">&quot;LightRemote&quot;</span>, true, false)
+
+    <span style="color:#66d9ef">if</span> specular_missing:
+        <span style="color:#66d9ef">var</span> result :<span style="color:#f92672">=</span> _build_remote_duplicates(
+            parent, ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>SPECULAR
+        )
+
+        specular_proxy <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>proxy
+        specular_remote <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>proxy_remote
+    <span style="color:#66d9ef">else</span>:
+        specular_remote <span style="color:#f92672">=</span> parent<span style="color:#f92672">.</span>find_node(<span style="color:#e6db74">&quot;SpecularRemote&quot;</span>, true, false)
+
+    self<span style="color:#f92672">.</span>light_role <span style="color:#f92672">=</span> light_role
+    self<span style="color:#f92672">.</span>emits_shadows <span style="color:#f92672">=</span> emits_shadows
+
+    <span style="color:#66d9ef">if</span> light_missing <span style="color:#f92672">or</span> specular_missing:
+        parent<span style="color:#f92672">.</span>add_child(self)
+        owner <span style="color:#f92672">=</span> scene_root
+
+
+<span style="color:#66d9ef">func</span> _build_remote_duplicates(parent: <span style="color:#a6e22e">Node</span>, type: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Dictionary</span>:
+    <span style="color:#66d9ef">var</span> proxy: <span style="color:#a6e22e">Node</span> <span style="color:#f92672">=</span> parent<span style="color:#f92672">.</span>duplicate()
+    <span style="color:#66d9ef">var</span> proxy_remote :<span style="color:#f92672">=</span> RemoteTransform<span style="color:#f92672">.</span>new()
+
+    parent<span style="color:#f92672">.</span>add_child(proxy_remote)
+    proxy_remote<span style="color:#f92672">.</span>owner <span style="color:#f92672">=</span> scene_root
+
+    match type:
+        ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>LIGHT:
+            builder<span style="color:#f92672">.</span>light_data<span style="color:#f92672">.</span>add_child(proxy)
+            <span style="color:#66d9ef">if</span> proxy is <span style="color:#a6e22e">Light</span>:
+                proxy<span style="color:#f92672">.</span>light_color <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>red
+            proxy_remote<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;LightRemote&quot;</span>
+        ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>SPECULAR:
+            builder<span style="color:#f92672">.</span>specular_data<span style="color:#f92672">.</span>add_child(proxy)
+            proxy_remote<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;SpecularRemote&quot;</span>
+
+    proxy<span style="color:#f92672">.</span>owner <span style="color:#f92672">=</span> scene_root
+
+    proxy_remote<span style="color:#f92672">.</span>remote_path <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;../</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> parent<span style="color:#f92672">.</span>get_path_to(proxy)
+
+    <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&quot;proxy&quot;</span>: proxy, <span style="color:#e6db74">&quot;proxy_remote&quot;</span>: proxy_remote}
+
+
+<span style="color:#66d9ef">func</span> _set_materials(parent: <span style="color:#a6e22e">Node</span>, type: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> parent:
+        <span style="color:#66d9ef">return</span>
+    <span style="color:#66d9ef">if</span> parent is <span style="color:#a6e22e">MeshInstance</span>:
+        <span style="color:#66d9ef">var</span> mat_count: <span style="color:#a6e22e">int</span> <span style="color:#f92672">=</span> parent<span style="color:#f92672">.</span>get_surface_material_count()
+
+        <span style="color:#66d9ef">for</span> mat <span style="color:#f92672">in</span> range(mat_count):
+            match type:
+                ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>LIGHT:
+                    parent<span style="color:#f92672">.</span>set_surface_material(mat, builder<span style="color:#f92672">.</span>white_diffuse_material)
+                ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>SPECULAR:
+                    parent<span style="color:#f92672">.</span>set_surface_material(mat, specular_material <span style="color:#66d9ef">if</span> specular_material <span style="color:#66d9ef">else</span> builder<span style="color:#f92672">.</span>specular_material)
+
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> parent<span style="color:#f92672">.</span>get_children():
+        _set_materials(child, type)
+
+
+<span style="color:#66d9ef">func</span> _set_light_role(value: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    light_role <span style="color:#f92672">=</span> value
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> Engine<span style="color:#f92672">.</span>editor_hint:
+        <span style="color:#66d9ef">return</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    <span style="color:#66d9ef">if</span> light_proxy is <span style="color:#a6e22e">Light</span>:
+        match light_role:
+            LightRole<span style="color:#f92672">.</span>KEY:
+                light_proxy<span style="color:#f92672">.</span>light_color <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>red
+            LightRole<span style="color:#f92672">.</span>FILL:
+                light_proxy<span style="color:#f92672">.</span>light_color <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>green
+            LightRole<span style="color:#f92672">.</span>KICK:
+                light_proxy<span style="color:#f92672">.</span>light_color <span style="color:#f92672">=</span> <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>blue
+
+    <span style="color:#66d9ef">if</span> specular_proxy is <span style="color:#a6e22e">Light</span>:
+        match light_role:
+            LightRole<span style="color:#f92672">.</span>KEY:
+                specular_proxy<span style="color:#f92672">.</span>light_energy <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+                specular_proxy<span style="color:#f92672">.</span>show()
+            LightRole<span style="color:#f92672">.</span>FILL:
+                specular_proxy<span style="color:#f92672">.</span>light_energy <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+                specular_proxy<span style="color:#f92672">.</span>hide()
+            LightRole<span style="color:#f92672">.</span>KICK:
+                specular_proxy<span style="color:#f92672">.</span>light_energy <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+                specular_proxy<span style="color:#f92672">.</span>hide()
+
+
+<span style="color:#66d9ef">func</span> _set_emits_shadows(value: <span style="color:#a6e22e">bool</span>) <span style="color:#f92672">-&gt;</span> void:
+    emits_shadows <span style="color:#f92672">=</span> value
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> Engine<span style="color:#f92672">.</span>editor_hint:
+        <span style="color:#66d9ef">return</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    <span style="color:#66d9ef">if</span> light_proxy is <span style="color:#a6e22e">Light</span>:
+        light_proxy<span style="color:#f92672">.</span>shadow_enabled <span style="color:#f92672">=</span> emits_shadows
+        specular_proxy<span style="color:#f92672">.</span>shadow_enabled <span style="color:#f92672">=</span> emits_shadows
+
+
+<span style="color:#66d9ef">func</span> _set_specular_material(value: <span style="color:#a6e22e">ShaderMaterial</span>) <span style="color:#f92672">-&gt;</span> void:
+    specular_material <span style="color:#f92672">=</span> value
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_inside_tree():
+        yield(self, <span style="color:#e6db74">&quot;ready&quot;</span>)
+
+    _set_materials(specular_proxy, ToonSceneBuilder<span style="color:#f92672">.</span>DataType<span style="color:#f92672">.</span>SPECULAR)
+
+
+<span style="color:#66d9ef">func</span> _on_parent_renamed() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> light_proxy:
+        light_proxy<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> get_parent()<span style="color:#f92672">.</span>name
+        light_remote<span style="color:#f92672">.</span>remote_path <span style="color:#f92672">=</span> (
+            <span style="color:#e6db74">&quot;../</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span>
+            <span style="color:#f92672">%</span> get_parent()<span style="color:#f92672">.</span>get_path_to(light_proxy)
+        )
+
+    <span style="color:#66d9ef">if</span> specular_proxy:
+        specular_proxy<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> get_parent()<span style="color:#f92672">.</span>name
+        specular_remote<span style="color:#f92672">.</span>remote_path <span style="color:#f92672">=</span> (
+            <span style="color:#e6db74">&quot;../</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span>
+            <span style="color:#f92672">%</span> get_parent()<span style="color:#f92672">.</span>get_path_to(specular_proxy)
+        )
+
+
+<span style="color:#66d9ef">func</span> _on_parent_tree_exiting() <span style="color:#f92672">-&gt;</span> void:
+    abort_deletion <span style="color:#f92672">=</span> false
+    Engine<span style="color:#f92672">.</span>get_main_loop()<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;idle_frame&quot;</span>, self, <span style="color:#e6db74">&quot;_on_SceneTree_idle_frame&quot;</span>, [], CONNECT_ONESHOT)
+
+
+<span style="color:#66d9ef">func</span> _on_SceneTree_idle_frame() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> abort_deletion:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#66d9ef">if</span> light_proxy:
+        light_proxy<span style="color:#f92672">.</span>queue_free()
+
+    <span style="color:#66d9ef">if</span> specular_proxy:
+        specular_proxy<span style="color:#f92672">.</span>queue_free()
+
+
+<span style="color:#66d9ef">func</span> _on_root_tree_exiting() <span style="color:#f92672">-&gt;</span> void:
+    abort_deletion <span style="color:#f92672">=</span> true
+
+</pre>
+</body>
+</html>

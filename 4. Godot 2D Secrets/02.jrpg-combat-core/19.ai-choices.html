@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpNX8UhtgJFT</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="letting-the-ai-choose-an-action-and-targets">Letting the AI choose an action and targets</h1>
+<p>Let’s implement the missing features in our <code>BattlerAI</code> class.</p>
+<p>For the agent to choose text action and target, we need a public function that the <code>ActiveTurnQueue</code> can call. Let’s call it <code>choose()</code>.</p>
+<p>We’re going to split the selection process into two steps: the agent first chooses an action, then a target. As we have the battlefield information pre-calculated for us, we can easily split the two operations and think of them almost separately.</p>
+<p>Also, we’re going to have a similar pattern to the <code>Action</code> class with a public method and a pseudo-private virtual one.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Returns a dictionary representing an action and its targets.</span>
+<span style="color:#75715e"># The dictionary has the form { action: Action, targets: Array[Battler] }</span>
+<span style="color:#75715e"># Arguments:</span>
+<span style="color:#75715e"># - `battlers: Array[Battler]`, all battlers on the field, including the actor</span>
+<span style="color:#66d9ef">func</span> choose() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Dictionary</span>:
+    <span style="color:#75715e"># A defensive assert to ensure we don&#39;t forget to call `setup()` on the AI during development.</span>
+    assert(
+        <span style="color:#f92672">not</span> _opponents<span style="color:#f92672">.</span>empty(),
+        <span style="color:#e6db74">&quot;You must call setup() on the AI and give it opponents for it to work.&quot;</span>
+    )
+    <span style="color:#66d9ef">return</span> _choose()
+
+
+<span style="color:#66d9ef">func</span> _choose() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Dictionary</span>:
+    <span style="color:#75715e"># We start the turn by gathering information about the battlefield.</span>
+    <span style="color:#66d9ef">var</span> battle_info :<span style="color:#f92672">=</span> _gather_information()
+
+    <span style="color:#75715e"># The values we need to return in our dictionary.</span>
+    <span style="color:#66d9ef">var</span> action: ActionData
+    <span style="color:#66d9ef">var</span> targets :<span style="color:#f92672">=</span> []
+
+    <span style="color:#75715e"># We&#39;re going to add two methods, `_choose_action()` and `_choose_targets()`,</span>
+    <span style="color:#75715e"># so we can override only one or the other in our subclasses.</span>
+    action <span style="color:#f92672">=</span> _choose_action(battle_info)
+
+    <span style="color:#75715e"># There&#39;s a special case with actions, if it&#39;s targeting its user, we don&#39;t need</span>
+    <span style="color:#75715e"># to choose a target.</span>
+    <span style="color:#66d9ef">if</span> action<span style="color:#f92672">.</span>is_targeting_self:
+        targets <span style="color:#f92672">=</span> [_actor]
+    <span style="color:#66d9ef">else</span>:
+        targets <span style="color:#f92672">=</span> _choose_targets(action, battle_info)
+    <span style="color:#66d9ef">return</span> {action <span style="color:#f92672">=</span> action, targets <span style="color:#f92672">=</span> targets}
+
+
+<span style="color:#75715e"># Virtual method. Returns the action the agent is choosing to use this turn.</span>
+<span style="color:#66d9ef">func</span> _choose_action(_info: <span style="color:#a6e22e">Dictionary</span>) <span style="color:#f92672">-&gt;</span> ActionData:
+    <span style="color:#66d9ef">return</span> _actor<span style="color:#f92672">.</span>actions[<span style="color:#ae81ff">0</span>]
+
+
+<span style="color:#75715e"># Virtual method. Returns the agent&#39;s targets this turn.</span>
+<span style="color:#66d9ef">func</span> _choose_targets(_action: ActionData, _info: <span style="color:#a6e22e">Dictionary</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">return</span> [_info<span style="color:#f92672">.</span>weakest_target]
+</pre>
+<p>Say that you want a boss to have a really powerful attack that requires charging energy for three turns before unleashing it. We can have an array of planned actions that the agent pulls from each turn.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Queue of [ActionData]. If not empty, the action is popped from this array on the next turn.</span>
+<span style="color:#75715e"># Use this property to plan actions over multiple turns.</span>
+<span style="color:#66d9ef">var</span> _next_actions :<span style="color:#f92672">=</span> []
+
+
+<span style="color:#75715e"># We need to update the code that chooses the action in the `_choose()` method.</span>
+<span style="color:#66d9ef">func</span> _choose() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Dictionary</span>:
+    <span style="color:#75715e">#...</span>
+
+    <span style="color:#75715e"># We pop one action from `_next_actions` if the array isn&#39;t empty.</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _next_actions<span style="color:#f92672">.</span>empty():
+        action <span style="color:#f92672">=</span> _next_actions<span style="color:#f92672">.</span>pop_front()
+    <span style="color:#75715e"># Otherwise, we call `_choose_action()`</span>
+    <span style="color:#66d9ef">else</span>:
+        action <span style="color:#f92672">=</span> _choose_action(battle_info)
+    <span style="color:#75715e">#...</span>
+</pre>
+<p>Finally, let’s add a random number generator so that each agent can generate random values as needed.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> _rng :<span style="color:#f92672">=</span> RandomNumberGenerator<span style="color:#f92672">.</span>new()
+</pre>
+<p>You can use it to shuffle actions or to choose between targets randomly.</p>
+<h2 id="coding-a-concrete-aggressive-ai">Coding a concrete aggressive AI</h2>
+<p>With our sanbox implemented, we can now create concrete agents with limited amounts of code.</p>
+<p>Here is a minimal example with an aggressive AI: it always attacks the weakest target with its strongest available ability.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name AggressiveBattlerAI
+<span style="color:#66d9ef">extends</span> BattlerAI
+
+
+<span style="color:#66d9ef">func</span> _choose_action(info: <span style="color:#a6e22e">Dictionary</span>) <span style="color:#f92672">-&gt;</span> ActionData:
+    <span style="color:#75715e"># We always pick the strongest action.</span>
+    <span style="color:#66d9ef">return</span> info<span style="color:#f92672">.</span>strongest_action
+
+
+<span style="color:#66d9ef">func</span> _choose_targets(_action: ActionData, info: <span style="color:#a6e22e">Dictionary</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#75715e"># We always work with arrays of targets to support targeting multiple targets.</span>
+    <span style="color:#75715e"># If you want to target only one opponent, don&#39;t forget to wrap it in an array.</span>
+    <span style="color:#66d9ef">return</span> [info<span style="color:#f92672">.</span>weakest_target]
+</pre>
+<p>You can see we pull the values from our pre-computed <code>info</code> dictionary. That’s one of the advantages of the sandbox pattern: we can keep subclasses lean and produce many variations quickly once the parent class provides enough functionality.</p>
+<h2 id="setting-up-ai-agents">Setting up AI agents</h2>
+<p>To wrap up this lesson, we’re going to put our AI system to use and test it.</p>
+<p>We have to wire the AI with the <code>Battler</code> and use its <code>choose()</code> method in the <code>ActiveTurnQueue</code>.</p>
+<p>Open <code>Battler.gd</code> and add a <code>setup()</code> function to it. We use it to give the AI brain a reference to all battlers on the battlefield. We can also add a method to allow players to access the <code>BattlerAI</code> instance.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># This is the concrete instance of `ai_scene`, an exported variable we defined in lesson 06.</span>
+<span style="color:#66d9ef">var</span> _ai_instance <span style="color:#f92672">=</span> null
+
+<span style="color:#75715e"># Allows the AI brain to get a reference to all battlers on the field.</span>
+<span style="color:#66d9ef">func</span> setup(battlers: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> ai_scene:
+        <span style="color:#75715e"># We instance the `ai_scene` and store a reference to it.</span>
+        _ai_instance <span style="color:#f92672">=</span> ai_scene<span style="color:#f92672">.</span>instance()
+        <span style="color:#75715e"># `BattlerAI.setup()` takes the actor and all battlers in the encounter.</span>
+        _ai_instance<span style="color:#f92672">.</span>setup(self, battlers)
+        <span style="color:#75715e"># Adding the instance as a child to trigger its `_ready()` callback.</span>
+        add_child(_ai_instance)
+
+
+<span style="color:#75715e"># Returns the `BattlerAI` instance attached to this battler.</span>
+<span style="color:#75715e"># We wrap it in a method because our property is pseudo-private: we want it to be read-only.</span>
+<span style="color:#66d9ef">func</span> get_ai() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Node</span>:
+    <span style="color:#66d9ef">return</span> _ai_instance
+</pre>
+<p>Next, open <code>ActiveTurnQueue.gd</code>. There, we want to call <code>Battler.setup()</code> at the start of the encounter to initialize AI agents.</p>
+<p>We then update the <code>_play_turn()</code> function to let the AI choose an action and targets.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        <span style="color:#75715e"># Setting up all AI-powered agents.</span>
+        battler<span style="color:#f92672">.</span>setup(battlers)
+        <span style="color:#75715e">#...</span>
+
+
+<span style="color:#66d9ef">func</span> _play_turn(battler: Battler) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">if</span> battler<span style="color:#f92672">.</span>is_player_controlled():
+        <span style="color:#75715e">#...</span>
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#75715e"># Letting the AI choose by calling its `choose()` method.</span>
+        <span style="color:#66d9ef">var</span> result: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> battler<span style="color:#f92672">.</span>get_ai()<span style="color:#f92672">.</span>choose()
+        action_data <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>action
+        targets <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>targets
+</pre>
+<h3 id="testing-the-agent">Testing the agent</h3>
+<p>It would be nice to test our artificial intelligence, ensure that it works.</p>
+<p>We don’t have a user interface yet so let’s use the print function to output its actions to the console. We first have to add an AI brain to one or more battlers.</p>
+<p>Open the <code>CombatDemo</code> scene you created in the turn queue lesson. Each battler has an <em>Ai Scene</em> property where we can drop a scene representing the artificial intelligence we want to use.</p>
+<p>Create a new scene with a single node called <em>AggressiveBattlerAI</em>. Attach the <code>AggressiveBattlerAI.gd</code> script to it.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>Then, either in the combat demo or in a given battler’s source scene, drag and drop <code>AggressiveBattlerAI.tscn</code> onto the <em>Ai Scene</em> property in the inspector.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>This is all you need to make an AI-controlled agent. We don’t have many actions or strategies that the agent can use at this point, as we’re just coding our system’s foundations. But at least the core features are in place, and we can test that the code works as expected.</p>
+<p>Let’s add some print statements in the in one of the AI’s <code>_choose_*()</code> virtual methods. For example, we can print the battlefield information like so, in <code>AggressiveBattlerAI.gd</code>:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _choose_action(info: <span style="color:#a6e22e">Dictionary</span>) <span style="color:#f92672">-&gt;</span> ActionData:
+    print(info)
+    <span style="color:#66d9ef">return</span> info<span style="color:#f92672">.</span>strongest_action
+</pre>
+<p>We can also add code in <code>ActiveTurnQueue.gd</code>, in the branch of <code>_play_turn()</code> that calls <code>battler.get_ai().choose()</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">var</span> result: <span style="color:#a6e22e">Dictionary</span> <span style="color:#f92672">=</span> battler<span style="color:#f92672">.</span>get_ai()<span style="color:#f92672">.</span>choose()
+        action_data <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>action
+        targets <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>targets
+        print(<span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74"> attacks </span><span style="color:#e6db74">%s</span><span style="color:#e6db74"> with action </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [battler<span style="color:#f92672">.</span>name, targets[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>name, action_data<span style="color:#f92672">.</span>label])
+</pre>
+<p>When running the game, you should see output like this, showing that our new code gets called:</p>
+<pre style="color:#f8f8f2;background-color:#272822">{attack_actions:[[<span style="color:#a6e22e">Resource</span>:<span style="color:#ae81ff">1245</span>]], available_actions:[[<span style="color:#a6e22e">Resource</span>:<span style="color:#ae81ff">1245</span>]], defensive_actions:[], fallen_opponents_count:<span style="color:#ae81ff">0</span>, fallen_party_count:<span style="color:#ae81ff">0</span>, health_status:<span style="color:#ae81ff">4</span>, strongest_action:[<span style="color:#a6e22e">Resource</span>:<span style="color:#ae81ff">1245</span>], weakest_ally:[<span style="color:#a6e22e">Node2D</span>:<span style="color:#ae81ff">1410</span>], weakest_target:[<span style="color:#a6e22e">Node2D</span>:<span style="color:#ae81ff">1400</span>]}
+
+BugCat attacks Bear with action Claw
+</pre>
+<p class="note">
+Note that if your player-controlled battler is faster than the enemies, you may not see this message until long seconds as we slow down time on the player’s turn. If that is the case, you can comment out the line <code>set_time_scale(0.05)</code> in <code>ActiveTurnQueue.gd</code>
+</p>
+<h2 id="the-code">The code</h2>
+<p>Here is the complete code for <code>BattlerAI.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name BattlerAI
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">enum</span> HealthStatus { CRITICAL, LOW, MEDIUM, HIGH, FULL }
+
+<span style="color:#66d9ef">var</span> _next_actions :<span style="color:#f92672">=</span> []
+<span style="color:#66d9ef">var</span> _rng :<span style="color:#f92672">=</span> RandomNumberGenerator<span style="color:#f92672">.</span>new()
+
+<span style="color:#66d9ef">var</span> _actor: Battler
+<span style="color:#66d9ef">var</span> _party :<span style="color:#f92672">=</span> []
+<span style="color:#66d9ef">var</span> _opponents :<span style="color:#f92672">=</span> []
+<span style="color:#66d9ef">var</span> _weaknesses_dict :<span style="color:#f92672">=</span> {}
+
+
+<span style="color:#66d9ef">func</span> setup(actor: Battler, battlers: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> void:
+    _actor <span style="color:#f92672">=</span> actor
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        <span style="color:#66d9ef">var</span> is_opponent: <span style="color:#a6e22e">bool</span> <span style="color:#f92672">=</span> battler<span style="color:#f92672">.</span>is_party_member <span style="color:#f92672">!=</span> actor<span style="color:#f92672">.</span>is_party_member
+        <span style="color:#66d9ef">if</span> is_opponent:
+            _opponents<span style="color:#f92672">.</span>append(battler)
+        <span style="color:#66d9ef">else</span>:
+            _party<span style="color:#f92672">.</span>append(battler)
+    _calculate_weaknesses()
+
+
+<span style="color:#66d9ef">func</span> choose() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Dictionary</span>:
+    assert(
+        <span style="color:#f92672">not</span> _opponents<span style="color:#f92672">.</span>empty(),
+        <span style="color:#e6db74">&quot;You must call setup() on the AI and give it opponents for it to work.&quot;</span>
+    )
+    <span style="color:#66d9ef">return</span> _choose()
+
+
+<span style="color:#75715e"># @tags: virtual</span>
+<span style="color:#66d9ef">func</span> _choose() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Dictionary</span>:
+    <span style="color:#66d9ef">var</span> battle_info :<span style="color:#f92672">=</span> _gather_information()
+    <span style="color:#66d9ef">var</span> action: ActionData
+    <span style="color:#66d9ef">var</span> targets :<span style="color:#f92672">=</span> []
+
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _next_actions<span style="color:#f92672">.</span>empty():
+        action <span style="color:#f92672">=</span> _next_actions<span style="color:#f92672">.</span>pop_front()
+    <span style="color:#66d9ef">else</span>:
+        action <span style="color:#f92672">=</span> _choose_action(battle_info)
+
+    <span style="color:#66d9ef">if</span> action<span style="color:#f92672">.</span>is_targeting_self:
+        targets <span style="color:#f92672">=</span> [_actor]
+    <span style="color:#66d9ef">else</span>:
+        targets <span style="color:#f92672">=</span> _choose_targets(action, battle_info)
+    <span style="color:#66d9ef">return</span> {action <span style="color:#f92672">=</span> action, targets <span style="color:#f92672">=</span> targets}
+
+
+<span style="color:#75715e"># @tags: virtual</span>
+<span style="color:#66d9ef">func</span> _choose_action(_info: <span style="color:#a6e22e">Dictionary</span>) <span style="color:#f92672">-&gt;</span> ActionData:
+    <span style="color:#66d9ef">return</span> _actor<span style="color:#f92672">.</span>actions[<span style="color:#ae81ff">0</span>]
+
+
+<span style="color:#75715e"># @tags: virtual</span>
+<span style="color:#66d9ef">func</span> _choose_targets(_action: ActionData, _info: <span style="color:#a6e22e">Dictionary</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">return</span> [_info<span style="color:#f92672">.</span>weakest_target]
+
+
+<span style="color:#66d9ef">func</span> _gather_information() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Dictionary</span>:
+    <span style="color:#66d9ef">var</span> actions :<span style="color:#f92672">=</span> _get_available_actions()
+    <span style="color:#66d9ef">var</span> attack_actions :<span style="color:#f92672">=</span> _get_attack_actions_from(actions)
+    <span style="color:#66d9ef">var</span> defensive_actions :<span style="color:#f92672">=</span> _get_defensive_actions_from(actions)
+    <span style="color:#66d9ef">var</span> info :<span style="color:#f92672">=</span> {
+        weakest_target <span style="color:#f92672">=</span> _get_battler_with_lowest_health(_opponents),
+        weakest_ally <span style="color:#f92672">=</span> _get_battler_with_lowest_health(_party),
+        health_status <span style="color:#f92672">=</span> _get_health_status(_actor),
+        fallen_party_count <span style="color:#f92672">=</span> _count_fallen_party(),
+        fallen_opponents_count <span style="color:#f92672">=</span> _count_fallen_opponents(),
+        available_actions <span style="color:#f92672">=</span> actions,
+        attack_actions <span style="color:#f92672">=</span> attack_actions,
+        defensive_actions <span style="color:#f92672">=</span> defensive_actions,
+        strongest_action <span style="color:#f92672">=</span> _find_most_damaging_action_from(attack_actions),
+    }
+    <span style="color:#66d9ef">return</span> info
+
+
+<span style="color:#66d9ef">func</span> _get_battler_with_lowest_health(battlers: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> Battler:
+    <span style="color:#66d9ef">var</span> weakest: Battler <span style="color:#f92672">=</span> battlers[<span style="color:#ae81ff">0</span>]
+    <span style="color:#66d9ef">for</span> battler <span style="color:#f92672">in</span> battlers:
+        <span style="color:#66d9ef">if</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">&lt;</span> weakest<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health:
+            weakest <span style="color:#f92672">=</span> battler
+    <span style="color:#66d9ef">return</span> weakest
+
+
+<span style="color:#66d9ef">func</span> _is_weak_to(battler: Battler, action: ActionData) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    <span style="color:#66d9ef">return</span> action<span style="color:#f92672">.</span>element <span style="color:#f92672">in</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>weaknesses
+
+
+<span style="color:#66d9ef">func</span> _count_fallen_party() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> ally <span style="color:#f92672">in</span> _party:
+        <span style="color:#66d9ef">if</span> ally<span style="color:#f92672">.</span>is_fallen():
+            count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">return</span> count
+
+
+<span style="color:#66d9ef">func</span> _count_fallen_opponents() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> opponent <span style="color:#f92672">in</span> _opponents:
+        <span style="color:#66d9ef">if</span> opponent<span style="color:#f92672">.</span>is_fallen():
+            count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">return</span> count
+
+
+<span style="color:#66d9ef">func</span> _get_health_status(battler: Battler) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">if</span> _is_health_below(battler, <span style="color:#ae81ff">0.1</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>CRITICAL
+    <span style="color:#66d9ef">elif</span> _is_health_below(battler, <span style="color:#ae81ff">0.3</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>LOW
+    <span style="color:#66d9ef">elif</span> _is_health_below(battler, <span style="color:#ae81ff">0.6</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>MEDIUM
+    <span style="color:#66d9ef">elif</span> _is_health_below(battler, <span style="color:#ae81ff">1.0</span>):
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>HIGH
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">return</span> HealthStatus<span style="color:#f92672">.</span>FULL
+
+
+<span style="color:#66d9ef">func</span> _is_health_below(battler: Battler, ratio: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    ratio <span style="color:#f92672">=</span> clamp(ratio, <span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">1.0</span>)
+    <span style="color:#66d9ef">return</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">&lt;</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">*</span> ratio
+
+
+<span style="color:#66d9ef">func</span> _is_health_above(battler: Battler, ratio: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">bool</span>:
+    ratio <span style="color:#f92672">=</span> clamp(ratio, <span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">1.0</span>)
+    <span style="color:#66d9ef">return</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">&gt;</span> battler<span style="color:#f92672">.</span>stats<span style="color:#f92672">.</span>health <span style="color:#f92672">*</span> ratio
+
+
+<span style="color:#66d9ef">func</span> _calculate_weaknesses() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> _actor<span style="color:#f92672">.</span>actions:
+        _weaknesses_dict[action] <span style="color:#f92672">=</span> []
+        <span style="color:#66d9ef">for</span> opponent <span style="color:#f92672">in</span> _opponents:
+            <span style="color:#66d9ef">if</span> _is_weak_to(opponent, action):
+                _weaknesses_dict[action]<span style="color:#f92672">.</span>append(opponent)
+
+
+<span style="color:#66d9ef">func</span> _get_available_actions() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> actions :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> _actor<span style="color:#f92672">.</span>actions:
+        <span style="color:#66d9ef">if</span> action<span style="color:#f92672">.</span>can_be_used_by(_actor):
+            actions<span style="color:#f92672">.</span>append(action)
+    <span style="color:#66d9ef">return</span> actions
+
+
+<span style="color:#66d9ef">func</span> _get_attack_actions_from(available_actions: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> attack_actions :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> available_actions:
+        <span style="color:#66d9ef">if</span> action is AttackActionData:
+            attack_actions<span style="color:#f92672">.</span>append(action)
+    <span style="color:#66d9ef">return</span> attack_actions
+
+
+<span style="color:#66d9ef">func</span> _get_defensive_actions_from(available_actions: <span style="color:#a6e22e">Array</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> defensive_actions :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> available_actions:
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> action is AttackActionData:
+            defensive_actions<span style="color:#f92672">.</span>append(action)
+    <span style="color:#66d9ef">return</span> defensive_actions
+
+
+<span style="color:#66d9ef">func</span> _find_most_damaging_action_from(attack_actions: <span style="color:#a6e22e">Array</span>):
+    <span style="color:#66d9ef">var</span> strongest_action
+    <span style="color:#66d9ef">var</span> highest_damage :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> action <span style="color:#f92672">in</span> attack_actions:
+        <span style="color:#66d9ef">var</span> total_damage <span style="color:#f92672">=</span> action<span style="color:#f92672">.</span>calculate_potential_damage_for(_actor)
+        <span style="color:#66d9ef">if</span> total_damage <span style="color:#f92672">&gt;</span> highest_damage:
+            strongest_action <span style="color:#f92672">=</span> action
+            highest_damage <span style="color:#f92672">=</span> total_damage
+    <span style="color:#66d9ef">return</span> strongest_action
+</pre>
+</body>
+</html>

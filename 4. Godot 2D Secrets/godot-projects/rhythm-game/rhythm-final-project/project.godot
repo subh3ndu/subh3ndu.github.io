@@ -1,0 +1,80 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Area2D",
+"class": "DragDetector",
+"language": "GDScript",
+"path": "res://RhythmGame/UI/TrackSelector/DragDetector.gd"
+}, {
+"base": "Node2D",
+"class": "PlacerHitBeat",
+"language": "GDScript",
+"path": "res://RhythmGame/Editor/PlacerHitBeat.gd"
+}, {
+"base": "Node2D",
+"class": "PlacerRest",
+"language": "GDScript",
+"path": "res://RhythmGame/Editor/PlacerRest.gd"
+}, {
+"base": "Path2D",
+"class": "PlacerRoller",
+"language": "GDScript",
+"path": "res://RhythmGame/Editor/PlacerHitRoller.gd"
+}, {
+"base": "Resource",
+"class": "TrackData",
+"language": "GDScript",
+"path": "res://RhythmGame/Tracks/TrackData.gd"
+}, {
+"base": "Area2D",
+"class": "TrackTile",
+"language": "GDScript",
+"path": "res://RhythmGame/UI/TrackSelector/TrackTile.gd"
+} ]
+_global_script_class_icons={
+"DragDetector": "",
+"PlacerHitBeat": "res://RhythmGame/Editor/placer_hit_beat_icon.svg",
+"PlacerRest": "res://RhythmGame/Editor/placer_rest_icon.svg",
+"PlacerRoller": "res://RhythmGame/Editor/placer_hit_roller_icon.svg",
+"TrackData": "",
+"TrackTile": ""
+}
+
+[application]
+
+config/name="2D Rhythm Game"
+run/main_scene="res://RhythmGameDemo.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+Events="*res://RhythmGame/Autoload/Events.gd"
+
+[display]
+
+window/size/width=1920
+window/size/height=1080
+window/vsync/use_vsync=false
+window/stretch/mode="2d"
+window/stretch/aspect="keep"
+
+[input]
+
+touch={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":1,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+
+[rendering]
+
+environment/default_clear_color=Color( 0.278431, 0.231373, 0.470588, 1 )
+environment/default_environment="res://default_env.tres"

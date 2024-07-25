@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpvloaZ4qgnK</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="the-power-system">The Power System</h1>
+<p>With the wires in place, we have all the entities we need to take energy from a power source (our Stirling engine) to another machine.</p>
+<p>Before creating the power receiver and its power storing logic, we’ll tackle transmitting and moving power along the wires.</p>
+<h2 id="the-entity-component-system">The Entity-Component-System</h2>
+<p>We’ll do this by implementing a variant of the Entity-Component-System pattern (ECS). In this pattern, entities have an array of specialized clumps of data, named components, through which they interact with systems.</p>
+<p>For example, by the end of this lesson, we’ll have a <code>PowerSource</code> (component) we’ll attach to engines and batteries (entities) that a <code>PowerSystem</code> (system) will detect and use to transfer the energy to a receiver.</p>
+<p>A frequent question new Godot users ask is how to implement an ECS in the engine. The pattern’s been popularized by Unity, which uses it at its core.</p>
+<p>Godot’s scene and node system are not built around the same idea so you won’t benefit from the ECS pattern in most games. We recommend forgetting about popular architectural patterns when working in Godot, like Model-View-Controller (MVC) or ECS, and thinking in terms of scenes and nodes.</p>
+<p>There are some specific types of games that will benefit from the ECS pattern, however. Simulation games can be one of those.</p>
+<p>In our case, we have independent and naive entities that do not know of one another. Yet, we need a way to connect and signal that something happened to them. For example, that a machine is receiving electricity.</p>
+<p>ECS is a useful pattern in this exact situation. We use it to complement Godot’s scene system rather than replace it.</p>
+<p>We won’t code a <em>pure</em> ECS, but rather a variant to keep our entities unaware of one another and their code decoupled.</p>
+<h2 id="power-components">Power Components</h2>
+<p>Let’s start building our ECS with the components. They are clumps of data that we can assign to an entity to configure it. In our case, we’ll make them <code>Node</code>s that the system will collect and store as references. The Stirling engine is a power source, electric machines will be power receivers, and some entities like the battery will be both.</p>
+<p>What does a power system component need? It needs an amount of power and a way to signal the entity that something occurred.</p>
+<h3 id="making-the-power-source">Making the power source</h3>
+<p>Let’s create the <code>PowerSource</code> component first.</p>
+<p>It is a <code>Node</code> that lives as a child of entities that belong to the <code>power_sources</code> group. It has a signal to tell it that machines on its system are drawing power, an amount of energy it’s able to provide, and an <code>efficiency</code> rating.</p>
+<p>If something about the machine makes it work slow, the <code>efficiency</code> may be less than <code>1</code>. For example, if it’s dirty or broken, its fuel is inefficient, or it is still priming itself. Your imagination is the limit.</p>
+<p>We create a new script, <code>PowerSource.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Component that can provide connected machines with electricity.</span>
+<span style="color:#75715e">## Add it as a child node of to machines that produce energy.</span>
+class_name PowerSource
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#75715e">## Signal for the power system to notify the component that it took</span>
+<span style="color:#75715e">## a certain amount of power from the power source. Allows entities to react accordingly.</span>
+<span style="color:#75715e">## For example, a battery can lower its stored amount or a generator can burn a tick of fuel.</span>
+<span style="color:#66d9ef">signal</span> power_updated(power_draw, delta)
+
+<span style="color:#75715e">## The maximum amount of power the machine can provide in units per tick.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> power_amount :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span>
+
+<span style="color:#75715e">## The possible directions for power to come `out` of the machine.</span>
+<span style="color:#75715e">## The default value, 15, makes it omnidirectional.</span>
+<span style="color:#75715e">## The FLAGS export hint below turns the value display in the Inspector into a checkbox list.</span>
+<span style="color:#66d9ef">export</span> (Types<span style="color:#f92672">.</span>Direction, FLAGS) <span style="color:#66d9ef">var</span> output_direction :<span style="color:#f92672">=</span> <span style="color:#ae81ff">15</span>
+
+<span style="color:#75715e">## How efficient the machine currently is. For instance, a machine that has no work</span>
+<span style="color:#75715e">## to do has an efficiency of `0` where one that has a job has an efficiency of `1`.</span>
+<span style="color:#66d9ef">var</span> efficiency :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+
+
+<span style="color:#75715e">## Returns a float indicating the possible power multiplied by the current efficiency.</span>
+<span style="color:#66d9ef">func</span> get_effective_power() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">float</span>:
+    <span style="color:#66d9ef">return</span> power_amount <span style="color:#f92672">*</span> efficiency
+</pre>
+<h3 id="adding-a-power-source-to-the-stirling-engine">Adding a power source to the Stirling engine</h3>
+<p>We can go back to the <code>StirlingEngineEntity.tscn</code> scene and add a new <code>PowerSource</code> child to it.</p>
+<p>The amount of power it provides is up to you and your sense of game balance about what a large piston should be able to push out or what your power units even are. Identifying what those units are is going to be the GUI’s job. I set mine for <code>25</code>, but that is before power balance.</p>
+<p>Having a component is not enough unless the engine continually runs at 100% like a cosmic power source. We don’t have a GUI, inventory, or fuel in place yet, but we can use the tween node to update the source’s efficiency and ramp up time.</p>
+<p>We can open the <code>StirlingEngineEntity.gd</code> script and add another property to interpolate to the tween.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">#onready var shaft := $PistonShaft</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> power :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>PowerSource
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    tween<span style="color:#f92672">.</span>interpolate_property(power, <span style="color:#e6db74">&quot;efficiency&quot;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, BOOTUP_TIME)
+    <span style="color:#75715e">#tween.start()</span>
+</pre>
+<p>As we don’t have inventory or fuel, we don’t need the <code>power_updated</code> signal. We’ll come back to this script later to tie the signal to consume fuel. No fuel, no power.</p>
+<h3 id="making-the-receiver-component">Making the Receiver component</h3>
+<p>The power receiver is a replica of the source component, but we invert it to receive power instead. Instead of two classes for the source and receiver of power, we could’ve chosen to code a single “PowerUnit” component and controlled whether energy flowed in or out with a flag. Still, the extra class allows us to differentiate them as individual units and name the variables for the inspector.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Component that receives electricity from a PowerSource.</span>
+<span style="color:#75715e">## Add it as a child of a machine that needs electricity to be powered.</span>
+class_name PowerReceiver
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#75715e">## Signal for the entity to react to it for when the receiver gets an amount of</span>
+<span style="color:#75715e">## power each system tick.</span>
+<span style="color:#75715e">## A battery can increase the amount of power stored, or an electric furnace can</span>
+<span style="color:#75715e">## begin smelting ore once it receives the power it needs.</span>
+<span style="color:#66d9ef">signal</span> received_power(amount, delta)
+
+<span style="color:#75715e">## The required amount of power for the machine to function in units per tick optimally.</span>
+<span style="color:#75715e">## If it receives less than that amount, it may mean the machine does not work or that it slows down.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> power_required :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span>
+
+<span style="color:#75715e">## The possible directions for power to come _in_ from, if not omnidirectional.</span>
+<span style="color:#75715e">## The FLAGS keyword makes it a multiple-choice answer in the inspector.</span>
+<span style="color:#66d9ef">export</span> (Types<span style="color:#f92672">.</span>Direction, FLAGS) <span style="color:#66d9ef">var</span> input_direction :<span style="color:#f92672">=</span> <span style="color:#ae81ff">15</span>
+
+<span style="color:#75715e">## How efficient the machine is at present. For instance, a machine that has no work</span>
+<span style="color:#75715e">## to do has an efficiency of `0` where one that has a job has an efficiency of 1.</span>
+<span style="color:#75715e">## Affects the final power demand.</span>
+<span style="color:#66d9ef">var</span> efficiency :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+
+
+<span style="color:#75715e">## Returns a float indicating the required power multiplied by the current efficiency.</span>
+<span style="color:#66d9ef">func</span> get_effective_power() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">float</span>:
+    <span style="color:#66d9ef">return</span> power_required <span style="color:#f92672">*</span> efficiency
+</pre>
+<p>We don’t have anything to assign this component to yet, but we’ll create a battery soon to test the system. Speaking of, that’s the next step.</p>
+<h2 id="implementing-the-power-system">Implementing the power system</h2>
+<p>Now we have the two components, we can code the system that’ll use them both: the <code>PowerSystem</code></p>
+<p>The system’s functions have a couple of jobs. They need to detect and collect entities with the right components, clean them up when destroyed, build a path for power to travel from sources to receivers, and then update both.</p>
+<p>If you want realism, you could also have them update the wires to melt under a certain amount of excess voltage or make the power fall off over distance. For the sake of efficiency and simplicity, in this demo, we do not update wires. We use them to check if a power source has a path to a power receiver.</p>
+<p>Create a new script named <code>PowerSystem.gd</code>. As ever, we begin with the class variables for keeping track of entities and updating them.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Holds references to entities in the world, and a series of paths that go from power sources</span>
+<span style="color:#75715e">## to power receivers. Every system tick, it sends power from the sources to the</span>
+<span style="color:#75715e">## receivers in order.</span>
+class_name PowerSystem
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Reference</span>
+
+<span style="color:#75715e">## Holds a set of power source components keyed by their map position. We keep</span>
+<span style="color:#75715e">## track of components to create &quot;paths&quot; that go from source to receiver,</span>
+<span style="color:#75715e">## which informs the system update loop to notify those components of power flow.</span>
+<span style="color:#66d9ef">var</span> power_sources :<span style="color:#f92672">=</span> {}
+
+<span style="color:#75715e">## Holds a set of power receiver components keyed by their map position.</span>
+<span style="color:#75715e">## Same purpose as power sources, we use them to create paths between source and</span>
+<span style="color:#75715e">## receiver used in the update loop.</span>
+<span style="color:#66d9ef">var</span> power_receivers :<span style="color:#f92672">=</span> {}
+
+<span style="color:#75715e">## Holds a set of entities that transmit power, like wires, keyed by their map</span>
+<span style="color:#75715e">## position. Used exclusively to create a path from a source to receiver(s).</span>
+<span style="color:#66d9ef">var</span> power_movers :<span style="color:#f92672">=</span> {}
+
+<span style="color:#75715e">## An array of &#39;power paths&#39;. Those arrays are map positions with [0] being</span>
+<span style="color:#75715e">## the location of a power source and the rest being receivers.</span>
+<span style="color:#75715e">## We use these power paths in the update loop to calculate the amount of power</span>
+<span style="color:#75715e">## in any given path (which has one source and one or more receivers) and inform</span>
+<span style="color:#75715e">## the source and receivers of the final number.</span>
+<span style="color:#66d9ef">var</span> paths :<span style="color:#f92672">=</span> []
+
+<span style="color:#75715e">## The cells that are already verified while building a power path. This</span>
+<span style="color:#75715e">## allows us to skip revisiting cells that are already in the list so we</span>
+<span style="color:#75715e">## only travel outwards.</span>
+<span style="color:#66d9ef">var</span> cells_travelled :<span style="color:#f92672">=</span> []
+
+<span style="color:#75715e">## We use this set to keep track of how much power each receiver has already gotten.</span>
+<span style="color:#75715e">## If you have two power sources with `10` units of power each feeding a machine</span>
+<span style="color:#75715e">## that takes `20`, then each will provide `10` over both paths.</span>
+<span style="color:#66d9ef">var</span> receivers_already_provided :<span style="color:#f92672">=</span> {}
+</pre>
+<p>To have the system keep track of when something has happened or should be happening, we can use the <code>Event</code> bus autoload we already coded.</p>
+<p>We’ll add a new event for this script, <code>systems_ticked</code>. When you need a new global event, go back to <code>Events.gd</code> and add the signal accordingly.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Signal emitted when the simulation triggers the systems for updates.</span>
+<span style="color:#66d9ef">signal</span> systems_ticked(delta)
+</pre>
+<p>We can now head back to <code>PowerSystem.gd</code> to connect to the <code>Events.entity_placed</code>, <code>Events.entity_removed</code>, and <code>Events.systems_ticked</code> signals.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _init() <span style="color:#f92672">-&gt;</span> void:
+    Events<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;entity_placed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_entity_placed&quot;</span>)
+    Events<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;entity_removed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_entity_removed&quot;</span>)
+    Events<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;systems_ticked&quot;</span>, self, <span style="color:#e6db74">&quot;_on_systems_ticked&quot;</span>)
+</pre>
+<p>We’ll implement the <code>_on_systems_ticked()</code> callback in the next lesson. For now, we’ll code the other two, <code>_on_entity_placed()</code> and <code>_on_entity_removed()</code>.</p>
+<h3 id="detecting-new-entities">Detecting new entities</h3>
+<p>The dictionaries above need filling, and the functions connected to the Events need filling in. We start with collecting the power sources and receivers as the entity tracker places them.</p>
+<p>To do so, we’ll need two helper functions: one to get a <code>PowerSource</code> component from an entity, and another to get a <code>PowerReceiver</code> component.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Searches for a PowerSource component in the entity&#39;s children. Returns null</span>
+<span style="color:#75715e">## if missing.</span>
+<span style="color:#66d9ef">func</span> _get_power_source_from(entity: <span style="color:#a6e22e">Node</span>) <span style="color:#f92672">-&gt;</span> PowerSource:
+    <span style="color:#75715e"># For each child in the entity</span>
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> entity<span style="color:#f92672">.</span>get_children():
+        <span style="color:#75715e"># Return the child if it&#39;s the component we need</span>
+        <span style="color:#66d9ef">if</span> child is PowerSource:
+            <span style="color:#66d9ef">return</span> child
+    <span style="color:#66d9ef">return</span> null
+
+
+<span style="color:#75715e">## Searches for a PowerReceiver component in the entity&#39;s children. Returns null</span>
+<span style="color:#75715e">## if missing.</span>
+<span style="color:#66d9ef">func</span> _get_power_receiver_from(entity: <span style="color:#a6e22e">Node</span>) <span style="color:#f92672">-&gt;</span> PowerReceiver:
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> entity<span style="color:#f92672">.</span>get_children():
+        <span style="color:#66d9ef">if</span> child is PowerReceiver:
+            <span style="color:#66d9ef">return</span> child
+    <span style="color:#66d9ef">return</span> null
+</pre>
+<p>With those in place, we can code our <code>_on_entity_placed()</code> and <code>_on_entity_removed()</code> callbacks.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Detects when the simulation places a new entity and puts its location in the respective</span>
+<span style="color:#75715e">## dictionary if it&#39;s part of the powers groups. Triggers an update of power paths.</span>
+<span style="color:#66d9ef">func</span> _on_entity_placed(entity, cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># A running tally of if we should update paths. If the new entity</span>
+    <span style="color:#75715e"># is in none of the power groups, we don&#39;t need to update anything, so false</span>
+    <span style="color:#75715e"># is the default.</span>
+    <span style="color:#66d9ef">var</span> retrace :<span style="color:#f92672">=</span> false
+
+    <span style="color:#75715e"># Check if the entity is in the power sources or receivers groups.</span>
+    <span style="color:#75715e"># Get its component using a helper function and trigger a power path update.</span>
+    <span style="color:#66d9ef">if</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_SOURCES):
+        power_sources[cellv] <span style="color:#f92672">=</span> _get_power_source_from(entity)
+        retrace <span style="color:#f92672">=</span> true
+
+    <span style="color:#66d9ef">if</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_RECEIVERS):
+        power_receivers[cellv] <span style="color:#f92672">=</span> _get_power_receiver_from(entity)
+        retrace <span style="color:#f92672">=</span> true
+
+    <span style="color:#75715e"># If a power mover, store the entity and trigger a power path update.</span>
+    <span style="color:#66d9ef">if</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_MOVERS):
+        power_movers[cellv] <span style="color:#f92672">=</span> entity
+        retrace <span style="color:#f92672">=</span> true
+
+    <span style="color:#75715e"># Update the power paths only if necessary.</span>
+    <span style="color:#66d9ef">if</span> retrace:
+        _retrace_paths()
+
+
+<span style="color:#75715e">## Detects when the simulation removes an entity. If any of our dictionaries held this</span>
+<span style="color:#75715e">## location, erase it, and trigger a path update.</span>
+<span style="color:#66d9ef">func</span> _on_entity_removed(_entity, cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># `Dictionary.erase()` returns true if it found the key and erased it.</span>
+    <span style="color:#66d9ef">var</span> retrace :<span style="color:#f92672">=</span> power_sources<span style="color:#f92672">.</span>erase(cellv)
+    <span style="color:#75715e"># Note the use of `or` below. If any of the previous flags came back true, we don&#39;t</span>
+    <span style="color:#75715e"># want to overwrite the previous true.</span>
+    retrace <span style="color:#f92672">=</span> power_receivers<span style="color:#f92672">.</span>erase(cellv) <span style="color:#f92672">or</span> retrace
+    retrace <span style="color:#f92672">=</span> power_movers<span style="color:#f92672">.</span>erase(cellv) <span style="color:#f92672">or</span> retrace
+
+    <span style="color:#75715e"># Update the power paths only if necessary.</span>
+    <span style="color:#66d9ef">if</span> retrace:
+        _retrace_paths()
+
+
+<span style="color:#75715e"># We&#39;ll implement this function in the next lesson.</span>
+<span style="color:#66d9ef">func</span> _retrace_paths() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+</pre>
+<p>We’ve made a lot of progress here, although we’re still missing some code to get the power system working. In the next lesson, we’ll build the power paths and calculate them for real.</p>
+<h2 id="code-reference">Code reference</h2>
+<p>Here are the complete scripts from this lesson.</p>
+<p><code>PowerSource.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name PowerSource
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">signal</span> power_updated(power_draw, delta)
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> power_amount :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span>
+<span style="color:#66d9ef">export</span> (Types<span style="color:#f92672">.</span>Direction, FLAGS) <span style="color:#66d9ef">var</span> output_direction :<span style="color:#f92672">=</span> <span style="color:#ae81ff">15</span>
+
+<span style="color:#66d9ef">var</span> efficiency :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+
+
+<span style="color:#66d9ef">func</span> get_effective_power() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">float</span>:
+    <span style="color:#66d9ef">return</span> power_amount <span style="color:#f92672">*</span> efficiency
+</pre>
+<p><code>PowerReceiver.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name PowerReceiver
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">signal</span> received_power(amount, delta)
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> power_required :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span>
+<span style="color:#66d9ef">export</span> (Types<span style="color:#f92672">.</span>Direction, FLAGS) <span style="color:#66d9ef">var</span> input_direction :<span style="color:#f92672">=</span> <span style="color:#ae81ff">15</span>
+
+<span style="color:#66d9ef">var</span> efficiency :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+
+
+<span style="color:#66d9ef">func</span> get_effective_power() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">float</span>:
+    <span style="color:#66d9ef">return</span> power_required <span style="color:#f92672">*</span> efficiency
+</pre>
+<p><code>StirlingEngineEntity.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> Entity
+
+<span style="color:#66d9ef">const</span> BOOTUP_TIME :<span style="color:#f92672">=</span> <span style="color:#ae81ff">6.0</span>
+<span style="color:#66d9ef">const</span> SHUTDOWN_TIME :<span style="color:#f92672">=</span> <span style="color:#ae81ff">3.0</span>
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> animation_player :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">AnimationPlayer</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> tween :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">Tween</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> shaft :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>PistonShaft
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> power :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>PowerSource
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    animation_player<span style="color:#f92672">.</span>play(<span style="color:#e6db74">&quot;Work&quot;</span>)
+    tween<span style="color:#f92672">.</span>interpolate_property(animation_player, <span style="color:#e6db74">&quot;playback_speed&quot;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, BOOTUP_TIME)
+    tween<span style="color:#f92672">.</span>interpolate_property(shaft, <span style="color:#e6db74">&quot;modulate&quot;</span>, <span style="color:#a6e22e">Color</span><span style="color:#f92672">.</span>white, <span style="color:#a6e22e">Color</span>(<span style="color:#ae81ff">0.5</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0.5</span>), BOOTUP_TIME)
+    tween<span style="color:#f92672">.</span>interpolate_property(power, <span style="color:#e6db74">&quot;efficiency&quot;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, BOOTUP_TIME)
+    tween<span style="color:#f92672">.</span>start()
+</pre>
+<p><code>PowerSystem.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name PowerSystem
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Reference</span>
+
+<span style="color:#66d9ef">var</span> power_sources :<span style="color:#f92672">=</span> {}
+<span style="color:#66d9ef">var</span> power_receivers :<span style="color:#f92672">=</span> {}
+<span style="color:#66d9ef">var</span> power_movers :<span style="color:#f92672">=</span> {}
+<span style="color:#66d9ef">var</span> paths :<span style="color:#f92672">=</span> []
+<span style="color:#66d9ef">var</span> cells_travelled :<span style="color:#f92672">=</span> []
+<span style="color:#66d9ef">var</span> receivers_already_provided :<span style="color:#f92672">=</span> {}
+
+
+<span style="color:#66d9ef">func</span> _init() <span style="color:#f92672">-&gt;</span> void:
+    Events<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;entity_placed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_entity_placed&quot;</span>)
+    Events<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;entity_removed&quot;</span>, self, <span style="color:#e6db74">&quot;_on_entity_removed&quot;</span>)
+    Events<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;systems_ticked&quot;</span>, self, <span style="color:#e6db74">&quot;_on_systems_ticked&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _get_power_source_from(entity: <span style="color:#a6e22e">Node</span>) <span style="color:#f92672">-&gt;</span> PowerSource:
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> entity<span style="color:#f92672">.</span>get_children():
+        <span style="color:#66d9ef">if</span> child is PowerSource:
+            <span style="color:#66d9ef">return</span> child
+    <span style="color:#66d9ef">return</span> null
+
+
+<span style="color:#66d9ef">func</span> _get_power_receiver_from(entity: <span style="color:#a6e22e">Node</span>) <span style="color:#f92672">-&gt;</span> PowerReceiver:
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> entity<span style="color:#f92672">.</span>get_children():
+        <span style="color:#66d9ef">if</span> child is PowerReceiver:
+            <span style="color:#66d9ef">return</span> child
+    <span style="color:#66d9ef">return</span> null
+
+
+<span style="color:#66d9ef">func</span> _on_entity_placed(entity, cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> retrace :<span style="color:#f92672">=</span> false
+
+    <span style="color:#66d9ef">if</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_SOURCES):
+        power_sources[cellv] <span style="color:#f92672">=</span> _get_power_source_from(entity)
+        retrace <span style="color:#f92672">=</span> true
+
+    <span style="color:#66d9ef">if</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_RECEIVERS):
+        power_receivers[cellv] <span style="color:#f92672">=</span> _get_power_receiver_from(entity)
+        retrace <span style="color:#f92672">=</span> true
+
+    <span style="color:#66d9ef">if</span> entity<span style="color:#f92672">.</span>is_in_group(Types<span style="color:#f92672">.</span>POWER_MOVERS):
+        power_movers[cellv] <span style="color:#f92672">=</span> entity
+        retrace <span style="color:#f92672">=</span> true
+
+    <span style="color:#66d9ef">if</span> retrace:
+        _retrace_paths()
+
+
+<span style="color:#66d9ef">func</span> _on_entity_removed(_entity, cellv: <span style="color:#a6e22e">Vector2</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> retrace :<span style="color:#f92672">=</span> power_sources<span style="color:#f92672">.</span>erase(cellv)
+    retrace <span style="color:#f92672">=</span> power_receivers<span style="color:#f92672">.</span>erase(cellv) <span style="color:#f92672">or</span> retrace
+    retrace <span style="color:#f92672">=</span> power_movers<span style="color:#f92672">.</span>erase(cellv) <span style="color:#f92672">or</span> retrace
+
+    <span style="color:#66d9ef">if</span> retrace:
+        _retrace_paths()
+
+
+<span style="color:#66d9ef">func</span> _retrace_paths() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+</pre>
+<p><code>Events.gd</code></p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+<span style="color:#66d9ef">signal</span> entity_placed(entity, cellv)
+<span style="color:#66d9ef">signal</span> entity_removed(entity, cellv)
+<span style="color:#66d9ef">signal</span> systems_ticked(delta)
+</pre>
+</body>
+</html>

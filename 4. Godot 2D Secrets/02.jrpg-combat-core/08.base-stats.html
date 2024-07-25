@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpKN2lps9es0</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="character-base-stats">Character base stats</h1>
+<p>In the previous two parts, we accessed battlers’ stats without defining them. Let’s do so in this lesson.</p>
+<p>We’re going to code the complete stats system here, with base stats, bonuses, and penalties. We need a reliable and secure way to read and update stats. That’s where the class’s complexity lies.</p>
+<p>As we saw two lessons ago when coding the <code>Battler</code>, our stats will extend the <code>Resource</code> class. This is so we can save them as a file separately from our characters and monsters, share them, and edit them in the <em>Inspector</em> without having to open a scene. Using a resource will also group the stats into a foldable area of in the <em>Inspector</em>.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>In a complete RPG game, using a resource would also allow you to attach it to the party member in the game world and the corresponding battler in the combat arena. As resources are shared in memory, losing health during combat would persist back on the map. And that, without having to explicitly pass a reference from the map’s character to the battler: attaching the resource to both in the editor would be enough.</p>
+<h2 id="health-and-energy">Health and energy</h2>
+<p>Let’s code the stats class now, starting with health and energy.</p>
+<p>Create a new GDScript file named <code>BattlerStats.gd</code>.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Stores and manages the battler&#39;s base stats like health, energy, and base</span>
+<span style="color:#75715e"># damage.</span>
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Resource</span>
+class_name BattlerStats
+</pre>
+<p>We need variables to control the maximum and current value for both stats. We will also use three signals to update the life and energy bars and know when a character fell in combat.</p>
+<p>Health and energy use similar logic. The main difference is that health should start at the maximum, while the energy starts at <code>0</code>.</p>
+<p>Below, we define signals for when the health and the energy change. This will allow us to limit coupling between the bars in the user interface and the stats themselves. Without signals, we would have to store a reference to the stats inside, say, the life bar, which would tightly couple the two objects and make code maintenance harder.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># Emitted when a character has no `health` left.</span>
+<span style="color:#66d9ef">signal</span> health_depleted
+<span style="color:#75715e"># Emitted every time the value of `health` changes.</span>
+<span style="color:#75715e"># We will use it to animate the life bar.</span>
+<span style="color:#66d9ef">signal</span> health_changed(old_value, new_value)
+<span style="color:#75715e"># Same as above, but for the `energy`.</span>
+<span style="color:#66d9ef">signal</span> energy_changed(old_value, new_value)
+
+
+<span style="color:#75715e"># The battler&#39;s maximum health.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> max_health :<span style="color:#f92672">=</span> <span style="color:#ae81ff">100.0</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> max_energy :<span style="color:#f92672">=</span> <span style="color:#ae81ff">6</span>
+
+<span style="color:#75715e"># Note that due to how Resources work, in Godot 3.2, health will not have a</span>
+<span style="color:#75715e"># value of `max_health`. This is why we have the function `reinitialize()`</span>
+<span style="color:#75715e"># below. Each battler should call it when the encounter starts.</span>
+<span style="color:#75715e"># This happens because a resource&#39;s initialization happens when you create it </span>
+<span style="color:#75715e"># in the editor serialize it, not when you load it in the game.</span>
+<span style="color:#66d9ef">var</span> health :<span style="color:#f92672">=</span> max_health <span style="color:#66d9ef">setget</span> set_health
+<span style="color:#66d9ef">var</span> energy :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">setget</span> set_energy
+
+
+<span style="color:#66d9ef">func</span> reinitialize() <span style="color:#f92672">-&gt;</span> void:
+    set_health(max_health)
+
+
+<span style="color:#66d9ef">func</span> set_health(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> health_previous :<span style="color:#f92672">=</span> health
+    <span style="color:#75715e"># We use `clamp()` to ensure the value is always in the [0.0, max_health]</span>
+    <span style="color:#75715e"># interval.</span>
+    health <span style="color:#f92672">=</span> clamp(value, <span style="color:#ae81ff">0.0</span>, max_health)
+    emit_signal(<span style="color:#e6db74">&quot;health_changed&quot;</span>, health_previous, health)
+    <span style="color:#75715e"># As we are working with decimal values, using the `==` operator for</span>
+    <span style="color:#75715e"># comparisons isn&#39;t safe. Instead, we need to call `is_equal_approx()`.</span>
+    <span style="color:#66d9ef">if</span> is_equal_approx(health, <span style="color:#ae81ff">0.0</span>):
+        emit_signal(<span style="color:#e6db74">&quot;health_depleted&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> set_energy(value: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> energy_previous :<span style="color:#f92672">=</span> energy
+    <span style="color:#75715e"># Energy works with whole numbers in this demo but the `clamp()` function</span>
+    <span style="color:#75715e"># returns a floating-point value. You can let the compiler cast the value to</span>
+    <span style="color:#75715e"># an integer, which will trigger a warning. I prefer to always do it</span>
+    <span style="color:#75715e"># explicitly to remind myself that I&#39;m working with integers here.</span>
+    energy <span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(clamp(value, <span style="color:#ae81ff">0.0</span>, max_energy))
+    emit_signal(<span style="color:#e6db74">&quot;energy_changed&quot;</span>, energy_previous, energy)
+</pre>
+<h2 id="base-and-final-stats">Base and final stats</h2>
+<p>Other stats all follow the same pattern. We have an exported variable to control a starting or base value for the character in the <em>Inspector</em>. Another property stores the final stat we’ll use in combat, with bonuses and penalties from status effects, items, or equipment applied.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_attack :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span> <span style="color:#66d9ef">setget</span> set_base_attack
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_defense :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span> <span style="color:#66d9ef">setget</span> set_base_defense
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_speed :<span style="color:#f92672">=</span> <span style="color:#ae81ff">70.0</span> <span style="color:#66d9ef">setget</span> set_base_speed
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_hit_chance :<span style="color:#f92672">=</span> <span style="color:#ae81ff">100.0</span> <span style="color:#66d9ef">setget</span> set_base_hit_chance
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_evasion :<span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span> <span style="color:#66d9ef">setget</span> set_base_evasion
+
+<span style="color:#75715e"># The values below are meant to be read-only.</span>
+<span style="color:#66d9ef">var</span> attack :<span style="color:#f92672">=</span> base_attack
+<span style="color:#66d9ef">var</span> defense :<span style="color:#f92672">=</span> base_defense
+<span style="color:#66d9ef">var</span> speed :<span style="color:#f92672">=</span> base_speed
+<span style="color:#66d9ef">var</span> hit_chance :<span style="color:#f92672">=</span> base_hit_chance
+<span style="color:#66d9ef">var</span> evasion :<span style="color:#f92672">=</span> base_evasion
+</pre>
+<p>I’ve chosen five stats for the game:</p>
+<ol type="1">
+<li>Attack and defense influence the damage a battler deals or takes.</li>
+<li>A high speed allows a battler to take turns often.</li>
+<li>Hit chance and evasion influence a battler’s ability to act successfully.</li>
+</ol>
+<p>We will discuss the damage and hit formulas in another lesson.</p>
+<p>I mentioned above properties like <code>attack</code> and <code>defense</code> are intended to be read-only. There is no way to enforce that in this class, even by using a setter function that doesn’t assign values. To prevent teammates from inadvertently modifying final stats, an option is to make the properties like <code>attack</code> pseudo-private and access them using a getter function. For example:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">var</span> _attack :<span style="color:#f92672">=</span> base_attack <span style="color:#66d9ef">setget</span> , get_attack
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">func</span> get_attack() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">float</span>:
+    <span style="color:#66d9ef">return</span> attack
+</pre>
+<p>But I’ve chosen to stick to public properties as in the team, we have a pretty strong and consistent code style.</p>
+<p>When we modify a base stat, we have to recalculate the corresponding final stat. This could happen, for example, when a character levels up. To achieve this, we can have every <code>base_*</code> property go through a setter that triggers recalculating the associated final value.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_attack :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span> <span style="color:#66d9ef">setget</span> set_base_attack
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> base_defense :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10.0</span> <span style="color:#66d9ef">setget</span> set_base_defense
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">func</span> set_base_attack(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    base_attack <span style="color:#f92672">=</span> value
+    _recalculate_and_update(<span style="color:#e6db74">&quot;attack&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> set_base_defense(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    base_defense <span style="color:#f92672">=</span> value
+    _recalculate_and_update(<span style="color:#e6db74">&quot;defense&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> set_base_speed(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    base_speed <span style="color:#f92672">=</span> value
+    _recalculate_and_update(<span style="color:#e6db74">&quot;speed&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> set_base_hit_chance(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    base_hit_chance <span style="color:#f92672">=</span> value
+    _recalculate_and_update(<span style="color:#e6db74">&quot;hit_chance&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> set_base_evasion(value: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    base_evasion <span style="color:#f92672">=</span> value
+    _recalculate_and_update(<span style="color:#e6db74">&quot;evasion&quot;</span>)
+</pre>
+<p>We have yet to define <code>_recalculate_and_update()</code>, which we’re going to do in the next lesson. But note that it’s this setup that allows for a flexible upgrade system.</p>
+<p>There are ways to avoid writing these repetitive setter functions or defining separate base and final stats. You’ll find an example in the course’s appendix at the end of this series. That’s a different stats implementation from our <a href="https://github.com/GDQuest/godot-2d-space-game">2D space game</a> that uses <code>Object.get_property_list()</code> to find stats from the object’s properties procedurally.</p>
+<p>However, considering we only have several stats and they’re unlikely to change during development, it’s not worth spending an hour to find a “smart” solution to save us 30 seconds of copy and paste.</p>
+<h2 id="deactivating-the-battler-when-the-health-depletes">Deactivating the battler when the health depletes</h2>
+<p>We can use the stats’ <code>health_depleted</code> signal to deactivate the battler. Open <code>Battler.gd</code> and add the following code.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e"># We connect to the stats&#39; `health_depleted` signal to react to the health reaching `0`.</span>
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e">#...</span>
+    <span style="color:#75715e">#stats.reinitialize()</span>
+    stats<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;health_depleted&quot;</span>, self, <span style="color:#e6db74">&quot;_on_BattlerStats_health_depleted&quot;</span>)
+
+
+<span style="color:#66d9ef">func</span> _on_BattlerStats_health_depleted() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># When the health depletes, we turn off processing for this battler.</span>
+    set_is_active(false)
+    <span style="color:#75715e"># Then, if it&#39;s an opponent, we mark it as unselectable. For party members,</span>
+    <span style="color:#75715e"># you still want to be able to select them to revive them.</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> is_party_member:
+        set_is_selectable(false)
+</pre>
+</body>
+</html>

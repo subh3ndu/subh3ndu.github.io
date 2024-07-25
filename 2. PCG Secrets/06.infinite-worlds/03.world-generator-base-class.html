@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpUemApcsRKP</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="the-worldgenerator-base-class">The WorldGenerator base class</h1>
+<p>In this lesson, we will build our infinite world generator’s foundations. We will code a virtual base class that each of our world generators will extend.</p>
+<p>This base class defines the shared properties and functions to generate and store data regarding the world’s sectors around the player.</p>
+<h2 id="the-challenge-with-infinite-worlds">The challenge with infinite worlds</h2>
+<p>The biggest challenge with infinite worlds probably has to do with the computer’s resources.</p>
+<p>In other tutorial series, we generated entire levels at once. However, here, our world is infinite. And we can’t generate an endless amount of data on a computer with finite processing power and memory.</p>
+<p>Instead, we have to generate a small portion of the world at a time. Because memory is finite, if the player moves far enough, we have to free some of the generated entities to make space for new chunks of the map.</p>
+<p>Here’s a solution to this problem. We’ll split the world into a grid and generate or free grid cells on the fly as the player explores the environment.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>With such a grid, you can keep using all sorts of generation algorithms, including those you learned in previous chapters.</p>
+<p>At least, as long as they’re <strong>deterministic</strong>. That is to say, if given the same input seed value, they always generate the same patterns. That’s because the player can move away from an area and come back to it later. When that happens, the area gets unloaded and re-generated. And the algorithm should generate it the same way as before.</p>
+<p>In this series, we’ve chosen to set the game in space and introduce new techniques like <strong>noise generators</strong>. These techniques apply to any kind of procedural generation.</p>
+<p>Here is how we will make the infinite world algorithm work:</p>
+<ol type="1">
+<li>We have a world divided into a square grid of sectors.</li>
+<li>Each sector should be roughly one screen tall, or maybe a bit bigger than that. This gives us enough space to generate interesting patterns inside of each.</li>
+<li>At the start of the game, we generate a small grid of sectors around the player.</li>
+<li>As the player moves in a given direction, we destroy the far away sectors and generate new ones in the direction they are moving.</li>
+</ol>
+<p>The last point is about performance optimization. We will only generate a handful of sectors at a time to avoid slowing down the game. As we generate a limited number of entities in the demo, the algorithm’s performance shouldn’t be an issue. However, as you add layers and rules to your algorithms, they require more processing power. The easiest way to limit the performance cost is to only generate what you need as the player moves.</p>
+<p>We’ll look at the function that helps us lazily generate and free chunks of the world after implementing our first procedural world, in two lessons.</p>
+<h2 id="coding-the-worldgenerator-base-class">Coding the WorldGenerator base class</h2>
+<p>Open a copy of the start project if you haven’t already done so, and create a new script named <code>WorldGenerator.gd</code>. It’s a base class that’ll define some features all of our infinite world generators will build upon.</p>
+<p>We start with the class definition and some properties. We need some variables to store the size of sectors, the number of sectors we want to generate around the player, and more.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Abstract base class for worlds.</span>
+<span style="color:#75715e">##</span>
+<span style="color:#75715e">## Splits the world into `sectors` of a fixed size in pixels. You can think of</span>
+<span style="color:#75715e">## the world as a grid of square sectors.</span>
+<span style="color:#75715e">## Exposes functions for extended classes to use, though the central part is the</span>
+<span style="color:#75715e">## `_generate_sector()` virtual method. This is where you should generate the</span>
+<span style="color:#75715e">## content of individual sectors.</span>
+class_name WorldGenerator
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node2D</span>
+
+<span style="color:#75715e">## When the player moves around the world, we generate sectors only in the</span>
+<span style="color:#75715e">## direction they are moving. And to do so, we think in term of the axis the</span>
+<span style="color:#75715e">## player Is moving along. These two constants represent the X and Y axes</span>
+<span style="color:#75715e">## respectively.</span>
+<span style="color:#66d9ef">enum</span> { AXIS_X, AXIS_Y }
+
+<span style="color:#75715e">## Size of a sector in pixels.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> sector_size :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1000.0</span>
+<span style="color:#75715e">## Number of sectors to generate around the player on a given axis.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> sector_axis_count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+<span style="color:#75715e">## Seed to generate the world. We will use a hash function to convert it to a</span>
+<span style="color:#75715e">## unique number for each sector. See the `make_seed_for()` function below.</span>
+<span style="color:#75715e">## This technique makes the world generation deterministic.</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> start_seed :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;world_generation&quot;</span>
+
+<span style="color:#75715e">## This dictionary will store the generated world data for every active sector.</span>
+<span style="color:#75715e">## You can use </span>
+<span style="color:#66d9ef">var</span> _sectors :<span style="color:#f92672">=</span> {}
+<span style="color:#75715e">## Coordinates of the sector the player currently is in. We use it to generate</span>
+<span style="color:#75715e">## sectors around the player.</span>
+<span style="color:#66d9ef">var</span> _current_sector :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO
+<span style="color:#75715e">## There are some built-in functions in GDScript to generate random numbers, but</span>
+<span style="color:#75715e">## the random number generator allows us to use a specific seed and provides</span>
+<span style="color:#75715e">## more methods, which is useful for procedural generation.</span>
+<span style="color:#66d9ef">var</span> _rng :<span style="color:#f92672">=</span> RandomNumberGenerator<span style="color:#f92672">.</span>new()
+
+<span style="color:#75715e">## We will reuse the three values below several times so we pre-calculate them.</span>
+<span style="color:#75715e">## They all relate to sectors and help us define and process our world&#39;s grid.</span>
+<span style="color:#75715e">## Half of `sector_size`.</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _half_sector_size :<span style="color:#f92672">=</span> sector_size <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>
+<span style="color:#75715e">## Total number of sectors to generate around the player.</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _total_sector_count :<span style="color:#f92672">=</span> sector_size <span style="color:#f92672">*</span> sector_size
+<span style="color:#75715e">## And this is half of `_total_sector_count`.</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _half_sector_count :<span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(sector_axis_count <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>)
+</pre>
+<p>Next, we define the base functions to generate the world. We’ll run the <code>generate()</code> method below once upon loading the world. This method delegates the work to <code>_generate_sector()</code>, a virtual method where we’ll implement various procedural generation algorithms in the next lessons.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Generates the world from scratch around the player.</span>
+<span style="color:#75715e">## Calls `_generate_sector()` below for each sector in a grid around the player.</span>
+<span style="color:#66d9ef">func</span> generate() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#75715e"># We loop over each cell in a grid of size `_total_sector_count` centered on the player.</span>
+    <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> range(<span style="color:#f92672">-</span>_half_sector_count, _half_sector_count):
+        <span style="color:#66d9ef">for</span> y <span style="color:#f92672">in</span> range(<span style="color:#f92672">-</span>_half_sector_count, _half_sector_count):
+            _generate_sector(x, y)
+
+
+<span style="color:#75715e">## Virtual function that governs how we should generate a given sector based on</span>
+<span style="color:#75715e">## its position in the infinite grid.</span>
+<span style="color:#66d9ef">func</span> _generate_sector(_x_id: <span style="color:#a6e22e">int</span>, _y_id: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+</pre>
+<h2 id="deterministic-procedural-generation">Deterministic procedural generation</h2>
+<p>We want to code our world generation algorithm in a deterministic way: when the player returns to a given location, the sector gets generated the same way.</p>
+<p>Computers don’t generate <em>truly random</em> numbers. Instead, they produce pseudo-random ones starting with a <strong>seed</strong>, a root number from which they calculate a sequence of numbers that feel random.</p>
+<p>Thanks to this, if we give the program the same seed, we always get the same sequence of numbers in return.</p>
+<p>Now, we can’t have only one seed for the entire world: if the player explores far from the starting point, saves, and loads the game again, using the same seed could effectively re-spawn the player at the center of the universe; or recenter the universe around them, depending on how you frame the issue.</p>
+<p>A solution to this problem is to generate unique seeds for different parts of the world. And as we’re already looking to split our world into sectors, we’ll generate a unique seed based on their coordinates. That way, each sector will have its unique sequence of pseudo-random numbers and always generate the same way.</p>
+<p>To do so, we write a function that produces the same seed given the same input parameters. We start from our <code>start_seed</code> and build a string that includes the sector’s coordinates. Then, we use the <code>String.hash()</code> method to convert it to a unique integer.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#75715e">## Creates a text string for the seed with the format &quot;seed_x_y&quot; and uses the</span>
+<span style="color:#75715e">## hash method to turn it into an integer.</span>
+<span style="color:#75715e">## This allows us to use it with the `RandomNumberGenerator.seed` property.</span>
+<span style="color:#66d9ef">func</span> make_seed_for(_x_id: <span style="color:#a6e22e">int</span>, _y_id: <span style="color:#a6e22e">int</span>, custom_data :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#75715e"># We build a string with three templates separated by underscores and use</span>
+    <span style="color:#75715e"># string formatting to populate them.</span>
+    <span style="color:#66d9ef">var</span> new_seed :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">_</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">_</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [start_seed, _x_id, _y_id]
+    <span style="color:#75715e"># We&#39;ll use the `custom_data` when we get to the layered world generator.</span>
+    <span style="color:#75715e"># It&#39;ll allow us to add a third dimension of information to the seed: the current layer.</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> custom_data<span style="color:#f92672">.</span>empty():
+        new_seed <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">_</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [new_seed, custom_data]
+    <span style="color:#66d9ef">return</span> new_seed<span style="color:#f92672">.</span>hash()
+</pre>
+<h2 id="code-reference">Code reference</h2>
+<p>Here’s the <code>WorldGenerator.gd</code> script so far, without the comments.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name WorldGenerator
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node2D</span>
+
+<span style="color:#66d9ef">enum</span> { AXIS_X, AXIS_Y }
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> sector_size :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1000.0</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> sector_axis_count :<span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> start_seed :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;world_generation&quot;</span>
+
+<span style="color:#66d9ef">var</span> _sectors :<span style="color:#f92672">=</span> {}
+<span style="color:#66d9ef">var</span> _current_sector :<span style="color:#f92672">=</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>ZERO
+<span style="color:#66d9ef">var</span> _rng :<span style="color:#f92672">=</span> RandomNumberGenerator<span style="color:#f92672">.</span>new()
+
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _half_sector_size :<span style="color:#f92672">=</span> sector_size <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _total_sector_count :<span style="color:#f92672">=</span> sector_size <span style="color:#f92672">*</span> sector_size
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> _half_sector_count :<span style="color:#f92672">=</span> <span style="color:#a6e22e">int</span>(sector_axis_count <span style="color:#f92672">/</span> <span style="color:#ae81ff">2.0</span>)
+
+
+<span style="color:#66d9ef">func</span> generate() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> range(<span style="color:#f92672">-</span>_half_sector_count, _half_sector_count):
+        <span style="color:#66d9ef">for</span> y <span style="color:#f92672">in</span> range(<span style="color:#f92672">-</span>_half_sector_count, _half_sector_count):
+            _generate_sector(x, y)
+
+
+<span style="color:#66d9ef">func</span> _generate_sector(_x_id: <span style="color:#a6e22e">int</span>, _y_id: <span style="color:#a6e22e">int</span>) <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+
+
+<span style="color:#66d9ef">func</span> make_seed_for(_x_id: <span style="color:#a6e22e">int</span>, _y_id: <span style="color:#a6e22e">int</span>, custom_data :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;&quot;</span>) <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">int</span>:
+    <span style="color:#66d9ef">var</span> new_seed :<span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">_</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">_</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [start_seed, _x_id, _y_id]
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> custom_data<span style="color:#f92672">.</span>empty():
+        new_seed <span style="color:#f92672">=</span> <span style="color:#e6db74">&quot;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">_</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&quot;</span> <span style="color:#f92672">%</span> [new_seed, custom_data]
+    <span style="color:#66d9ef">return</span> new_seed<span style="color:#f92672">.</span>hash()
+</pre>
+</body>
+</html>

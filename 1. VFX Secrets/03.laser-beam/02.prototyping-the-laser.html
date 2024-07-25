@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpjVDe25CQWi</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="prototyping-the-laser">Prototyping the laser</h1>
+<p>When designing visual effects, you always want to have the underlying mechanic or interactions in place. That’s why we’re going to prototype our laser’s fire mechanic first.</p>
+<p>For this effect, we need:</p>
+<ol type="1">
+<li>A <code>RayCast2D</code> node to detect collisions and limit the length of the laser.</li>
+<li>a <code>Line2D</code> node to draw our laser beam, following the raycast.</li>
+<li>Three <code>Particle2D</code> nodes. We are going to emit particles from the ship, along the beam, and where the laser hits. Name them respectively <em>CastingParticles2D</em>, <em>BeamParticles2D</em>, and <em>CollisionParticles2D</em>.</li>
+<li>A <code>Tween</code> node to animate the laser’s width, when we start or stop casting the beam.</li>
+</ol>
+<p>Create these nodes in a new scene, with the raycast as the scene’s root node. Rename the <code>RayCast2D</code> node <em>LaserBeam2D</em>.</p>
+<p>Your scene should look like that:</p>
+<figure>
+<img src="data:image/png;base64,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" alt />
+</figure>
+<p>We are going to use the <em>glowing_circle.png</em> image for all the particle systems. You can find it in the <em>FileSystem</em> dock under the <em>assets/</em> folder. Select all the <code>Particle2D</code> nodes at the same time and drag the image to the <em>Texture</em> property in the Inspector. Changing a property with multiple nodes selected updates them all at the same time.</p>
+<p>Save your scene as <code>LaserBeam.tscn</code></p>
+<h2 id="coding-the-interactive-beam">Coding the interactive beam</h2>
+<p>Next, we have to write some code to fire the beam.</p>
+<p>Let’s start by making the beam cast towards a direction until it reaches its maximum length. Add a new GDScript file to the <em>LaserBeam2D</em>.</p>
+<p>Open the script and add two exported properties so you can configure the beam’s cast speed and its maximum length.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name LaserBeam2D
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">RayCast2D</span>
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> cast_speed :<span style="color:#f92672">=</span> <span style="color:#ae81ff">7000.0</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">var</span> max_length :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1400</span>
+</pre>
+<p>We need to make the raycast extend up to <code>max_length</code> at a speed of <code>cast_speed</code>. We are then going to use it to limit the length of the <em>Line2D</em> node, where it intersects with other colliders.</p>
+<p>We are going to use the <code>_physics_process</code> callback for that. Inside the <code>_physics_process</code> method, let’s use the <code>cast_to</code> property of <code>RayCast2D`` to extend the ray. Clamp the length to</code>max_length`.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _physics_process(delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    cast_to <span style="color:#f92672">=</span> (cast_to <span style="color:#f92672">+</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>RIGHT <span style="color:#f92672">*</span> cast_speed <span style="color:#f92672">*</span> delta)<span style="color:#f92672">.</span>clamped(max_length)
+</pre>
+<p>The calculation above extends the laser to the right, which corresponds to an angle of <code>0</code> in Godot. Doing so ensures we won’t run into problems when we rotate the laser later.</p>
+<h2 id="designing-the-base-visuals">Designing the base visuals</h2>
+<p>We have the raycast set, now let’s create the laser. Back to the scene, in the <em>FillLine2D</em>, create 2 points. The line should:</p>
+<ol type="1">
+<li>Only have two points.</li>
+<li>The first point should be at the origin of the world, <code>Vector2(0, 0)</code>.</li>
+</ol>
+<p>You can use the Grid Snap to snap the points to precise locations or expand the <em>Points</em> property in the Inspector to set their coordinates by hand.</p>
+<figure>
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAg4AAAB/CAMAAACwhLpGAAAAkFBMVEUyKUfvkGTKfF74USemaFjmjGNOOEtmf/9BOFTBd13vTjXRXF91euhxiP9WTmclHzLZhWH/hITq6eouJUBnR1HOgGGLWVI7NEj/kZF8tBxzlndFSGigRpXFMU+Fmfz/vr7/vb2wr7WzsbjGfGD+/v5WZMbAYaDzTGF4Z4C7t7x9LSahro3KVE/gyb9XZ1DBLkr5rpIRAAAEB0lEQVR42u3da5OaMBiGYbBIoQexCYpI9+CeOrrd7f//d1WLuDONLyrLCsn9fI2wvMM1JIRJ1os8MXJz3uTgHjePWjz5ZcsuIjFyc97k4B43j1o8+UXL9ng68HR40wwHOMABDnCAAxzgAAc4wAEOcIADHOAABzjAAQ5wgAMc4AAHOMABDnCAAxzgAAc4wAEOdnNI1tGOcChrdYKD/r/Yeg46u1PqLtMucKhqdYGDqdhaDjpTt7PZrcq0/Rz2tTrAITMVW8shWdz8WOdmkdjPYV+rAxw8U7H1HNRsc9RMucChqtUBDtpULBzgQGdBZ3FmZ+ExlGQoyYsmL5oHji9nK8I4kJIHVmSaptOTDoh7W2p21jRUmXDgjweHM8kHYiY0n97c5rmHfpzJzxZxiXc69P2hkHzoZvy+Xrfvpw0W9KfjcRAKyUMxqa3NoxZP3uaFx5NhKD8d6jhMrR9KntHc16FkAAc4wAEOcIADHOAABzjAAQ5wgAMc4AAHOMABDnCAg60cigIOcKg4fBbz3dbm6xZP3vDC4QAHOMABDnCAAxzgAAc4wAEOcLCFQ5I/PsIBDjsOz9dwcIPDdu0WHOzj0GBvqFDmoF9HcOgWhyKROcRhg72h0oHEYbP6s4BDlzgU61sicYiDJntDLQOJQ5IoJXqAwwdzKDZ3RPAQBC+N9oY6xGG7LDxRDw8qWf1e5yvpQFb/7shhD8G0bjOgK1P+/KpibL9aPT2lm7+99fCFdCKr3R0Jfx7MU5kDzd7IlGhZdhbxODD/4Pk5rDh8Ip1IxUGPDiTedRbLyPyDM4eSOtG7ziJ6XOebW7nu5mUVZWeh33koedSLZrIdSkYMJXs0lDzvRXO3N5Q8DbX5TcSLZtdeNPX7T0MdNUmtE6ah+jYN1eo3iwWT1HzCggMcjBxe+cANh33mtt5vOMABDnCAAxzgAAc4wAEOcIDDhTiwvwP7O7zl4MEBDhUHDw5wgAMc4AAHOMABDnCAAxzgAAc4wAEOcIADHOAABzjA4QM4DP1xLGQei7m3tXnS4snbvPCh32xvKF/kcG8Jh+l0GgRucPAzeVFeYfxX7Vm0VGoZZWsPUua+BRnEL0q9xAPfhYTljTXe9aiQF/RnWu6LbBg77Gu1f+zgZVmTvaEWif0c9rU6wMFbNNobygUOpu2SbOWg6/aGggMc6CzoLE550XRoKOkxlKzlUO4NpT0HOFS1OsAhMhV7xDSULmcrHOBQ1eoCB1OxR09Su8Hh9OYec/DOm6SGAxzgAAc4wAEOcIADHOAABzjAAQ5wgAMc4AAHOMABDnCAAxzgAAc4wAEOcIADHOAABzjAAQ5wgAMcLONgXtC/X+Itts6bHNzj5lGLJ79o2TwdeDq8af4LTPeBtWjXxYYAAAAASUVORK5CYII=" alt />
+</figure>
+<p>Back to the script, store a reference to the <em>FillLine2D</em> node. You can place it right below the exported variables you already have:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> fill :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>FillLine2D
+</pre>
+<p>Now, we need to make the <em>FillLine2D</em> extend with the ray we cast in <code>_physics_process</code>. For that, create a <code>cast_beam()</code> method and call it in <code>_physics_process</code>:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> _physics_process(delta: <span style="color:#a6e22e">float</span>) <span style="color:#f92672">-&gt;</span> void:
+    cast_to <span style="color:#f92672">=</span> (cast_to <span style="color:#f92672">+</span> <span style="color:#a6e22e">Vector2</span><span style="color:#f92672">.</span>RIGHT <span style="color:#f92672">*</span> cast_speed <span style="color:#f92672">*</span> delta)<span style="color:#f92672">.</span>clamped(max_length)
+    cast_beam()
+
+
+<span style="color:#66d9ef">func</span> cast_beam() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">pass</span>
+</pre>
+<p>In the <code>cast_beam()</code> method, we are going to calculate how far the laser should extend:</p>
+<ol type="1">
+<li>If the raycast collides with something, the laser should stop there.</li>
+<li>Otherwise, the laser should extend to the length of the ray.</li>
+</ol>
+<p>In the <code>cast_beam()</code> method, add a <code>cast_point</code> variable and have it default to the <code>cast_to</code> value. If the raycast is colliding, then assign the collision point’s coordinates to the <code>cast_point</code> variable.</p>
+<p>The physics engine updates the collision information on raycasts and other physics nodes all together at the end of the physics frame. We need to update the raycast manually to get correct collision information. Call <code>force_raycast_update()</code> before checking for collisions to do so.</p>
+<p>Finally, set the fill line’s last point to the value of <code>cast_point</code> to extend the laser beam. Your <code>cast_beam</code> function should look like this:</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">func</span> cast_beam() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> cast_point :<span style="color:#f92672">=</span> cast_to
+
+    force_raycast_update()
+    <span style="color:#66d9ef">if</span> is_colliding():
+        cast_point <span style="color:#f92672">=</span> to_local(get_collision_point())
+
+    fill<span style="color:#f92672">.</span>points[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> cast_point
+</pre>
+<p>Note that we need to convert the collision point’s coordinates to local ones because the function <code>get_collision_point()</code> returns a global position, and our fill line uses local coordinates for drawing.</p>
+<p>To test your changes, in <code>_physics_process</code>, you can add a call to <code>look_at(get_global_mouse_position())</code>. This function rotates your node towards the mouse. Be sure to remove the extra line after testing at the end of the tutorial.</p>
+</body>
+</html>

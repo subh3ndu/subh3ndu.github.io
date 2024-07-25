@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TmpsyfwaqWDMv</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <style type="text/css">:root {--c-caption: grey;--c-blue: #26bfe3;--c-green: #02e180;--c-orange: #f2971a;--c-pink: #e3266f;--c-bg: #fff;--c-bg-alt: #f5f5f5;--c-text-header: #fff;--c-text-body: #95989a;--padding: 20px;--padding-inv: calc(-1 * var(--padding));--fonts: "Open Sans", -apple-system, system-ui, "Segoe UI", "Roboto","Helvetica Neue", Arial, sans-serif;--font-size: 1.1rem;}html {font-size: 100%;}body {color: #444;font-family: var(--fonts);font-size: var(--font-size);line-height: 1.7;padding: 1em;margin: auto;max-width: 800px;background: #fefefe;}a {color: #0645ad;text-decoration: none;}a:visited {color: #0b0080;}a:hover {color: #06e;}a:active {color: #faa700;}a:focus {outline: thin dotted;}a::selection {background: rgba(255, 255, 0, 0.3);color: #0645ad;}*::selection {background: rgba(255, 255, 0, 0.3);color: #000;}p {margin: 1em 0;}.caption {text-align: center;color: var(--c-caption);font-style: italic;}.note,.tips,.warning {display: block;width: calc(100% - var(--padding) * 2);padding: 0 var(--padding);padding-bottom: var(--padding);background-color: var(--c-bg-alt);}.note:before,.tips:before,.warning:before {display: block;margin: 0 var(--padding-inv) 10px var(--padding-inv);padding-left: var(--padding);font-style: bold;color: white;}.note:before {content: "Note";background-color: var(--c-blue);}.tips:before {content: "Tips";background-color: var(--c-pink);}.warning:before {content: "Warning";background-color: var(--c-orange);}img {max-width: 100%;}h1,h2,h3,h4,h5,h6 {color: #111;line-height: 125%;margin-top: 2em;font-weight: normal;}h4,h5,h6 {font-weight: bold;}h1 {font-size: 2.5em;}h2 {font-size: 2em;}h3 {font-size: 1.5em;}h4 {font-size: 1.2em;}blockquote {color: #666666;margin: 0;padding-left: 3em;border-left: 0.5em #eee solid;}hr {display: block;height: 2px;border: 0;border-top: 1px solid #aaa;border-bottom: 1px solid #eee;margin: 1em 0;padding: 0;}pre,code,kbd,samp {color: #0084b8;font-family: monospace, monospace;}pre {background-color: #f9f9f9;padding: 1em;font-size: 14px;white-space: pre-wrap;word-wrap: break-word;}code {white-space: pre-wrap;}b,strong {font-weight: bold;}dfn {font-style: italic;color: var(--c-blue);}ins {background: #ff9;color: #000;text-decoration: none;}ul,ol {margin: 1em 0;padding: 0 0 0 2em;}li p:last-child {margin-bottom: 0;}ul ul,ol ol {margin: 0.3em 0;}dl {margin-bottom: 1em;}dt {font-weight: bold;margin-bottom: 0.8em;}dd {margin: 0 0 0.8em 2em;}dd:last-child {margin-bottom: 0;}img {border: 0;-ms-interpolation-mode: bicubic;vertical-align: middle;}figure {display: block;text-align: center;margin: 1em 0;}figure img {border: none;margin: 0 auto;}figcaption {font-size: 0.8em;font-style: italic;margin: 0 0 0.8em;}.author {font-size: 1.2em;text-align: center;}tag {min-width: 3.2em;text-align: center;border-radius: 8px;padding: 0 4px;margin-bottom: 0;margin-top: 4px;margin-right: 0.2em;display: inline-block;color: white;}tag.update {background: var(--c-blue);}tag.new {background: var(--c-green);}tag.update:after {content: "update";}tag.new:after {content: "new";}button {background-color: var(--c-blue);color: white;border: none;cursor: pointer;line-height: 2rem;font-size: 1.2rem;margin: 0.75rem 0;overflow: visible;padding: 0.75rem 1.5rem;border-radius: 1rem;transition: background-color $transition-duration;white-space: nowrap;}</style>
+</head>
+<body>
+<h1 id="the-adapter-pattern">The Adapter pattern</h1>
+<p><em>The Adapter acts as a wrapper between two objects. It catches calls meant for one object and transforms them into a format that is recognizable for another.</em></p>
+<h2 id="the-problem">The problem</h2>
+<p>You’re making an RPG that involves quests. You could code it yourself, but you got recommended a neat code asset with a quest system built-in. It’s open-source and permissive, so long as you give credit where credit is due.</p>
+<p>That’s a lot of time saved, and it has everything you need to make quest chains!</p>
+<p>But then you start looking at the API and realize that, to make the quest system detect the inventory, it expects a <code>CharacterInventory</code> class they coded with an “inventory_filled” signal and a <code>get_inventory_list()</code> function.</p>
+<p>Your inventory does not have a <code>CharacterInventory</code> class. It has a <code>Inventory</code>, with a “inventory_changed” signal and a <code>get_all_inventory()</code> function instead.</p>
+<p>Does that mean you need to ditch this cool quest system and code it yourself after all?</p>
+<h2 id="the-solution">The solution</h2>
+<p>Thankfully not. What you can do instead is to create an Adapter. It’s a way of putting square pegs in holes that expect round pegs, comparing oranges to apples, and making cars run on train tracks.</p>
+<ul>
+<li>You have some <code>Client</code> class that expects a specific object type.</li>
+<li>The <code>Target</code> class is the class the <code>Client</code> expects.</li>
+<li>You have an incompatible <code>Adaptee</code> that works with your system, but not with <code>Client</code></li>
+<li>You create an <code>Adapter</code> class that <em>extends</em> <code>Target</code> and holds a reference to the <code>Adaptee</code>.</li>
+</ul>
+<p>When the <code>Client</code> calls a function that expects data from the <code>Target</code>, you instead call a different function that returns <code>Adaptee</code>’s data in a format <code>Client</code> recognizes.</p>
+<h2 id="example">Example</h2>
+<p>Let’s take the example of a quest system. Specifically, this is the part of the system that can trigger a quest moving on or becoming completed when the character collects an item they need. This is a system you did not create. You got it online and want to use it.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name QuestSystem
+<span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Node</span>
+
+
+<span style="color:#66d9ef">var</span> _inventory: CharacterInventory
+<span style="color:#66d9ef">var</span> _current_quest: Quest
+
+
+<span style="color:#75715e">## Sets the system&#39;s reference to the player inventory and connects to a signal</span>
+<span style="color:#75715e">## triggered when the inventory gets a new piece of inventorty.</span>
+<span style="color:#66d9ef">func</span> setup(inventory: CharacterInventory) <span style="color:#f92672">-&gt;</span> void:
+    _inventory <span style="color:#f92672">=</span> inventory
+    inventory<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;inventory_filled&quot;</span>, self, <span style="color:#e6db74">&quot;_on_CharacterInventory_inventory_filled&quot;</span>)
+
+
+<span style="color:#75715e">## Whenever the inventory changes and the quest needs the inventory,</span>
+<span style="color:#75715e">## we provide the quest with a list of inventory items and, if it&#39;s the one we</span>
+<span style="color:#75715e">## needed, we make the quest move forwards to the next step.</span>
+<span style="color:#66d9ef">func</span> _on_CharacterInventory_inventory_filled() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">if</span> _current_quest <span style="color:#f92672">and</span> _current_quest<span style="color:#f92672">.</span>objective is InventoryObjective:
+        <span style="color:#66d9ef">var</span> all_items :<span style="color:#f92672">=</span> _inventory<span style="color:#f92672">.</span>get_inventory_list()
+
+        <span style="color:#66d9ef">if</span> _current_quest<span style="color:#f92672">.</span>check_for_items(all_items):
+            _current_quest<span style="color:#f92672">.</span>advance_quest()
+</pre>
+<p>We know the <code>CharacterInventory</code> class has a “inventory_filled” signal, and a <code>get_inventory_list()</code> function that returns an array of <code>QuestItem</code>s.</p>
+<p>But your inventory has an “inventory_changed” signal and a <code>get_all_inventory()</code> function that returns an array of <code>Item</code>s. It’s incompatible.</p>
+<p>Besides that, the class types don’t match, and it wouldn’t accept it anyway.</p>
+<p>To put this <code>Inventory</code> class into the <code>QuestSystem</code>, we need a translation layer. That’s the Adapter. It will be a subclass of <code>CharacterInventory</code> and override all the functions <code>QuestSystem</code> expects to use and return data, so it’s translated into a format it understands.</p>
+<pre style="color:#f8f8f2;background-color:#272822">class_name InventoryAdapter
+<span style="color:#66d9ef">extends</span> CharacterInventory
+
+
+<span style="color:#66d9ef">var</span> _inventory: Inventory
+
+
+<span style="color:#66d9ef">func</span> setup(inventory: Inventory) <span style="color:#f92672">-&gt;</span> void:
+    _inventory <span style="color:#f92672">=</span> inventory
+    _inventory<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&quot;inventory_changed&quot;</span>, self, <span style="color:#e6db74">&quot;emit_signal&quot;</span>, [<span style="color:#e6db74">&quot;inventory_filled&quot;</span>])
+
+
+<span style="color:#66d9ef">func</span> get_inventory_list() <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">Array</span>:
+    <span style="color:#66d9ef">var</span> output :<span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">var</span> inventory_items :<span style="color:#f92672">=</span> _inventory<span style="color:#f92672">.</span>get_all_inventory()
+    <span style="color:#66d9ef">for</span> item <span style="color:#f92672">in</span> inventory_items:
+        <span style="color:#66d9ef">var</span> quest_item :<span style="color:#f92672">=</span> QuestItem<span style="color:#f92672">.</span>new()
+        quest_item<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> item<span style="color:#f92672">.</span>name
+        quest_item<span style="color:#f92672">.</span>quantity <span style="color:#f92672">=</span> item<span style="color:#f92672">.</span>quantity
+        quest_item<span style="color:#f92672">.</span>id <span style="color:#f92672">=</span> item<span style="color:#f92672">.</span>id
+        
+        output <span style="color:#f92672">+=</span> quest_item
+    
+    <span style="color:#66d9ef">return</span> output
+</pre>
+<p>You’d repeat this process with every other function with some inventory data that is incompatible with the current function. Now, when you instance your quest system and set it up, you have a handy class you can use to pass along without needing to change either the quest system or your inventory system.</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> quest_system :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>QuestSystem
+<span style="color:#66d9ef">onready</span> <span style="color:#66d9ef">var</span> inventory :<span style="color:#f92672">=</span> <span style="color:#f92672">$</span>Inventory
+
+
+<span style="color:#66d9ef">func</span> _ready() <span style="color:#f92672">-&gt;</span> void:
+    <span style="color:#66d9ef">var</span> inventory_adapter :<span style="color:#f92672">=</span> InventoryAdapter<span style="color:#f92672">.</span>new()
+    inventory_adapter<span style="color:#f92672">.</span>setup(inventory)
+    
+    quest_system<span style="color:#f92672">.</span>setup(inventory_adapter)
+    quest_system<span style="color:#f92672">.</span>start_quest(<span style="color:#e6db74">&quot;Tutorial&quot;</span>)
+</pre>
+<p>No one is any the wiser about the subterfuge, and everything works invisibly (at least, so long as you don’t forget any function or signal).</p>
+<h2 id="usage">Usage</h2>
+<p>If you write all your game’s code yourself, you won’t need the Adapter pattern often. But there are cases where it could happen. If you coded previous projects and you’d like to re-use the code from them into your new game, but you find that they don’t play nicely with one another, the Adapter can help out.</p>
+<p>It could also come into play when refactoring code later down the line of a growing project. You could code a particular system and discover only weeks or months down the line that it could be useful with some of your existing classes. Instead of re-making either the old system or the old targets, you can create an Adapter to stand between the two.</p>
+<p>Where it truly shines is when you bring in code from outside sources. This is code you either do not have access to (like a closed-source C++ library), or would be prohibitively expensive on time to change (a complex codebase). It comes into play when you already have your own code in place that you do not want or cannot change.</p>
+</body>
+</html>
